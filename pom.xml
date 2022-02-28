@@ -69,7 +69,7 @@
                 <configuration>
                     <!-- 指定打包的jar包输出路径、输出文件名-->
                     <finalName>StrengthenWeapon-1.0</finalName>
-                    <outputDirectory>../spigot/plugins</outputDirectory>
+                    <outputDirectory>spigot/plugins</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
