@@ -1,0 +1,10 @@
+# 排除 IDEA 目录
+/StrengthWeapon/.idea/
+# 排除输出目录
+/StrengthWeapon/out/
+/StrengthWeapon/target/
+*.class
+# 排除库文件目录
+/StrengthWeapon/src/lib/
+# 排除测试用 Spigot 目录
+/spigot/

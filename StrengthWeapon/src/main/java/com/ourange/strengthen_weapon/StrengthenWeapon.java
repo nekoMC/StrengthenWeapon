@@ -6,8 +6,8 @@ import com.ourange.strengthen_weapon.listener.StrengthenMenuListener;
 import com.ourange.strengthen_weapon.listener.SwBowListener;
 import com.ourange.strengthen_weapon.utils.ConfigFactory;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * @author ourange
+ */
 public class StrengthenWeapon extends JavaPlugin {
     private static final String DEFAULT_COMMAND = "sw";
     private ConsoleCommandSender sender;
@@ -39,7 +42,7 @@ public class StrengthenWeapon extends JavaPlugin {
     public void onEnable() {
         factory = new ConfigFactory(this);
         //初始化并绑定handler
-        handler = new CommandHandler(this,factory);
+        handler = new CommandHandler(this, factory);
         Objects.requireNonNull(Bukkit.getPluginCommand(DEFAULT_COMMAND)).setExecutor(handler);
         handler.setFactory(factory);
         //设置tab联想
@@ -76,6 +79,7 @@ public class StrengthenWeapon extends JavaPlugin {
      * 子命令联想
      */
     private final String[] subUserCommands = {"sw_bow", "sw_stone"};
+
     @Override
     public @Nullable
     List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
@@ -90,9 +94,10 @@ public class StrengthenWeapon extends JavaPlugin {
 
     /**
      * 发送控制台信息
+     *
      * @param msg 消息字符串
      */
-    public void consoleMsg(String msg){
-        sender.sendMessage("§a[strengthWeapon] "+msg);
+    public void consoleMsg(String msg) {
+        sender.sendMessage("§a[strengthWeapon] " + msg);
     }
 }
