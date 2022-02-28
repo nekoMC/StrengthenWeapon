@@ -1,4 +1,4 @@
-package com.ourange.strengthen_weapon.domain;
+package fun.nekomc.sw.domain;
 
 public class StrengthenBow extends StrengthenItem {
 

@@ -1,10 +1,10 @@
-package com.ourange.strengthen_weapon;
+package fun.nekomc.sw;
 
-import com.ourange.strengthen_weapon.domain.enumeration.WeaponsIndex;
-import com.ourange.strengthen_weapon.handler.CommandHandler;
-import com.ourange.strengthen_weapon.listener.StrengthenMenuListener;
-import com.ourange.strengthen_weapon.listener.SwBowListener;
-import com.ourange.strengthen_weapon.utils.ConfigFactory;
+import fun.nekomc.sw.domain.enumeration.WeaponsIndex;
+import fun.nekomc.sw.handler.CommandHandler;
+import fun.nekomc.sw.listener.StrengthenMenuListener;
+import fun.nekomc.sw.listener.SwBowListener;
+import fun.nekomc.sw.utils.ConfigFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
  */
 public class StrengthenWeapon extends JavaPlugin {
     private static final String DEFAULT_COMMAND = "sw";
+
     private ConsoleCommandSender sender;
     private ConfigFactory factory;
     private CommandHandler handler;
@@ -35,11 +36,11 @@ public class StrengthenWeapon extends JavaPlugin {
     public void onLoad() {
         this.saveDefaultConfig();
         sender = getServer().getConsoleSender();
-        //MenuUtils.authorMenu(this);
     }
 
     @Override
     public void onEnable() {
+        // TODO: 自动注入、单例模式解耦
         factory = new ConfigFactory(this);
         //初始化并绑定handler
         handler = new CommandHandler(this, factory);

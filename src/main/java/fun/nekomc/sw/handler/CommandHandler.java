@@ -1,13 +1,11 @@
-package com.ourange.strengthen_weapon.handler;
+package fun.nekomc.sw.handler;
 
-import com.ourange.strengthen_weapon.StrengthenWeapon;
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
-import com.ourange.strengthen_weapon.domain.StrengthenStone;
-import com.ourange.strengthen_weapon.service.imp.StrengthenServiceImp;
-import com.ourange.strengthen_weapon.utils.ConfigFactory;
-import com.ourange.strengthen_weapon.utils.PlayerMsgUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.service.imp.StrengthenServiceImp;
+import fun.nekomc.sw.utils.ConfigFactory;
+import fun.nekomc.sw.utils.PlayerMsgUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommandHandler implements CommandExecutor {

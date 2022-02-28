@@ -1,4 +1,4 @@
-package com.ourange.strengthen_weapon.dao;
+package fun.nekomc.sw.dao;
 
 import org.bukkit.entity.Player;
 

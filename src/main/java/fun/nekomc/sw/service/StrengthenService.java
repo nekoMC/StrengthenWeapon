@@ -1,8 +1,7 @@
-package com.ourange.strengthen_weapon.service;
+package fun.nekomc.sw.service;
 
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
-import com.ourange.strengthen_weapon.domain.StrengthenStone;
-import com.ourange.strengthen_weapon.domain.enumeration.WeaponsIndex;
+import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenStone;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

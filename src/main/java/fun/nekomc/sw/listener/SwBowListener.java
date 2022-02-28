@@ -1,8 +1,7 @@
-package com.ourange.strengthen_weapon.listener;
+package fun.nekomc.sw.listener;
 
-import com.ourange.strengthen_weapon.StrengthenWeapon;
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
-import com.ourange.strengthen_weapon.utils.ItemLoreUtils;
+import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.utils.ItemLoreUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;

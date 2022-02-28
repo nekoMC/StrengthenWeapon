@@ -1,4 +1,4 @@
-package com.ourange.strengthen_weapon.utils;
+package fun.nekomc.sw.utils;
 
 import org.bukkit.entity.Player;
 

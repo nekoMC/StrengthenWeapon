@@ -1,34 +1,39 @@
-package com.ourange.strengthen_weapon.utils;
+package fun.nekomc.sw.utils;
 
-import com.ourange.strengthen_weapon.StrengthenWeapon;
-import com.ourange.strengthen_weapon.domain.StrengthenBow;
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
-import com.ourange.strengthen_weapon.domain.StrengthenStone;
-import com.ourange.strengthen_weapon.domain.enumeration.WeaponsIndex;
+import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.domain.StrengthenBow;
+import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenStone;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 全局配置管理器
+ *
+ * @author ourange
+ */
 public class ConfigFactory {
+
     private StrengthenWeapon plugin;
-//    private StrengthExtra strengthExtra;
+
     private final FileConfiguration configuration = new YamlConfiguration();
     private List<StrengthenItem> strengthenWeapons;
     private List<StrengthenStone> strengthenStones;
 
-    public ConfigFactory(){ }
+    public ConfigFactory() {
+    }
 
-    public ConfigFactory(StrengthenWeapon plugin){
+    public ConfigFactory(StrengthenWeapon plugin) {
         this.plugin = plugin;
         this.strengthenWeapons = new ArrayList<>();
-        //strengthExtra = new StrengthExtra();
         initFile();
         initItems();
-        //initExtra();
     }
 
     /**
@@ -36,7 +41,7 @@ public class ConfigFactory {
      */
     public void initFile() {
         try {
-            configuration.load(new File(plugin.getDataFolder(),"config.yml"));
+            configuration.load(new File(plugin.getDataFolder(), "config.yml"));
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             plugin.consoleMsg("§c§l配置文件不存在，正在生成配置文件....");

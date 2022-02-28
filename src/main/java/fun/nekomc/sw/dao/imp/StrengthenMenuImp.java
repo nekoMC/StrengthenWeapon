@@ -1,6 +1,6 @@
-package com.ourange.strengthen_weapon.dao.imp;
+package fun.nekomc.sw.dao.imp;
 
-import com.ourange.strengthen_weapon.dao.StrengthenMenuDAO;
+import fun.nekomc.sw.dao.StrengthenMenuDAO;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;

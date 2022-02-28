@@ -1,10 +1,10 @@
-package com.ourange.strengthen_weapon.listener;
+package fun.nekomc.sw.listener;
 
-import com.ourange.strengthen_weapon.StrengthenWeapon;
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
-import com.ourange.strengthen_weapon.domain.StrengthenStone;
-import com.ourange.strengthen_weapon.service.StrengthenService;
-import com.ourange.strengthen_weapon.utils.ItemLoreUtils;
+import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.service.StrengthenService;
+import fun.nekomc.sw.utils.ItemLoreUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;

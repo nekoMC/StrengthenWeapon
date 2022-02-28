@@ -4,13 +4,31 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>fun.nekomc</groupId>
     <artifactId>StrengthWeapon</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+
+        <!-- Environment properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <maven.minimumVersion>3.6.0</maven.minimumVersion>
+
+        <!-- Versioning properties -->
+        <project.outputName>StrengthWeapon</project.outputName>
+        <project.buildNumber>CUSTOM</project.buildNumber>
+        <project.versionCode>${project.version}-b${project.buildNumber}</project.versionCode>
+        <project.finalNameBase>${project.outputName}-${project.version}</project.finalNameBase>
+
+        <!-- Plugin description file properties -->
+        <pluginDescription.name>${project.outputName}</pluginDescription.name>
+        <pluginDescription.version>${project.versionCode}</pluginDescription.version>
+        <pluginDescription.main>${project.groupId}.${project.artifactId}.${pluginDescription.name}</pluginDescription.main>
+        <pluginDescription.authors>ourange, ChiruMori</pluginDescription.authors>
     </properties>
 
     <repositories>
@@ -68,7 +86,7 @@
                 <version>3.2.0</version>
                 <configuration>
                     <!-- 指定打包的jar包输出路径、输出文件名-->
-                    <finalName>StrengthenWeapon-1.0</finalName>
+                    <finalName>${project.finalNameBase}</finalName>
                     <outputDirectory>spigot/plugins</outputDirectory>
                 </configuration>
                 <executions>
@@ -77,6 +95,81 @@
                         <phase>package</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- 生成包含全部类文件、依赖的 jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>shaded-jar-legacy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.finalNameBase}-legacy</finalName>
+<!--                            <relocations>-->
+<!--                                <relocation>-->
+<!--                                    <pattern>com.google.common</pattern>-->
+<!--                                    <shadedPattern>fun.nekomc.sw.libs.com.google.common</shadedPattern>-->
+<!--                                </relocation>-->
+<!--                                <relocation>-->
+<!--                                    <pattern>com.google.thirdparty</pattern>-->
+<!--                                    <shadedPattern>fun.nekomc.sw.libs.com.google.thirdparty</shadedPattern>-->
+<!--                                </relocation>-->
+<!--                                <relocation>-->
+<!--                                    <pattern>com.google.gson</pattern>-->
+<!--                                    <shadedPattern>fun.nekomc.sw.libs.com.google.gson</shadedPattern>-->
+<!--                                </relocation>-->
+<!--                            </relocations>-->
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Don't create the reduced pom file, as we don't deploy the shaded jar -->
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <!-- Deploy the non shaded jar as main artifact -->
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <!-- Use the base jar name, to help server owners download the right jar -->
+                    <finalName>${project.finalNameBase}</finalName>
+
+                    <!--
+                    重定位全部依赖类，以防止版本等问题造成的冲突
+                    -->
+                    <relocations combine.children="append">
+<!--                        <relocation>-->
+<!--                            <pattern>javax.inject</pattern>-->
+<!--                            <shadedPattern>fun.nekomc.sw.libs.javax.inject</shadedPattern>-->
+<!--                        </relocation>-->
+                    </relocations>
+
+                    <filters>
+                        <!-- Ignore manifest signatures for shading the project into an uber-jar to fix -->
+                        <!-- "Invalid signature file digest for Manifest main attributes" -->
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                                <exclude>META-INF/*.MF</exclude>
+                                <exclude>META-INF/DEPENDENCIES</exclude>
+                                <exclude>META-INF/**/module-info.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                            <addHeader>false</addHeader>
+                        </transformer>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
             </plugin>
         </plugins>
     </build>

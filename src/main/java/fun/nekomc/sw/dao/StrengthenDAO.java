@@ -1,6 +1,6 @@
-package com.ourange.strengthen_weapon.dao;
+package fun.nekomc.sw.dao;
 
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

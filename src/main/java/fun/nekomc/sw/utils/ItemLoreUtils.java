@@ -1,6 +1,6 @@
-package com.ourange.strengthen_weapon.utils;
+package fun.nekomc.sw.utils;
 
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenItem;
 
 import java.util.List;
 

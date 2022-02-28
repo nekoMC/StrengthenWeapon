@@ -1,11 +1,10 @@
-package com.ourange.strengthen_weapon.service.imp;
+package fun.nekomc.sw.service.imp;
 
-import com.ourange.strengthen_weapon.StrengthenWeapon;
-import com.ourange.strengthen_weapon.dao.imp.StrengthenDAOImp;
-import com.ourange.strengthen_weapon.domain.StrengthenItem;
-import com.ourange.strengthen_weapon.domain.StrengthenStone;
-import com.ourange.strengthen_weapon.domain.enumeration.WeaponsIndex;
-import com.ourange.strengthen_weapon.service.StrengthenService;
+import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.dao.imp.StrengthenDAOImp;
+import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.service.StrengthenService;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
