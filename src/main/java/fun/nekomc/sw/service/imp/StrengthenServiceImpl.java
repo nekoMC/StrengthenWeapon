@@ -1,7 +1,7 @@
 package fun.nekomc.sw.service.imp;
 
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.dao.imp.StrengthenDAOImp;
+import fun.nekomc.sw.dao.imp.StrengthenDAOImpl;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.service.StrengthenService;
@@ -11,22 +11,26 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Random;
 
-public class StrengthenServiceImp implements StrengthenService {
-    private final StrengthenDAOImp dao;
+/**
+ * @author ourange
+ */
+public class StrengthenServiceImpl implements StrengthenService {
+    private final StrengthenDAOImpl dao;
     private StrengthenWeapon plugin;
     private List<StrengthenItem> strengthenWeapons;
     private List<StrengthenStone> strengthenStones;
     private final Random random = new Random();
 
-    public StrengthenServiceImp(StrengthenWeapon plugin, List<StrengthenItem> strengthenWeapons, List<StrengthenStone> strengthenStones) {
+    public StrengthenServiceImpl(StrengthenWeapon plugin, List<StrengthenItem> strengthenWeapons, List<StrengthenStone> strengthenStones) {
         this.plugin = plugin;
         this.strengthenWeapons = strengthenWeapons;
         this.strengthenStones = strengthenStones;
-        dao = new StrengthenDAOImp();
+        dao = new StrengthenDAOImpl();
         dao.setPlugin(plugin);
         dao.setStrengthenWeapons(strengthenWeapons);
         dao.setStrengthenStones(strengthenStones);
     }
+
     @Override
     public ItemStack giveStrengthBow(int amount) {
 
@@ -43,11 +47,12 @@ public class StrengthenServiceImp implements StrengthenService {
     public ItemStack strengthen(Player player, ItemStack itemStack, StrengthenItem strengthenItem, StrengthenStone strengthenStone, boolean isAdmin) {
         boolean isSafe = false;
         boolean isSuccess = strengthenSuccess(strengthenStone.getChance());
-        return  dao.strengthen(player, itemStack, strengthenItem, isSuccess||isAdmin, isSafe);
+        return dao.strengthen(player, itemStack, strengthenItem, isSuccess || isAdmin, isSafe);
     }
 
+    @Override
     public ItemStack strengthenSuccessResult(ItemStack itemStack, StrengthenItem strengthenItem) {
-        return  dao.strengthenSuccessResult(itemStack, strengthenItem);
+        return dao.strengthenSuccessResult(itemStack, strengthenItem);
     }
 
     private boolean strengthenSuccess(int chance) {

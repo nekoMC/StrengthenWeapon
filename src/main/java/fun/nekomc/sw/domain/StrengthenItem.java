@@ -2,12 +2,35 @@ package fun.nekomc.sw.domain;
 
 import java.util.List;
 
+/**
+ * 被 sw 识别的道具
+ * TODO: Lombok 简化
+ * TODO: 配置化改造
+ *
+ * @author ourange
+ */
 public abstract class StrengthenItem {
     private String displayName;
     private String name;
+
+    /**
+     * 道具的解释文本
+     */
     private List<String> lore;
+
+    /**
+     * 道具材质
+     */
     private String material;
+
+    /**
+     * 等级名称（强化等级前缀）
+     */
     private String levelName;
+
+    /**
+     * 强化等级
+     */
     private int level;
     private String configName;
 

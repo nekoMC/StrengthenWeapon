@@ -1,5 +1,5 @@
 name: StrengthenWeapon
-main: com.ourange.strengthen_weapon.StrengthenWeapon
+main: fun.nekomc.sw.StrengthenWeapon
 version: '0.1'
 api-version: '1.18'
 author: ourange

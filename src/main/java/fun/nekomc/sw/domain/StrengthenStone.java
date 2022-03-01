@@ -2,6 +2,11 @@ package fun.nekomc.sw.domain;
 
 import java.util.List;
 
+/**
+ * 强化石
+ *
+ * @author ourange
+ */
 public class StrengthenStone extends StrengthenItem{
     public static final String STONE_NAME = "sw_stone";
 

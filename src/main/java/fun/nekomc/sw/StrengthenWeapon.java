@@ -40,7 +40,7 @@ public class StrengthenWeapon extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // TODO: 自动注入、单例模式解耦
+        // TODO: 单例模式解耦
         factory = new ConfigFactory(this);
         //初始化并绑定handler
         handler = new CommandHandler(this, factory);
@@ -49,6 +49,7 @@ public class StrengthenWeapon extends JavaPlugin {
         //设置tab联想
         Objects.requireNonNull(Bukkit.getPluginCommand(DEFAULT_COMMAND)).setTabCompleter(this);
         //初始化并绑定监听器
+        // TODO: 分类整理各 Listener 以拓展更多内容
         swBowListener = new SwBowListener();
         swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
         getServer().getPluginManager().registerEvents(swBowListener, this);

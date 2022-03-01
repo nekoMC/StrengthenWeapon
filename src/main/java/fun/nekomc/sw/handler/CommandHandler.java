@@ -3,7 +3,7 @@ package fun.nekomc.sw.handler;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
-import fun.nekomc.sw.service.imp.StrengthenServiceImp;
+import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigFactory;
 import fun.nekomc.sw.utils.PlayerMsgUtils;
 import org.bukkit.command.Command;
@@ -15,10 +15,15 @@ import org.bukkit.inventory.*;
 
 import java.util.List;
 
+/**
+ * 命令行指令解释器
+ *
+ * @author ourange
+ */
 public class CommandHandler implements CommandExecutor {
     private StrengthenWeapon plugin;
     private ConfigFactory factory;
-    private StrengthenServiceImp strengthService;
+    private StrengthenServiceImpl strengthService;
 
 
 /*private static StrengthServiceImpl strengthService;
@@ -28,7 +33,7 @@ public class CommandHandler implements CommandExecutor {
     public CommandHandler(StrengthenWeapon plugin, ConfigFactory factory){
         this.plugin = plugin;
         this.factory = factory;
-        strengthService = new StrengthenServiceImp(plugin, factory.getStrengthenWeapons(), factory.getStrengthenStones());
+        strengthService = new StrengthenServiceImpl(plugin, factory.getStrengthenWeapons(), factory.getStrengthenStones());
         strengthService.setPlugin(plugin);
         /*strengthService.setPlugin(plugin);*/
     }
@@ -39,6 +44,7 @@ public class CommandHandler implements CommandExecutor {
         if (!"CONSOLE".equals(commandSender.getName())) {
             Player player = ((Player) commandSender).getPlayer();
             assert player != null;
+            // 未传递参数时，为玩家打开菜单
             if (commandArray.length < 1) {
                 //strengthService.infoMenu(player);
 
@@ -61,6 +67,7 @@ public class CommandHandler implements CommandExecutor {
                 Inventory inv = plugin.getServer().createInventory(player, InventoryType.ANVIL, "Strengthen");
                 player.openInventory(inv);
             } else {
+                // 传递子指令时，给玩家指定的道具
                 String sonCommand = commandArray[0];
                 ItemStack stack = null;
                 int amount = 0;
@@ -110,12 +117,12 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private void giveSwItem(Player player, ItemStack itemStack) {
+        // TODO: 确认背包满时是否存在问题
         PlayerInventory inventory = player.getInventory();
         //int amount = itemStack.getAmount();
 
         int firstEmpty = inventory.firstEmpty();
         inventory.setItem(firstEmpty, itemStack);
-
     }
 
     public ConfigFactory getFactory() {
@@ -126,11 +133,11 @@ public class CommandHandler implements CommandExecutor {
         this.factory = factory;
     }
 
-    public StrengthenServiceImp getStrengthService() {
+    public StrengthenServiceImpl getStrengthService() {
         return strengthService;
     }
 
-    public void setStrengthService(StrengthenServiceImp strengthService) {
+    public void setStrengthService(StrengthenServiceImpl strengthService) {
         this.strengthService = strengthService;
     }
 }

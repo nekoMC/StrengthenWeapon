@@ -65,6 +65,8 @@ public class ConfigFactory {
 
     /**
      * 初始化强化物品
+     *
+     * TODO: Bean 方式重构
      */
     private void initStrengthenItem(StrengthenItem item) {
         String configName = item.getConfigName();
@@ -87,7 +89,7 @@ public class ConfigFactory {
 
         String configName = StrengthenStone.STONE_NAME;
         List<Integer> chances = configuration.getIntegerList(configName + ".chance");
-
+        // 根据 chance 的配置生成不同强化石
         for (int i = 0; i < chances.size(); i++) {
             StrengthenStone stone = new StrengthenStone();
 

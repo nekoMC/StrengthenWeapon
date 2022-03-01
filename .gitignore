@@ -1,5 +1,6 @@
-# 排除 IDEA 目录
+# 排除 IDEA 文件
 /.idea/
+/.run/
 # 排除输出目录
 /out/
 /target/

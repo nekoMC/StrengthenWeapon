@@ -14,13 +14,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class StrengthenDAOImp implements StrengthenDAO {
+/**
+ * @author ourange
+ */
+public class StrengthenDAOImpl implements StrengthenDAO {
     private StrengthenWeapon plugin;
     private List<StrengthenItem> strengthenWeapons;
     private List<StrengthenStone> strengthenStones;
     private StrengthenItem bow;
 
-    public StrengthenDAOImp() { }
+    public StrengthenDAOImpl() { }
 
     @Override
     public ItemStack giveStrengthenBow(int count) {
@@ -58,6 +61,7 @@ public class StrengthenDAOImp implements StrengthenDAO {
         ItemStack resItemStack = itemStack.clone();
         ItemMeta itemMeta = resItemStack.getItemMeta();
         boolean breakdown = false;
+        // TODO：配置化提示文案重构
         if (itemMeta != null) {
             List<String> lore = itemMeta.getLore();
             if (lore != null) {
@@ -90,8 +94,9 @@ public class StrengthenDAOImp implements StrengthenDAO {
                 resItemStack.setItemMeta(itemMeta);
             }
         }
-        if (breakdown)
+        if (breakdown) {
             return null;
+        }
         return resItemStack;
     }
 
