@@ -1,5 +1,8 @@
 package fun.nekomc.sw.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.List;
 
 /**
@@ -7,7 +10,9 @@ import java.util.List;
  *
  * @author ourange
  */
-public class StrengthenStone extends StrengthenItem{
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class StrengthenStone extends StrengthenItem {
     public static final String STONE_NAME = "sw_stone";
 
     private int chance;
@@ -16,14 +21,6 @@ public class StrengthenStone extends StrengthenItem{
     public void setLore(List<String> lore) {
         super.setLore(lore);
         lore.add(1, "§c强化成功率:" + chance + "%");
-    }
-
-    public int getChance() {
-        return chance;
-    }
-
-    public void setChance(int chance) {
-        this.chance = chance;
     }
 
     public StrengthenStone() {

@@ -5,7 +5,7 @@ import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigFactory;
-import fun.nekomc.sw.utils.PlayerMsgUtils;
+import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,10 +31,10 @@ public class CommandHandler implements CommandExecutor {
     public static final String ADMIN_PERMISSION = "strength.admin";*/
 
     public CommandHandler(StrengthenWeapon plugin, ConfigFactory factory){
-        this.plugin = plugin;
-        this.factory = factory;
-        strengthService = new StrengthenServiceImpl(plugin, factory.getStrengthenWeapons(), factory.getStrengthenStones());
-        strengthService.setPlugin(plugin);
+//        this.plugin = plugin;
+//        this.factory = factory;
+//        strengthService = new StrengthenServiceImpl(plugin, factory.getStrengthenWeapons(), factory.getStrengthenStones());
+//        strengthService.setPlugin(plugin);
         /*strengthService.setPlugin(plugin);*/
     }
 
@@ -85,7 +85,7 @@ public class CommandHandler implements CommandExecutor {
                             }
                         }
                         catch (Exception e) {
-                            PlayerMsgUtils.sendMsg(player, "§b请输入正确的指令:/sw sw_stone [1~" + strengthService.getStrengthenStones().size() + "]");
+                            MsgUtils.sendMsg(player, "§b请输入正确的指令:/sw sw_stone [1~" + strengthService.getStrengthenStones().size() + "]");
                         }
                         break;
                     default:
@@ -100,7 +100,7 @@ public class CommandHandler implements CommandExecutor {
                     return true;
                 }
             }
-            plugin.consoleMsg("&c控制台仅允许使用reload指令");
+            MsgUtils.consoleMsg("&c控制台仅允许使用reload指令");
         }
         return true;
     }

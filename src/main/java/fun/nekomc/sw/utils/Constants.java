@@ -10,4 +10,6 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Constants {
+
+    public static final String CONFIG_FILE_NAME = "config.yml";
 }
