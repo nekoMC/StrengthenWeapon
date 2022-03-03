@@ -1,15 +1,13 @@
 package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.dto.SwItemConfigDto;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,10 +15,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 全局配置管理器
- * 因作用于全局，且不涉及重载等拓展，采用静态类实现
+ * 因作用于全局，且不涉及面向对象拓展，采用静态类实现
  *
  * @author ourange
  */
@@ -29,7 +28,7 @@ import java.util.Map;
 public class ConfigFactory {
 
     private final YamlConfiguration yamlConfigFileLoader = new YamlConfiguration();
-    private Map<String, SwItemConfigDto> swItemMap;
+    private Map<String, SwItemConfigDto> swItemConfigMap;
 
     /**
      * 加载、重载配置文件。即读取配置文件内容到 loader 中
@@ -40,9 +39,23 @@ public class ConfigFactory {
         // 读取 config.yml，如果不存在则自动生成
         Map<String, Object> configYmlRawMap = loadConfigYml(rootPath);
         // 将 Map 的值转 SwItemConfigDto 对象
-        swItemMap = ServiceUtils.convertMapValue(configYmlRawMap,
+        swItemConfigMap = ServiceUtils.convertMapValue(configYmlRawMap,
                 raw -> BeanUtil.fillBeanWithMap(((MemorySection) raw).getValues(true), new SwItemConfigDto(), true, true));
-        log.info("{}", swItemMap);
+        log.info("{}", swItemConfigMap);
+        // 在这里拓展道具的解析和其他配置文件的读取
+    }
+
+    /**
+     * 根据道具名获取指定道具的配置（配置文件中定义的配置）
+     *
+     * @param itemName 道具配置名，在配置文件中，一个配置项的名称
+     * @return Optional 包装的 SwItemConfigDto 对象，可能为空
+     */
+    public static Optional<SwItemConfigDto> getItemConfig(String itemName) {
+        if (CollectionUtil.isEmpty(swItemConfigMap)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(swItemConfigMap.get(itemName));
     }
 
     /**
@@ -64,6 +77,8 @@ public class ConfigFactory {
         }
         return yamlConfigFileLoader.getValues(false);
     }
+
+// 备用，用作参考
 //
 //    /**
 //     * 初始化所有强化物品以及强化石

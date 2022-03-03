@@ -12,4 +12,14 @@ import lombok.experimental.UtilityClass;
 public class Constants {
 
     public static final String CONFIG_FILE_NAME = "config.yml";
+
+    /**
+     * 权限节点命名空间
+     */
+    public static final String PERMISSION_NAMESPACE = "sw.";
+
+    /**
+     * 根指令
+     */
+    public static final String BASE_COMMAND = "sw";
 }

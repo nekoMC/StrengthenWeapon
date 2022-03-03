@@ -1,12 +1,12 @@
 package fun.nekomc.sw;
 
-import fun.nekomc.sw.domain.enumeration.WeaponsIndex;
 import fun.nekomc.sw.exception.SwException;
-import fun.nekomc.sw.handler.CommandHandler;
+import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.StrengthenMenuListener;
 import fun.nekomc.sw.listener.SwBowListener;
 import fun.nekomc.sw.utils.ConfigFactory;
 
+import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,10 +25,8 @@ import java.util.stream.Collectors;
  * @author ourange
  */
 public class StrengthenWeapon extends JavaPlugin {
-    private static final String DEFAULT_COMMAND = "sw";
 
     private ConfigFactory factory;
-    private CommandHandler handler;
     private SwBowListener swBowListener;
     private StrengthenMenuListener strengthenMenuListener;
 
@@ -55,13 +53,12 @@ public class StrengthenWeapon extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // 初始化配置管理器
         ConfigFactory.loadConfig(this.getDataFolder().getPath());
-        //初始化并绑定handler
-        handler = new CommandHandler(this, factory);
-        Objects.requireNonNull(Bukkit.getPluginCommand(DEFAULT_COMMAND)).setExecutor(handler);
-        handler.setFactory(factory);
-        //设置tab联想
-        Objects.requireNonNull(Bukkit.getPluginCommand(DEFAULT_COMMAND)).setTabCompleter(this);
+        // 绑定指令解析器、设置指令 tab 联想
+        CommandHandler handler = CommandHandler.getInstance();
+        Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND)).setExecutor(handler);
+        Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND)).setTabCompleter(handler);
         //初始化并绑定监听器
         // TODO: 分类整理各 Listener 以拓展更多内容
 //        swBowListener = new SwBowListener();
@@ -89,22 +86,5 @@ public class StrengthenWeapon extends JavaPlugin {
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
 //        strengthenMenuListener.setStrengthenWeapons(factory.getStrengthenWeapons());
         /*damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());*/
-    }
-
-    /**
-     * 子命令联想
-     */
-    private final String[] subUserCommands = {"sw_bow", "sw_stone"};
-
-    @Override
-    public @Nullable
-    List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (args.length > 1) {
-            return new ArrayList<>();
-        }
-        if (args.length == 0) {
-            return Arrays.asList(subUserCommands);
-        }
-        return Arrays.stream(subUserCommands).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
     }
 }
