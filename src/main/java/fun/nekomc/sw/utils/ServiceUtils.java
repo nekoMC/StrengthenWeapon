@@ -1,10 +1,12 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.lang.Assert;
 import lombok.experimental.UtilityClass;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -27,7 +29,7 @@ public class ServiceUtils {
      * @return 转换了值类型的 Map，键类型不会变化
      */
     public static <KEY, SRC, TAR> Map<KEY, TAR> convertMapValue(Map<KEY, SRC> srcMap, Function<SRC, TAR> valueConverter) {
-        assert null != valueConverter : "valueConverter cannot be null";
+        Assert.notNull(valueConverter, "valueConverter cannot be null");
         if (null == srcMap || srcMap.isEmpty()) {
             return Collections.emptyMap();
         }

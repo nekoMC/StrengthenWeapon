@@ -1,5 +1,6 @@
 package fun.nekomc.sw.handler;
 
+import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
@@ -44,6 +45,7 @@ public class CommandHandler implements CommandExecutor {
         if (!"CONSOLE".equals(commandSender.getName())) {
             Player player = ((Player) commandSender).getPlayer();
             assert player != null;
+            Assert.notNull(player, "player cannot be null!");
             // 未传递参数时，为玩家打开菜单
             if (commandArray.length < 1) {
                 //strengthService.infoMenu(player);

@@ -2,6 +2,7 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.dto.SwItemConfigDto;
@@ -34,7 +35,8 @@ public class ConfigFactory {
      * 加载、重载配置文件。即读取配置文件内容到 loader 中
      */
     public static void loadConfig(String rootPath) {
-        assert StringUtils.isNotBlank(rootPath) : "配置文件根路径不能为空！";
+        Assert.notBlank(rootPath, "配置文件根路径不能为空！");
+
         // 读取 config.yml，如果不存在则自动生成
         Map<String, Object> configYmlRawMap = loadConfigYml(rootPath);
         // 将 Map 的值转 SwItemConfigDto 对象
