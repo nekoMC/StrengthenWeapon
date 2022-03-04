@@ -11,13 +11,15 @@ import org.bukkit.command.CommandSender;
  */
 class SwReloadCommand extends SwCommand {
 
-    public SwReloadCommand(SwCommand... subCmd) {
-        super("reload", false, "admin", subCmd);
+    public SwReloadCommand() {
+        super("reload", false, "admin");
     }
 
     @Override
-    protected void rua(CommandSender sender, String[] args) {
+    public boolean rua(CommandSender sender, String[] args) {
         StrengthenWeapon.getInstance().reloadConfig();
+        // TODO: 这里怎么回事，瞎TM改
         MsgUtils.consoleMsg("&c控制台仅允许使用reload指令");
+        return false;
     }
 }

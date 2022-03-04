@@ -16,12 +16,12 @@ import org.bukkit.inventory.ItemStack;
  */
 class BaseSwCommand extends SwCommand {
 
-    public BaseSwCommand(SwCommand... subCmd) {
-        super(Constants.BASE_COMMAND, true, "", subCmd);
+    public BaseSwCommand() {
+        super(Constants.BASE_COMMAND, true, "");
     }
 
     @Override
-    protected void rua(CommandSender sender, String[] args) {
+    public boolean rua(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         if (args.length < 1) {
             Inventory inv = StrengthenWeapon.getInstance().getServer().createInventory(player, InventoryType.ANVIL, "Strengthen");
@@ -52,5 +52,6 @@ class BaseSwCommand extends SwCommand {
                     break;
             }
         }
+        return true;
     }
 }

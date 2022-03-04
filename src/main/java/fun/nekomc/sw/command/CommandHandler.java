@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,11 +41,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     public static final String ADMIN_PERMISSION = "strength.admin";*/
 
     private CommandHandler() {
-        // 初始化指令树
-        commandTree = new BaseSwCommand(
-                // TODO: 拓展更多指令
-                new SwReloadCommand()
-        );
+        // 构建指令树
+
+        // 根节点
+        commandTree = new BaseSwCommand();
+        // 一级节点
+        SwCommand swReload = new SwReloadCommand();
+        commandTree.linkSubCmd(swReload);
     }
 
     public static CommandHandler getInstance() {
@@ -55,8 +58,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command,
                              @NotNull String mainCommand, String[] commandArray) {
-        commandTree.execute(commandSender, commandArray);
-        return true;
+        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(commandSender, commandArray);
+        return cmdNodeDispatchTo.map(swCommand -> swCommand.rua(commandSender, commandArray)).orElse(false);
     }
 
     /**

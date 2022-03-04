@@ -1,6 +1,8 @@
 package fun.nekomc.sw.command;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.utils.Constants;
@@ -45,41 +47,64 @@ public abstract class SwCommand {
     /**
      * 当前指令的子指令
      */
-    private final List<SwCommand> subCmd;
+    private List<SwCommand> subCmd;
 
     /**
-     * 构建指令，以指令 <code> sw give ChiruMori lingo_ame </code> 为例
+     * 父级指令
+     */
+    private SwCommand parentCmd;
+
+    /**
+     * 当前指令在指令树中的深度
+     */
+    private int depth;
+
+    /**
+     * 构建指令
      *
-     * @param cmd             当前指令名，即例子中 sw
+     * @param cmd             当前指令名
      * @param isPlayerCmd     执行者是否必须为玩家
      * @param permissionPoint 执行该指令需要的权限点（控制台不受限）
-     * @param subCmd          子指令列表，如例子中的 give 指令
      */
-    protected SwCommand(String cmd, boolean isPlayerCmd, String permissionPoint, SwCommand... subCmd) {
+    protected SwCommand(String cmd, boolean isPlayerCmd, String permissionPoint) {
         this.nowCmd = cmd;
         this.playerCmd = isPlayerCmd;
         this.permissionPoint = permissionPoint;
-        this.subCmd = Arrays.asList(subCmd);
+        this.parentCmd = null;
+        this.depth = 0;
     }
 
     /**
-     * 执行指令
+     * 为当前指令设置子指令，如果不涉及指令树动态变化，本方法只应该在建树时调一次
+     *
+     * @param subCmdArray 子指令
+     */
+    public void linkSubCmd(SwCommand... subCmdArray) {
+        for (SwCommand swCommand : subCmdArray) {
+            swCommand.parentCmd = this;
+            swCommand.depth = this.depth + 1;
+        }
+        this.subCmd = Arrays.asList(subCmdArray);
+    }
+
+    /**
+     * 获取能处理当前指令的指令节点
      *
      * @param sender 指令执行方
      * @param args   指令参数，不含指令本身
+     * @return 能处理当前指令的指令节点，比如入参 args 为 sw reload，则返回 reload 指令节点
      */
-    public void execute(CommandSender sender, String[] args) {
+    public Optional<SwCommand> getCmdNode(CommandSender sender, String[] args) {
         if (!preCheck(sender, args)) {
-            return;
+            return Optional.empty();
         }
 
         // 看看子指令能不能处理。能就撇给子指令，否则自己上
         Optional<SwCommand> runnableSubCommand = getRunnableSubCommand(args);
         if (runnableSubCommand.isPresent()) {
-            runnableSubCommand.get().execute(sender, ArrayUtil.sub(args, 1, args.length));
-            return;
+            return runnableSubCommand.get().getCmdNode(sender, args);
         }
-        rua(sender, args);
+        return Optional.of(this);
     }
 
     /**
@@ -87,14 +112,41 @@ public abstract class SwCommand {
      *
      * @param sender 指令执行者，如果 playerCmd 为 true，则本参数一定为玩家
      * @param args   指令参数
+     * @return 指令执行是否成功
      */
-    protected void rua(CommandSender sender, String[] args) {
+    public boolean rua(CommandSender sender, final String[] args) {
         // 没有重写本方法，摆烂
         if (sender instanceof Player) {
             MsgUtils.sendMsg((Player) sender, "Unsupported command");
-            return;
+            return false;
         }
         MsgUtils.consoleMsg("Unsupported command");
+        return false;
+    }
+
+    /**
+     * 获取指令 Tab 提示信息列表，通常需要重写
+     *
+     * @param sender 指令发送方
+     * @param args   参数
+     * @return 提示信息列表
+     */
+    public List<String> hint(CommandSender sender, final String[] args) {
+        return ListUtil.empty();
+    }
+
+    /**
+     * 将参数列表根据当前指令深度进行裁剪，如 sw give ChiruMori dog 指令
+     * 当子指令 give 节点调用本方法时，会得到 [ChiruMori, dog]
+     *
+     * @param args 原始参数列表，如在上例中应为 [give, ChiruMori, dog]
+     * @return 裁剪后的子参数
+     */
+    protected String[] ignoreDontCareArgs(final String[] args) {
+        if (ArrayUtil.isEmpty(args)) {
+            return null == args ? new String[0] : args;
+        }
+        return ArrayUtil.sub(args, depth, args.length);
     }
 
     // ========== private ========== //
@@ -126,13 +178,13 @@ public abstract class SwCommand {
      * @return Optional 包装的命令对象，不存在时返回 Optional.empty()
      */
     private Optional<SwCommand> getRunnableSubCommand(String[] args) {
-        if (CollectionUtil.isEmpty(subCmd) || ArrayUtil.isEmpty(args)) {
+        if (CollUtil.isEmpty(subCmd) || ArrayUtil.isEmpty(args)) {
             return Optional.empty();
         }
-        String subCmdToMatch = args[0];
-        for (SwCommand subCmd : subCmd) {
-            if (Objects.equals(subCmd.nowCmd, subCmdToMatch)) {
-                return Optional.of(subCmd);
+        String subCmdToMatch = args[depth];
+        for (SwCommand subCmdCandidate : subCmd) {
+            if (Objects.equals(subCmdCandidate.nowCmd, subCmdToMatch)) {
+                return Optional.of(subCmdCandidate);
             }
         }
         return Optional.empty();
