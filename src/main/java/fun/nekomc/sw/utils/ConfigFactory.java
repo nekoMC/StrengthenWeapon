@@ -2,6 +2,7 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.dto.SwItemConfigDto;
@@ -14,6 +15,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,6 +46,18 @@ public class ConfigFactory {
                 raw -> BeanUtil.fillBeanWithMap(((MemorySection) raw).getValues(true), new SwItemConfigDto(), true, true));
         log.info("{}", swItemConfigMap);
         // 在这里拓展道具的解析和其他配置文件的读取
+    }
+
+    /**
+     * 获取当前可用的道具列表
+     *
+     * @return 配置文件中指定的道具列表
+     */
+    public static List<String> getItemNameList() {
+        if (CollectionUtil.isEmpty(swItemConfigMap)) {
+            return ListUtil.empty();
+        }
+        return new ArrayList<>(swItemConfigMap.keySet());
     }
 
     /**

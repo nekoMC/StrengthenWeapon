@@ -1,9 +1,16 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.dto.SwItemConfigDto;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 操作道具 Lore 的工具类
@@ -11,7 +18,7 @@ import java.util.List;
  * @author ourange
  */
 @UtilityClass
-public class ItemLoreUtils {
+public class ItemUtils {
 
     /**
      * 获取 SW 道具的强化等级（解析 lore 内容）
@@ -43,5 +50,29 @@ public class ItemLoreUtils {
      */
     public static String getItemName(List<String> lore) {
         return lore.get(lore.size() - 1);
+    }
+
+    /**
+     * 通过 ItemConfigDto 构建道具
+     *
+     * @param itemConfig SwItemConfigDto 对象，通常通过配置文件中读取获得
+     * @return 道具，配置存在问题时返回 Optional.empty
+     */
+    public Optional<ItemStack> buildItemByConfig(SwItemConfigDto itemConfig) {
+        Assert.notNull(itemConfig, "itemConfig cannot be null");
+        // Material
+        Material material = Material.getMaterial(itemConfig.getMaterial());
+        if (null == material) {
+            return Optional.empty();
+        }
+        ItemStack itemStack = new ItemStack(material);
+        // Meta
+        ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
+        meta.setDisplayName(itemConfig.getDisplayName());
+        meta.setLore(itemConfig.getLore());
+        meta.set
+
+        itemStack.setItemMeta(meta);
+        return Optional.of(itemStack);
     }
 }

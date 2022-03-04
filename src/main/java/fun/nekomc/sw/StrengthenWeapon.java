@@ -8,6 +8,7 @@ import fun.nekomc.sw.utils.ConfigFactory;
 
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
+import org.bukkit.Server;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.bukkit.Bukkit;
@@ -49,6 +50,13 @@ public class StrengthenWeapon extends JavaPlugin {
             throw new SwException("插件正在加载中");
         }
         return INSTANCE;
+    }
+
+    /**
+     * 获取 Server 实例
+     */
+    public static Server server() {
+        return getInstance().getServer();
     }
 
     @Override

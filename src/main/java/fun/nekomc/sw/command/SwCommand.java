@@ -2,14 +2,13 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
+import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import fun.nekomc.sw.utils.ServiceUtils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -27,6 +26,7 @@ import java.util.Optional;
  * @author Chiru
  */
 @Slf4j
+@Getter
 public abstract class SwCommand {
 
     /**
@@ -113,26 +113,27 @@ public abstract class SwCommand {
      * @param sender 指令执行者，如果 playerCmd 为 true，则本参数一定为玩家
      * @param args   指令参数
      * @return 指令执行是否成功
+     * @throws SwCommandException 当指令执行异常时抛出，回执消息统一由外部处理
      */
     public boolean rua(CommandSender sender, final String[] args) {
-        // 没有重写本方法，摆烂
-        if (sender instanceof Player) {
-            MsgUtils.sendMsg((Player) sender, "Unsupported command");
-            return false;
-        }
-        MsgUtils.consoleMsg("Unsupported command");
+        // 没有重写本方法，摆烂给执行者
+        MsgUtils.returnMsgToSender(sender, "Unsupported command");
         return false;
     }
 
     /**
      * 获取指令 Tab 提示信息列表，通常需要重写
+     * 默认实现返回子指令列表，如果没有子指令返回 null
      *
      * @param sender 指令发送方
      * @param args   参数
      * @return 提示信息列表
      */
     public List<String> hint(CommandSender sender, final String[] args) {
-        return ListUtil.empty();
+        if (CollectionUtil.isEmpty(subCmd)) {
+            return null;
+        }
+        return ServiceUtils.convertList(subCmd, SwCommand::getNowCmd);
     }
 
     /**

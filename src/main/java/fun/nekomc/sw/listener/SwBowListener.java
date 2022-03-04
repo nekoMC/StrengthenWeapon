@@ -1,7 +1,7 @@
 package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.utils.ItemLoreUtils;
+import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
@@ -28,13 +28,13 @@ public class SwBowListener implements Listener {
                 if (event.getBow() != null && event.getBow().getItemMeta() != null
                         && event.getBow().getItemMeta().getLore() != null) {
                     // 这把弓如果是认证的连发弓
-                    String bowName = ItemLoreUtils.getItemName(event.getBow().getItemMeta().getLore());
-                    String swBowName = ItemLoreUtils.getItemName(strengthenBow.getLore());
+                    String bowName = ItemUtils.getItemName(event.getBow().getItemMeta().getLore());
+                    String swBowName = ItemUtils.getItemName(strengthenBow.getLore());
                     if (bowName.equalsIgnoreCase(swBowName)) {
                         Arrow arrow = (Arrow) event.getProjectile();
                         Player player = (Player) event.getEntity();
 
-                        int level = ItemLoreUtils.getItemLevel(event.getBow().getItemMeta().getLore(), strengthenBow);
+                        int level = ItemUtils.getItemLevel(event.getBow().getItemMeta().getLore(), strengthenBow);
                         // 额外的箭，每高一级，多射一支
                         Random random = new Random();
                         double range = 2.0;//范围

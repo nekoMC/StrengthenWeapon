@@ -1,19 +1,13 @@
 package fun.nekomc.sw.command;
 
-import cn.hutool.core.lang.Assert;
-import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
-import fun.nekomc.sw.utils.ConfigFactory;
-import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +23,6 @@ import java.util.stream.Collectors;
  * @author ourange
  */
 public class CommandHandler implements CommandExecutor, TabCompleter {
-    private StrengthenWeapon plugin;
-    private ConfigFactory factory;
     private StrengthenServiceImpl strengthService;
     private final SwCommand commandTree;
 
@@ -43,23 +35,31 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private CommandHandler() {
         // 构建指令树
 
-        // 根节点
+        // 根节点：sw
         commandTree = new BaseSwCommand();
-        // 一级节点
+        // 一级节点：sw xx
         SwCommand swReload = new SwReloadCommand();
-        commandTree.linkSubCmd(swReload);
+        SwCommand swGivePlayerItem = new SwGiveCommand();
+        commandTree.linkSubCmd(swReload, swGivePlayerItem);
+        // TODO: 写几个配置，调试指令
     }
 
     public static CommandHandler getInstance() {
         return INSTANCE;
     }
 
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command,
                              @NotNull String mainCommand, String[] commandArray) {
         Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(commandSender, commandArray);
-        return cmdNodeDispatchTo.map(swCommand -> swCommand.rua(commandSender, commandArray)).orElse(false);
+        return cmdNodeDispatchTo.map(swCommand -> {
+            try {
+                return swCommand.rua(commandSender, commandArray);
+            } catch (SwCommandException e) {
+                e.feedback();
+            }
+            return false;
+        }).orElse(false);
     }
 
     /**
@@ -72,23 +72,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         strengthService.setStrengthenWeapons(strengthItems);
         strengthService.setStrengthenStones(strengthenStones);
         //strengthService.reloadServiceConfig(strengthExtra);
-    }
-
-    private void giveSwItem(Player player, ItemStack itemStack) {
-        // TODO: 确认背包满时是否存在问题
-        PlayerInventory inventory = player.getInventory();
-        //int amount = itemStack.getAmount();
-
-        int firstEmpty = inventory.firstEmpty();
-        inventory.setItem(firstEmpty, itemStack);
-    }
-
-    public ConfigFactory getFactory() {
-        return factory;
-    }
-
-    public void setFactory(ConfigFactory factory) {
-        this.factory = factory;
     }
 
     public StrengthenServiceImpl getStrengthService() {

@@ -22,4 +22,14 @@ public class Constants {
      * 根指令
      */
     public static final String BASE_COMMAND = "sw";
+
+    /**
+     * 指令实际参数与预期参数数量不匹配时的报错信息，报这个说明有 BUG
+     */
+    public static final String COMMAND_PARAMETER_SIZE_ERROR_MSG = "COMMAND ERROR!";
+
+    /**
+     * 管理权限节点
+     */
+    public static final String ADMIN_PERMISSION_POINT = "Admin";
 }

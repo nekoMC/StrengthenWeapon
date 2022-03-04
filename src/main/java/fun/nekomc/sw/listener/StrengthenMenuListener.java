@@ -4,7 +4,7 @@ import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.service.StrengthenService;
-import fun.nekomc.sw.utils.ItemLoreUtils;
+import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -124,10 +124,10 @@ public class StrengthenMenuListener implements Listener {
             List<String> lore = stack.getItemMeta().getLore();
             if (lore != null) {
                 for (StrengthenItem item: items) {
-                    if (ItemLoreUtils.getItemName(lore).equalsIgnoreCase(item.getName())
+                    if (ItemUtils.getItemName(lore).equalsIgnoreCase(item.getName())
                     && stack.getType().toString().equalsIgnoreCase(item.getMaterial())) {
                         if(item instanceof StrengthenStone) {
-                            if(ItemLoreUtils.getItemLevel(lore, item) != item.getLevel())
+                            if(ItemUtils.getItemLevel(lore, item) != item.getLevel())
                                 continue;
                         }
                         return item;
