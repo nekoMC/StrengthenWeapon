@@ -1,9 +1,9 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.dto.SwItemConfigDto;
+import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.ConfigFactory;
 import fun.nekomc.sw.utils.Constants;
@@ -36,23 +36,29 @@ class SwGiveCommand extends SwCommand {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         if (actualArgs.length < REQUIRE_ARG_MIN_SIZE || actualArgs.length > REQUIRE_ARG_MAX_SIZE) {
-            throw new SwCommandException(sender, "语法错误，格式：/sw give <玩家> <道具> <数量>");
+            throw new SwCommandException(sender, "语法错误，用法：/sw give <玩家> <道具> <数量>");
         }
         String playerName = actualArgs[0];
         String itemName = actualArgs[1];
-        int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(args[2]);
+        int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(actualArgs[2]);
         // 获取指定名称道具的配置
         Optional<SwItemConfigDto> itemConfigOptional = ConfigFactory.getItemConfig(itemName);
         if (!itemConfigOptional.isPresent()) {
             throw new SwCommandException(sender, "不存在的道具");
         }
         // 给玩家指定的道具
+        ItemStack itemStack;
         SwItemConfigDto itemConfig = itemConfigOptional.get();
-        Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig);
-        if (!itemStackOpt.isPresent()) {
-            throw new SwCommandException(sender, "无法解析物品，请检查配置文件");
+        try {
+            // 根据配置文件构建物品
+            Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig);
+            if (!itemStackOpt.isPresent()) {
+                throw new SwCommandException(sender, "无法解析物品，请检查配置文件");
+            }
+            itemStack = itemStackOpt.get();
+        } catch (IllegalArgumentException | ConfigurationException e) {
+            throw new SwCommandException(sender, e.getMessage());
         }
-        ItemStack itemStack = itemStackOpt.get();
         itemStack.setAmount(amount);
         Player targetPlayer = StrengthenWeapon.server().getPlayer(playerName);
         if (null == targetPlayer) {
@@ -66,19 +72,18 @@ class SwGiveCommand extends SwCommand {
     public List<String> hint(CommandSender sender, String[] args) {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
+        int actualArgLength = getArgsActualLength(actualArgs, args);
         // 输入为 `sw give` 的情况，返回 null 以使用默认补全（用户名）
-        if (ArrayUtil.isEmpty(actualArgs)) {
-            return null;
+        switch (actualArgLength) {
+            case 0:
+                return null;
+            case 1:
+                return ConfigFactory.getItemNameList();
+            case REQUIRE_ARG_MIN_SIZE:
+                return ListUtil.of("<数量>");
+            default:
+                return ListUtil.empty();
         }
-        // 输入为 `sw give player` 的情况，返回全部可用的道具名称
-        if (actualArgs.length == 1) {
-            return ConfigFactory.getItemNameList();
-        }
-        // 输入为 `sw give player item` 的情况，返回数量的提示
-        if (actualArgs.length == REQUIRE_ARG_MIN_SIZE) {
-            return ListUtil.of("<数量>");
-        }
-        return ListUtil.empty();
     }
 
     // ========== private ========== //

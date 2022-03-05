@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.Data;
 import org.bukkit.NamespacedKey;
@@ -77,9 +76,10 @@ public class SwItemConfigDto implements Serializable {
         attributes.forEach((slot, attributeMap) -> {
             EquipmentSlot slotType = EquipmentSlot.valueOf(slot);
             attributeMap.forEach((attr, val) -> {
-                // 解析形如 MovementSpeed: 0.3、ARMOR: 3 的属性配置
-                Attribute attribute = Attribute.valueOf(attr);
-                String modifierName = String.format("%s.%s.%s", attr, slot, val);
+                // 解析形如 Movement_Speed: 0.3、ARMOR: 3 的属性配置
+                String attrName = attr.toUpperCase();
+                Attribute attribute = Attribute.valueOf(attrName);
+                String modifierName = String.format("%s.%s.%s", attrName, slot, val);
                 AttributeModifier.Operation operation = AttributeModifier.Operation.ADD_NUMBER;
                 // 数值位于 (-1.0, 1.0) 范围内，乘系数
                 if (Math.abs(val) < 1) {
@@ -106,12 +106,13 @@ public class SwItemConfigDto implements Serializable {
         for (String enchantment : enchantments) {
             // 解析附魔配置
             String[] enchantNameAndLevel = enchantment.split(":");
-            Enchantment targetEnchant = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
+            String enchantmentName = enchantNameAndLevel[0].toLowerCase();
+            Enchantment targetEnchant = Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName));
             if (null == targetEnchant) {
                 throw new ConfigurationException("无法识别的附魔：" + enchantment);
             }
             int lvl = 0;
-            if (enchantment.length() == 2) {
+            if (enchantNameAndLevel.length == 2) {
                 lvl = Integer.parseInt(enchantNameAndLevel[1]);
             }
             enchantMap.put(targetEnchant, lvl);

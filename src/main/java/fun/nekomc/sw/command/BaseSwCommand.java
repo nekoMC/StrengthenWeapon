@@ -1,14 +1,13 @@
 package fun.nekomc.sw.command;
 
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.utils.Constants;
+import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * sw 根指令
@@ -25,7 +24,9 @@ class BaseSwCommand extends SwCommand {
     @Override
     public boolean rua(CommandSender sender, String[] args) {
         // 预期指令为 `sw`
-        Assert.isTrue(ArrayUtil.isEmpty(args), Constants.COMMAND_PARAMETER_SIZE_ERROR_MSG);
+        if (ArrayUtil.isNotEmpty(args)) {
+            throw new CommandException("请检查指令是否正确");
+        }
         Player player = (Player) sender;
         Inventory inv = StrengthenWeapon.server().createInventory(player, InventoryType.ANVIL, "Strengthen");
         player.openInventory(inv);

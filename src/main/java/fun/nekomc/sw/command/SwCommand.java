@@ -90,19 +90,14 @@ public abstract class SwCommand {
     /**
      * 获取能处理当前指令的指令节点
      *
-     * @param sender 指令执行方
      * @param args   指令参数，不含指令本身
      * @return 能处理当前指令的指令节点，比如入参 args 为 sw reload，则返回 reload 指令节点
      */
-    public Optional<SwCommand> getCmdNode(CommandSender sender, String[] args) {
-        if (!preCheck(sender, args)) {
-            return Optional.empty();
-        }
-
+    public Optional<SwCommand> getCmdNode(String[] args) {
         // 看看子指令能不能处理。能就撇给子指令，否则自己上
         Optional<SwCommand> runnableSubCommand = getRunnableSubCommand(args);
         if (runnableSubCommand.isPresent()) {
-            return runnableSubCommand.get().getCmdNode(sender, args);
+            return runnableSubCommand.get().getCmdNode(args);
         }
         return Optional.of(this);
     }
@@ -147,7 +142,27 @@ public abstract class SwCommand {
         if (ArrayUtil.isEmpty(args)) {
             return null == args ? new String[0] : args;
         }
-        return ArrayUtil.sub(args, depth, args.length);
+        String[] blankKilled = ArrayUtil.removeBlank(args);
+        return ArrayUtil.sub(blankKilled, depth, args.length);
+    }
+
+    /**
+     * 获取实际有效参数长度，如 sw give 指令：
+     * "sw give" 返回 0
+     * "sw give " 返回 0
+     * “sw give Chiru” 返回 0
+     * "sw give Chiru " 返回 1
+     */
+    protected int getArgsActualLength(final String[] filtered, final String[] raw) {
+        if (ArrayUtil.isEmpty(filtered) || ArrayUtil.isEmpty(raw)) {
+            return 0;
+        }
+        boolean lastArgIsValid = StringUtils.isNotBlank(raw[raw.length - 1]);
+        int result = filtered.length;
+        if (lastArgIsValid) {
+            result -= 1;
+        }
+        return result;
     }
 
     /**

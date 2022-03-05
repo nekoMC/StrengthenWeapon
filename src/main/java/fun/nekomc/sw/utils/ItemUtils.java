@@ -80,8 +80,7 @@ public class ItemUtils {
         meta.setUnbreakable(itemConfig.isUnbreakable());
         // Meta - 附魔、属性修改
         meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
-        Map<Enchantment, Integer> enchants = meta.getEnchants();
-        enchants.putAll(itemConfig.getEnchantMap());
+        itemConfig.getEnchantMap().forEach((enchant, lvl) -> meta.addEnchant(enchant, lvl, true));
         // Meta - 附加信息
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
         persistentDataContainer.set(new NamespacedKey(StrengthenWeapon.getInstance(), itemConfig.getName()),

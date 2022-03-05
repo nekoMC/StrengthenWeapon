@@ -1,6 +1,7 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.exception.SwCommandException;
@@ -51,13 +52,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command,
                              @NotNull String mainCommand, String[] commandArray) {
-        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(commandSender, commandArray);
+        String[] argsRemovedBlank = ArrayUtil.removeBlank(commandArray);
+        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(argsRemovedBlank);
         return cmdNodeDispatchTo.map(swCommand -> {
-            if (!swCommand.preCheck(commandSender, commandArray)) {
+            if (!swCommand.preCheck(commandSender, argsRemovedBlank)) {
                 return false;
             }
             try {
-                return swCommand.rua(commandSender, commandArray);
+                return swCommand.rua(commandSender, argsRemovedBlank);
             } catch (SwCommandException e) {
                 e.feedback();
                 return false;
@@ -88,7 +90,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(sender, args);
+        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(ArrayUtil.removeBlank(args));
         return cmdNodeDispatchTo.map(swCommand -> {
             try {
                 return swCommand.hint(sender, args);

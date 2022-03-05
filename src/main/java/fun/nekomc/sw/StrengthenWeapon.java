@@ -90,7 +90,6 @@ public class StrengthenWeapon extends JavaPlugin {
     public void reloadConfig() {
         super.reloadConfig();
         ConfigFactory.loadConfig(this.getDataFolder().getPath());
-        MsgUtils.consoleMsg("§c§l正在重新读取§a[§bconfig.yml§a]§c§l文件...");
 //        handler.reloadHandlerMethod(factory.getStrengthenWeapons(), factory.getStrengthenStones());
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
 //        strengthenMenuListener.setStrengthenWeapons(factory.getStrengthenWeapons());
