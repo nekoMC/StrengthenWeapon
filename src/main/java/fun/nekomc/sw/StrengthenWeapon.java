@@ -9,6 +9,7 @@ import fun.nekomc.sw.utils.ConfigFactory;
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Server;
+import org.bukkit.command.PluginCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.bukkit.Bukkit;
@@ -65,8 +66,9 @@ public class StrengthenWeapon extends JavaPlugin {
         ConfigFactory.loadConfig(this.getDataFolder().getPath());
         // 绑定指令解析器、设置指令 tab 联想
         CommandHandler handler = CommandHandler.getInstance();
-        Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND)).setExecutor(handler);
-        Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND)).setTabCompleter(handler);
+        PluginCommand checkedPluginCommand = Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND));
+        checkedPluginCommand.setExecutor(handler);
+        checkedPluginCommand.setTabCompleter(handler);
         //初始化并绑定监听器
         // TODO: 分类整理各 Listener 以拓展更多内容
 //        swBowListener = new SwBowListener();
@@ -87,9 +89,8 @@ public class StrengthenWeapon extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
+        ConfigFactory.loadConfig(this.getDataFolder().getPath());
         MsgUtils.consoleMsg("§c§l正在重新读取§a[§bconfig.yml§a]§c§l文件...");
-//        factory.initFile();
-//        factory.initItems();
 //        handler.reloadHandlerMethod(factory.getStrengthenWeapons(), factory.getStrengthenStones());
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
 //        strengthenMenuListener.setStrengthenWeapons(factory.getStrengthenWeapons());

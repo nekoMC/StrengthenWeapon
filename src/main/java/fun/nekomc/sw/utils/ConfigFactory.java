@@ -84,7 +84,7 @@ public class ConfigFactory {
             MsgUtils.consoleMsg("§c§l配置文件不存在，正在生成配置文件....");
             StrengthenWeapon.getInstance().saveDefaultConfig();
         }
-        MsgUtils.consoleMsg("§c§l本地配置文件初始化成功，正在读取配置文件...");
+        MsgUtils.consoleMsg("§c§l正在读取配置文件...");
         try {
             yamlConfigFileLoader.load(configYmlFile);
         } catch (IOException | InvalidConfigurationException e) {

@@ -71,11 +71,11 @@ class SwGiveCommand extends SwCommand {
             return null;
         }
         // 输入为 `sw give player` 的情况，返回全部可用的道具名称
-        if (args.length == 1) {
+        if (actualArgs.length == 1) {
             return ConfigFactory.getItemNameList();
         }
         // 输入为 `sw give player item` 的情况，返回数量的提示
-        if (args.length == REQUIRE_ARG_MIN_SIZE) {
+        if (actualArgs.length == REQUIRE_ARG_MIN_SIZE) {
             return ListUtil.of("<数量>");
         }
         return ListUtil.empty();

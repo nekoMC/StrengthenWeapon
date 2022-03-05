@@ -1,14 +1,21 @@
 package fun.nekomc.sw.utils;
 
 import cn.hutool.core.lang.Assert;
+import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.dto.SwItemAttachData;
 import fun.nekomc.sw.dto.SwItemConfigDto;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -70,7 +77,15 @@ public class ItemUtils {
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
         meta.setDisplayName(itemConfig.getDisplayName());
         meta.setLore(itemConfig.getLore());
-        meta.set
+        meta.setUnbreakable(itemConfig.isUnbreakable());
+        // Meta - 附魔、属性修改
+        meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
+        Map<Enchantment, Integer> enchants = meta.getEnchants();
+        enchants.putAll(itemConfig.getEnchantMap());
+        // Meta - 附加信息
+        PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
+        persistentDataContainer.set(new NamespacedKey(StrengthenWeapon.getInstance(), itemConfig.getName()),
+                SwItemAttachData.DEFAULT_ATTACH_DATA, SwItemAttachData.DEFAULT_ATTACH_DATA);
 
         itemStack.setItemMeta(meta);
         return Optional.of(itemStack);

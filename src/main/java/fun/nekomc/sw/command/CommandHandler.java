@@ -1,5 +1,6 @@
 package fun.nekomc.sw.command;
 
+import cn.hutool.core.collection.ListUtil;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.exception.SwCommandException;
@@ -41,7 +42,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         SwCommand swReload = new SwReloadCommand();
         SwCommand swGivePlayerItem = new SwGiveCommand();
         commandTree.linkSubCmd(swReload, swGivePlayerItem);
-        // TODO: 写几个配置，调试指令
     }
 
     public static CommandHandler getInstance() {
@@ -53,12 +53,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                              @NotNull String mainCommand, String[] commandArray) {
         Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(commandSender, commandArray);
         return cmdNodeDispatchTo.map(swCommand -> {
+            if (!swCommand.preCheck(commandSender, commandArray)) {
+                return false;
+            }
             try {
                 return swCommand.rua(commandSender, commandArray);
             } catch (SwCommandException e) {
                 e.feedback();
+                return false;
             }
-            return false;
         }).orElse(false);
     }
 
@@ -82,21 +85,18 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         this.strengthService = strengthService;
     }
 
-    /**
-     * 子命令联想
-     */
-    private final String[] subUserCommands = {"sw_bow", "sw_stone"};
-
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length > 1) {
-            return new ArrayList<>();
-        }
-        if (args.length == 0) {
-            return Arrays.asList(subUserCommands);
-        }
-        return Arrays.stream(subUserCommands).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(sender, args);
+        return cmdNodeDispatchTo.map(swCommand -> {
+            try {
+                return swCommand.hint(sender, args);
+            } catch (SwCommandException e) {
+                e.feedback();
+                return null;
+            }
+        }).orElse(null);
     }
 
 }

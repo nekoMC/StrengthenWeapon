@@ -11,4 +11,8 @@ public class ConfigurationException extends SwException {
     public ConfigurationException(Throwable throwable) {
         super(throwable);
     }
+
+    public ConfigurationException(String msg) {
+        super(msg);
+    }
 }

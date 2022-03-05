@@ -150,12 +150,10 @@ public abstract class SwCommand {
         return ArrayUtil.sub(args, depth, args.length);
     }
 
-    // ========== private ========== //
-
     /**
      * 执行指令前的预校验
      */
-    private boolean preCheck(CommandSender sender, String[] args) {
+    public boolean preCheck(CommandSender sender, String[] args) {
         Assert.notNull(sender, "sender cannot be null");
         Assert.notNull(args, "args cannot be null");
         if (playerCmd && !(sender instanceof Player)) {
@@ -171,6 +169,9 @@ public abstract class SwCommand {
         }
         return true;
     }
+
+    // ========== private ========== //
+
 
     /**
      * 获取能执行当前指令的子命令
