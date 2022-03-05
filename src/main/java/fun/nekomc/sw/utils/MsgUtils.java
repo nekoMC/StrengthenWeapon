@@ -21,18 +21,21 @@ public class MsgUtils {
      *
      * @param player 玩家
      * @param msg    消息内容
+     * @param args   附加参数（用于格式化消息内容）
      */
-    public static void sendMsg(Player player, String msg) {
-        player.sendMessage(msg);
+    public static void sendMsg(Player player, String msg, Object... args) {
+        player.sendMessage(String.format(msg, args));
     }
 
     /**
      * 向控制台输出消息
      *
-     * @param msg 消息内容
+     * @param msg  消息内容
+     * @param args 附加参数（用于格式化消息内容）
      */
-    public static void consoleMsg(String msg) {
-        CONSOLE_SENDER.sendMessage("§a[strengthWeapon] " + msg);
+    public static void consoleMsg(String msg, Object... args) {
+        String formattedMsg = String.format("§a[strengthWeapon] " + msg, args);
+        CONSOLE_SENDER.sendMessage(formattedMsg);
     }
 
     /**
@@ -40,12 +43,13 @@ public class MsgUtils {
      *
      * @param sender 指令执行者
      * @param msg    消息内容
+     * @param args   附加参数（用于格式化消息内容）
      */
-    public static void returnMsgToSender(CommandSender sender, String msg) {
+    public static void returnMsgToSender(CommandSender sender, String msg, Object... args) {
         if (sender instanceof Player) {
-            sendMsg((Player) sender, msg);
+            sendMsg((Player) sender, msg, args);
         } else {
-            consoleMsg(msg);
+            consoleMsg(msg, args);
         }
     }
 }

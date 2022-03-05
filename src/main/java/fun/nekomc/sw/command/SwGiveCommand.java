@@ -36,7 +36,7 @@ class SwGiveCommand extends SwCommand {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         if (actualArgs.length < REQUIRE_ARG_MIN_SIZE || actualArgs.length > REQUIRE_ARG_MAX_SIZE) {
-            throw new SwCommandException(sender, "语法错误，用法：/sw give <玩家> <道具> <数量>");
+            throw new SwCommandException(sender, ConfigFactory.getConfiguredMsg("grammar_error"));
         }
         String playerName = actualArgs[0];
         String itemName = actualArgs[1];
@@ -44,7 +44,7 @@ class SwGiveCommand extends SwCommand {
         // 获取指定名称道具的配置
         Optional<SwItemConfigDto> itemConfigOptional = ConfigFactory.getItemConfig(itemName);
         if (!itemConfigOptional.isPresent()) {
-            throw new SwCommandException(sender, "不存在的道具");
+            throw new SwCommandException(sender, ConfigFactory.getConfiguredMsg("unknown_item"));
         }
         // 给玩家指定的道具
         ItemStack itemStack;
@@ -53,7 +53,7 @@ class SwGiveCommand extends SwCommand {
             // 根据配置文件构建物品
             Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig);
             if (!itemStackOpt.isPresent()) {
-                throw new SwCommandException(sender, "无法解析物品，请检查配置文件");
+                throw new SwCommandException(sender, "config_error");
             }
             itemStack = itemStackOpt.get();
         } catch (IllegalArgumentException | ConfigurationException e) {
@@ -62,7 +62,7 @@ class SwGiveCommand extends SwCommand {
         itemStack.setAmount(amount);
         Player targetPlayer = StrengthenWeapon.server().getPlayer(playerName);
         if (null == targetPlayer) {
-            throw new SwCommandException(sender, "玩家不存在");
+            throw new SwCommandException(sender, "unknown_player");
         }
         givePlayerItem(targetPlayer, itemStack);
         return true;
@@ -79,8 +79,8 @@ class SwGiveCommand extends SwCommand {
                 return null;
             case 1:
                 return ConfigFactory.getItemNameList();
-            case REQUIRE_ARG_MIN_SIZE:
-                return ListUtil.of("<数量>");
+            case 2:
+                return ListUtil.of("1", "64");
             default:
                 return ListUtil.empty();
         }

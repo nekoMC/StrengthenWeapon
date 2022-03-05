@@ -1,0 +1,32 @@
+# 所有可以被 SW 识别的道具都需要在此定义。包括强化材料，如强化石、洗练石、白板武器装备等
+sw_bow:
+  displayName: §b[强化弓]
+  name: sw_bow
+  levelName: §b等级:+
+  level: 1
+  lore:
+    - §b等级:+${str_lvl}
+    - §a每强化一级，可以射出一根额外的箭。
+    - §bline 2
+  material: BOW
+
+sw_stone:
+  displayName: sw_stone
+  name: §b[强化石]
+  levelName: '§b等级:'
+  level: 0
+  lore:
+    - §aline 1
+    - §bline 2
+  material: RAW_COPPER
+  chance:
+    - 10
+    - 20
+    - 30
+    - 40
+    - 50
+    - 60
+    - 70
+    - 80
+    - 90
+    - 99

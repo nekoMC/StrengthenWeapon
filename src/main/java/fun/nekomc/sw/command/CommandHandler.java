@@ -1,6 +1,5 @@
 package fun.nekomc.sw.command;
 
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
@@ -13,11 +12,8 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 命令行指令解释器
@@ -30,19 +26,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     private static final CommandHandler INSTANCE = new CommandHandler();
 
-/*private static StrengthServiceImpl strengthService;
-    private static final int DEFAULT_STACK = 64;
-    public static final String ADMIN_PERMISSION = "strength.admin";*/
-
     private CommandHandler() {
-        // 构建指令树
-
-        // 根节点：sw
-        commandTree = new BaseSwCommand();
-        // 一级节点：sw xx
-        SwCommand swReload = new SwReloadCommand();
-        SwCommand swGivePlayerItem = new SwGiveCommand();
-        commandTree.linkSubCmd(swReload, swGivePlayerItem);
+        // 构建指令树。根节点：sw
+        commandTree = new RootSwCommand().linkSubCmd(
+                // 一级节点：sw xx
+                new SwReloadCommand(),
+                new SwGiveCommand(),
+                new SwHelpCommand()
+        );
     }
 
     public static CommandHandler getInstance() {

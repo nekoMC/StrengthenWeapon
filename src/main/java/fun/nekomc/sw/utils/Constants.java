@@ -13,6 +13,8 @@ public class Constants {
 
     public static final String CONFIG_FILE_NAME = "config.yml";
 
+    public static final String ITEMS_CONFIG_FILE_NAME = "items.yml";
+
     /**
      * 权限节点命名空间
      */

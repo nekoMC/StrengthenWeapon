@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;
+import fun.nekomc.sw.utils.ConfigFactory;
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
@@ -79,18 +80,19 @@ public abstract class SwCommand {
      *
      * @param subCmdArray 子指令
      */
-    public void linkSubCmd(SwCommand... subCmdArray) {
+    public SwCommand linkSubCmd(SwCommand... subCmdArray) {
         for (SwCommand swCommand : subCmdArray) {
             swCommand.parentCmd = this;
             swCommand.depth = this.depth + 1;
         }
         this.subCmd = Arrays.asList(subCmdArray);
+        return this;
     }
 
     /**
      * 获取能处理当前指令的指令节点
      *
-     * @param args   指令参数，不含指令本身
+     * @param args 指令参数，不含指令本身
      * @return 能处理当前指令的指令节点，比如入参 args 为 sw reload，则返回 reload 指令节点
      */
     public Optional<SwCommand> getCmdNode(String[] args) {
@@ -112,7 +114,7 @@ public abstract class SwCommand {
      */
     public boolean rua(CommandSender sender, final String[] args) {
         // 没有重写本方法，摆烂给执行者
-        MsgUtils.returnMsgToSender(sender, "Unsupported command");
+        MsgUtils.returnMsgToSender(sender, ConfigFactory.getConfiguredMsg("unsupported_msg"));
         return false;
     }
 
@@ -147,7 +149,7 @@ public abstract class SwCommand {
     }
 
     /**
-     * 获取实际有效参数长度，如 sw give 指令：
+     * 获取实际有效参数长度，配合 onTabComplete 使用，如 sw give 指令：
      * "sw give" 返回 0
      * "sw give " 返回 0
      * “sw give Chiru” 返回 0
@@ -171,15 +173,19 @@ public abstract class SwCommand {
     public boolean preCheck(CommandSender sender, String[] args) {
         Assert.notNull(sender, "sender cannot be null");
         Assert.notNull(args, "args cannot be null");
-        if (playerCmd && !(sender instanceof Player)) {
-            log.warn("该指令只能被玩家执行！");
+        boolean notPlayer = !(sender instanceof Player);
+        if (playerCmd && notPlayer) {
+            MsgUtils.consoleMsg(ConfigFactory.getConfiguredMsg("not_player"));
             return false;
+        }
+        if (notPlayer) {
+            return true;
         }
         Player player = (Player) sender;
         // 存在权限要求，且不满足这个要求，返回 false
         if (!StringUtils.isBlank(permissionPoint) &&
                 !player.hasPermission(Constants.PERMISSION_NAMESPACE + permissionPoint)) {
-            MsgUtils.sendMsg(player, "您没有权限执行该指令！");
+            MsgUtils.sendMsg(player, ConfigFactory.getConfiguredMsg("no_auth"));
             return false;
         }
         return true;

@@ -1,32 +1,14 @@
-# 所有可以被 SW 识别的道具都需要在此定义。包括强化材料，如强化石、洗练石、白板武器装备等
-sw_bow:
-  displayName: sw_bow
-  name: §b[强化弓]
-  levelName: §b等级:+
-  level: 1
-  lore:
-    - §b等级:+${str_lvl}
-    - §a每强化一级，可以射出一根额外的箭。
-    - §bline 2
-  material: BOW
-
-sw_stone:
-  displayName: sw_stone
-  name: §b[强化石]
-  levelName: '§b等级:'
-  level: 0
-  lore:
-    - §aline 1
-    - §bline 2
-  material: RAW_COPPER
-  chance:
-    - 10
-    - 20
-    - 30
-    - 40
-    - 50
-    - 60
-    - 70
-    - 80
-    - 90
-    - 99
+message:
+  unsupported_msg: 不支持的用法
+  reloaded: 配置文件已重新读取
+  no_auth: 您没有权限执行该指令
+  not_player: 该指令只能被玩家执行
+  grammar_error: 语法错误，请检查指令是否正确
+  unknown_item: 不存在的道具
+  config_error: 无法解析配置，请检查配置文件
+  unknown_player: 玩家不存在
+  help_msg: |
+    §c§l--- §aSW 帮助信息 §c§l---
+    §a§l/sw §e打开强化菜单
+    §a§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
+    §a§l/sw help §e显示本帮助信息

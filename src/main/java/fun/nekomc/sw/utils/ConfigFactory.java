@@ -5,14 +5,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.dto.ConfigYmlDto;
 import fun.nekomc.sw.dto.SwItemConfigDto;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.MemorySection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,22 +31,27 @@ import java.util.Optional;
 @Slf4j
 public class ConfigFactory {
 
-    private final Yaml yamlLoader = new Yaml();
+    /**
+     * Yaml 加载器，此处需要指定加载器，否则报错
+     * https://stackoverflow.com/questions/26463078/snakeyaml-class-not-found-exception
+     */
+    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigFactory.class.getClassLoader()));
     private Map<String, SwItemConfigDto> swItemConfigMap;
+    private ConfigYmlDto configYmlDto;
 
     /**
      * 加载、重载配置文件。即读取配置文件内容到 loader 中
      */
+    @SuppressWarnings("unchecked")
     public static void loadConfig(String rootPath) {
         Assert.notBlank(rootPath, "配置文件根路径不能为空！");
-
-        // 读取 config.yml，如果不存在则自动生成
-        Map<String, Map<?, ?>> configYmlRawMap = loadConfigYml(rootPath);
+        // 读取（生成） config.yml
+        configYmlDto = loadConfigFile(rootPath, Constants.CONFIG_FILE_NAME, ConfigYmlDto.class);
+        // 读取（生成） items.yml
+        Map<String, Map<String, ?>> configYmlRawMap = loadConfigFile(rootPath, Constants.ITEMS_CONFIG_FILE_NAME, Map.class);
         // 将 Map 的值转 SwItemConfigDto 对象
         swItemConfigMap = ServiceUtils.convertMapValue(configYmlRawMap,
                 raw -> BeanUtil.fillBeanWithMap(raw, new SwItemConfigDto(), true, true));
-        log.info("{}", swItemConfigMap);
-        // 在这里拓展道具的解析和其他配置文件的读取
     }
 
     /**
@@ -76,20 +80,31 @@ public class ConfigFactory {
     }
 
     /**
+     * 获取 config.yml 中配置的消息
+     *
+     * @param msgKey 消息键
+     * @return 不存在时返回空串
+     */
+    public static String getConfiguredMsg(String msgKey) {
+        return configYmlDto.getMessageByKey(msgKey);
+    }
+
+    // ========== private ========== //
+
+    /**
      * 读取 config.yml 文件为 Map
      */
-    @SuppressWarnings("unchecked")
-    private static Map<String, Map<?, ?>> loadConfigYml(String rootPath) {
-        // 加载 config.yml 配置文件
-        File configYmlFile = new File(rootPath, Constants.CONFIG_FILE_NAME);
+    private static <T> T loadConfigFile(String rootPath, String targetFileName, Class<T> targetClass) {
+        // 加载配置文件
+        File configYmlFile = new File(rootPath, targetFileName);
         // 配置文件不存在时，保存默认配置文件，保存后，可以被 File 对象立即感知到
         if (!configYmlFile.exists()) {
-            MsgUtils.consoleMsg("§c§l配置文件不存在，正在生成配置文件....");
-            StrengthenWeapon.getInstance().saveDefaultConfig();
+            MsgUtils.consoleMsg("§c§l配置文件[%s]不存在，正在生成配置文件....", targetFileName);
+            StrengthenWeapon.getInstance().saveResource(Constants.ITEMS_CONFIG_FILE_NAME, false);
         }
         MsgUtils.consoleMsg("§c§l正在读取配置文件...");
         try {
-            return yamlLoader.loadAs(new FileInputStream(configYmlFile), Map.class);
+            return yamlLoader.loadAs(new FileInputStream(configYmlFile), targetClass);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }
