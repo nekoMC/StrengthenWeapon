@@ -90,7 +90,7 @@ class SwGiveCommand extends SwCommand {
 
     /**
      * 参考：https://github.com/MiniDay/HamsterAPI/blob/master/src/main/java/cn/hamster3/api/HamsterAPI.java
-     * 如果玩家背包满，则在玩家位置生成掉落物
+     * 将物品放入玩家背包，如果玩家背包满，则在玩家位置生成掉落物
      */
     private void givePlayerItem(Player player, ItemStack itemStack) {
         World world = player.getWorld();

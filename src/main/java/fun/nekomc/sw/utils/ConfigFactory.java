@@ -45,6 +45,7 @@ public class ConfigFactory {
     @SuppressWarnings("unchecked")
     public static void loadConfig(String rootPath) {
         Assert.notBlank(rootPath, "配置文件根路径不能为空！");
+        MsgUtils.consoleMsg("§c§l正在读取配置文件...");
         // 读取（生成） config.yml
         configYmlDto = loadConfigFile(rootPath, Constants.CONFIG_FILE_NAME, ConfigYmlDto.class);
         // 读取（生成） items.yml
@@ -102,7 +103,6 @@ public class ConfigFactory {
             MsgUtils.consoleMsg("§c§l配置文件[%s]不存在，正在生成配置文件....", targetFileName);
             StrengthenWeapon.getInstance().saveResource(Constants.ITEMS_CONFIG_FILE_NAME, false);
         }
-        MsgUtils.consoleMsg("§c§l正在读取配置文件...");
         try {
             return yamlLoader.loadAs(new FileInputStream(configYmlFile), targetClass);
         } catch (IOException e) {

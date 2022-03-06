@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 /**
  * 写入 Item 元数据的附加数据信息
+ * 因为本类会写入 MetaData，因此字段名会简写以节约内存
  * created: 2022/3/5 18:01
  *
  * @author Chiru
@@ -20,6 +21,7 @@ public class SwItemAttachData implements PersistentDataType<String, SwItemAttach
 
     /**
      * 强化、洗练均为 0 级的默认数据信息
+     * 同时用作 PersistentDataType 接口实现的单例
      */
     public static final SwItemAttachData DEFAULT_ATTACH_DATA = new SwItemAttachData();
 

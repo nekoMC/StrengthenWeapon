@@ -1,5 +1,6 @@
 package fun.nekomc.sw;
 
+import fun.nekomc.sw.domain.enumeration.WeaponsIndex;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.StrengthenMenuListener;
@@ -70,16 +71,13 @@ public class StrengthenWeapon extends JavaPlugin {
         checkedPluginCommand.setExecutor(handler);
         checkedPluginCommand.setTabCompleter(handler);
         //初始化并绑定监听器
-        // TODO: 分类整理各 Listener 以拓展更多内容
-//        swBowListener = new SwBowListener();
+        swBowListener = new SwBowListener();
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
-//        getServer().getPluginManager().registerEvents(swBowListener, this);
-//        strengthenMenuListener = new StrengthenMenuListener();
-//        strengthenMenuListener.setPlugin(this);
-//        strengthenMenuListener.setStrengthenWeapons(factory.getStrengthenWeapons());
-//        strengthenMenuListener.setStrengthenStones(factory.getStrengthenStones());
-//        strengthenMenuListener.setService(handler.getStrengthService());
-//        getServer().getPluginManager().registerEvents(strengthenMenuListener, this);
+        getServer().getPluginManager().registerEvents(swBowListener, this);
+        strengthenMenuListener = new StrengthenMenuListener();
+        strengthenMenuListener.setPlugin(this);
+        strengthenMenuListener.setService(handler.getStrengthService());
+        getServer().getPluginManager().registerEvents(strengthenMenuListener, this);
         /*damageListener = new OnDamageListener();
         damageListener.setPlugin(this);
         damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());
@@ -90,9 +88,7 @@ public class StrengthenWeapon extends JavaPlugin {
     public void reloadConfig() {
         super.reloadConfig();
         ConfigFactory.loadConfig(this.getDataFolder().getPath());
-//        handler.reloadHandlerMethod(factory.getStrengthenWeapons(), factory.getStrengthenStones());
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
-//        strengthenMenuListener.setStrengthenWeapons(factory.getStrengthenWeapons());
         /*damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());*/
     }
 }

@@ -6,7 +6,6 @@ import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.service.StrengthenService;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Set;
 
@@ -228,7 +229,11 @@ public class StrengthenMenuListener implements Listener {
         if (swWeapon != null && swStone != null) {
             StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
             StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
-
+            // ===================================
+            // TODO: 临时处理：直接将 swStone 传入，忽略校验结果以恢复强化石功能
+            strengthenStone = new StrengthenStone();
+            strengthenStone.setChance(50);
+            // ===================================
             swResult = service.strengthen(player, swWeapon, strengthenItem, strengthenStone, false);
 
             anvilInv.setItem(SW_WEAPON_INDEX, consumeItem(swWeapon));

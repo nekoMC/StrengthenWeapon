@@ -5,6 +5,10 @@ import fun.nekomc.sw.dao.StrengthenDAO;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.domain.enumeration.WeaponsIndex;
+import fun.nekomc.sw.dto.SwItemAttachData;
+import fun.nekomc.sw.exception.ConfigurationException;
+import fun.nekomc.sw.exception.SwCommandException;
+import fun.nekomc.sw.utils.ConfigFactory;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Material;
@@ -13,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author ourange
@@ -61,14 +66,20 @@ public class StrengthenDAOImpl implements StrengthenDAO {
         ItemStack resItemStack = itemStack.clone();
         ItemMeta itemMeta = resItemStack.getItemMeta();
         boolean breakdown = false;
-        // TODO：配置化提示文案重构
         if (itemMeta != null) {
             List<String> lore = itemMeta.getLore();
             if (lore != null) {
-                int level = ItemUtils.getItemLevel(lore, strengthenItem);
+                // TODO: 临时处理，读取数据标签中的强化等级
+                Optional<SwItemAttachData> attachDataOpt = ItemUtils.getAttachData(itemStack);
+                if (!attachDataOpt.isPresent()) {
+                    throw new ConfigurationException(ConfigFactory.getConfiguredMsg("config_error"));
+                }
+                SwItemAttachData attachData = attachDataOpt.get();
+                int level = attachData.getStrLvl();
 
                 if(isSuccess) {//成功
-                    ItemUtils.setItemLevel(lore, strengthenItem, level + 1);
+                    // ItemUtils.setItemLevel(lore, strengthenItem, level + 1);
+                    level++;
                     MsgUtils.sendMsg(player, "§6恭喜你强化成功，§b" + itemMeta.getDisplayName() + "§6已从强化等级:§b" + level + "§6提升至§b" + (level+1) + "§6!");
                 }
                 else {//失败
@@ -81,7 +92,8 @@ public class StrengthenDAOImpl implements StrengthenDAO {
                             MsgUtils.sendMsg(player, "§6很可惜强化失败，§b" + itemMeta.getDisplayName() + "§6强化等级:§b" + level + "§6已损坏！");
                         }
                         else if (level > 4) {
-                            ItemUtils.setItemLevel(lore, strengthenItem, level - 1);
+                            // ItemUtils.setItemLevel(lore, strengthenItem, level - 1);
+                            level--;
                             MsgUtils.sendMsg(player, "§6很可惜强化失败，§b" + itemMeta.getDisplayName() + "§6强化等级:§b" + level + "§6已降至§b" + (level-1) + "§6!");
                         }
                         else {
@@ -90,8 +102,9 @@ public class StrengthenDAOImpl implements StrengthenDAO {
                     }
                 }
 
-                itemMeta.setLore(lore);
-                resItemStack.setItemMeta(itemMeta);
+                // TODO: 临时处理，更新强化等级
+                attachData.setStrLvl(level);
+                ItemUtils.updateAttachData(itemMeta, attachData);
             }
         }
         if (breakdown) {

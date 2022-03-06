@@ -5,19 +5,15 @@ import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.dto.SwItemAttachData;
 import fun.nekomc.sw.dto.SwItemConfigDto;
+import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 操作道具 Lore 的工具类
@@ -65,7 +61,7 @@ public class ItemUtils {
      * @param itemConfig SwItemConfigDto 对象，通常通过配置文件中读取获得
      * @return 道具，配置存在问题时返回 Optional.empty
      */
-    public Optional<ItemStack> buildItemByConfig(SwItemConfigDto itemConfig) {
+    public static Optional<ItemStack> buildItemByConfig(SwItemConfigDto itemConfig) {
         Assert.notNull(itemConfig, "itemConfig cannot be null");
         // Material
         Material material = Material.getMaterial(itemConfig.getMaterial());
@@ -83,10 +79,94 @@ public class ItemUtils {
         itemConfig.getEnchantMap().forEach((enchant, lvl) -> meta.addEnchant(enchant, lvl, true));
         // Meta - 附加信息
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
-        persistentDataContainer.set(new NamespacedKey(StrengthenWeapon.getInstance(), itemConfig.getName()),
+        persistentDataContainer.set(getWarpedKey(itemConfig.getName()),
                 SwItemAttachData.DEFAULT_ATTACH_DATA, SwItemAttachData.DEFAULT_ATTACH_DATA);
 
         itemStack.setItemMeta(meta);
         return Optional.of(itemStack);
+    }
+
+    /**
+     * 将 SwItemAttachData 更新到 ItemStack 的 PersistentDataContainer 中
+     *
+     * @param itemMeta   道具 ItemMeta，必须包含合法的 SwItemAttachData 数据
+     * @param attachData 更新后的 SwItemAttachData
+     */
+    public static void updateAttachData(ItemMeta itemMeta, SwItemAttachData attachData) {
+        PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
+        persistentDataContainer.set(getWarpedKey(getNameFromDataContainer(persistentDataContainer)),
+                SwItemAttachData.DEFAULT_ATTACH_DATA, attachData);
+    }
+
+    /**
+     * 获取道具的附加信息
+     *
+     * @param itemStack 道具 ItemStack
+     * @return SwItemAttachData，不存在时返回 Optional.empty()
+     */
+    public static Optional<SwItemAttachData> getAttachData(ItemStack itemStack) {
+        if (null == itemStack) {
+            return Optional.empty();
+        }
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (null == itemMeta) {
+            return Optional.empty();
+        }
+        PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
+        NamespacedKey warpedItemName = getWarpedKey(getNameFromDataContainer(persistentDataContainer));
+        SwItemAttachData attachData = persistentDataContainer.get(warpedItemName, SwItemAttachData.DEFAULT_ATTACH_DATA);
+        return Optional.ofNullable(attachData);
+    }
+
+    /**
+     * 从 ItemStack 中获取道具名称，预期名称只有一个，存在多个时抛异常
+     *
+     * @param itemStack 道具
+     * @return 道具名称，如 sw_bow
+     * @throws ConfigurationException 当存在多个道具名时抛出
+     */
+    public static String getNameFromMeta(ItemStack itemStack) {
+        Optional<PersistentDataContainer> dataContainerFromItem = getDataContainerFromItem(itemStack);
+        return dataContainerFromItem.map(ItemUtils::getNameFromDataContainer).orElse(null);
+    }
+
+    // ========== private ========== //
+
+    /**
+     * 从 Container 中获取道具名称，预期名称只有一个，存在多个时抛异常
+     */
+    private static String getNameFromDataContainer(PersistentDataContainer container) {
+        Set<NamespacedKey> keys = container.getKeys();
+        String res = null;
+        // 遍历 container 中的全部 key，预期只有一个 key
+        for (NamespacedKey key : keys) {
+            if (null == res) {
+                res = key.getKey();
+            } else {
+                throw new ConfigurationException(ConfigFactory.getConfiguredMsg("config_error"));
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 从 ItemStack 中获取 Container
+     */
+    private static Optional<PersistentDataContainer> getDataContainerFromItem(ItemStack itemStack) {
+        if (null == itemStack) {
+            return Optional.empty();
+        }
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (null == itemMeta) {
+            return Optional.empty();
+        }
+        return Optional.of(itemMeta.getPersistentDataContainer());
+    }
+
+    /**
+     * 将指定的名称包装为 container 识别的命名空间 key
+     */
+    private static NamespacedKey getWarpedKey(String key) {
+        return new NamespacedKey(StrengthenWeapon.getInstance(), key);
     }
 }

@@ -6,7 +6,6 @@ import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.ConfigFactory;
 import fun.nekomc.sw.utils.Constants;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
