@@ -3,6 +3,7 @@ package fun.nekomc.sw.utils;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
+import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.dto.SwItemAttachData;
 import fun.nekomc.sw.dto.SwItemConfigDto;
 import fun.nekomc.sw.exception.ConfigurationException;
@@ -128,6 +129,17 @@ public class ItemUtils {
     public static String getNameFromMeta(ItemStack itemStack) {
         Optional<PersistentDataContainer> dataContainerFromItem = getDataContainerFromItem(itemStack);
         return dataContainerFromItem.map(ItemUtils::getNameFromDataContainer).orElse(null);
+    }
+
+    /**
+     * 检查指定的物品是否满足 SW 相关配置，仅校验自定义数据标签
+     * TODO：针对自定义附魔、祛魔改名的情况，可以写其他监听器来防止，如果实现不了，需要在此处兜底
+     *
+     * @param stack ItemStack 对象
+     * @return 是否存在自定义数据标签
+     */
+    public boolean isSwItem(ItemStack stack) {
+        return getAttachData(stack).isPresent();
     }
 
     // ========== private ========== //

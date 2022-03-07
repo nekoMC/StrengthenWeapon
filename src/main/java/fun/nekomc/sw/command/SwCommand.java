@@ -152,7 +152,7 @@ public abstract class SwCommand {
      * 获取实际有效参数长度，配合 onTabComplete 使用，如 sw give 指令：
      * "sw give" 返回 0
      * "sw give " 返回 0
-     * “sw give Chiru” 返回 0
+     * "sw give Chiru" 返回 0
      * "sw give Chiru " 返回 1
      */
     protected int getArgsActualLength(final String[] filtered, final String[] raw) {

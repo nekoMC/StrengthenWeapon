@@ -98,7 +98,7 @@ public class StrengthenMenuListener implements Listener {
                         // 第一个格子中没有物品
                         if (anvilInv.getItem(SW_WEAPON_INDEX) == null) {
                             ItemStack stack2 = event.getCurrentItem();
-                            if (checkSwItem(stack2, strengthenWeapons) != null) {
+                            if (ItemUtils.isSwItem(stack2)) {
                                 anvilInv.setItem(SW_WEAPON_INDEX, stack2);
                                 event.setCurrentItem(null);
                                 cancel = false;
@@ -107,7 +107,7 @@ public class StrengthenMenuListener implements Listener {
                         // 第一个格子中有物品，第二个格子中没有
                         else if (anvilInv.getItem(SW_STONE_INDEX) == null) {
                             ItemStack stack2 = event.getCurrentItem();
-                            if (checkSwItem(stack2, strengthenStones) != null) {
+                            if (ItemUtils.isSwItem(stack2)) {
                                 anvilInv.setItem(SW_STONE_INDEX, stack2);
                                 event.setCurrentItem(null);
                                 cancel = false;
@@ -144,7 +144,7 @@ public class StrengthenMenuListener implements Listener {
                         case SW_STONE_INDEX:
                             ItemStack cursorItem = event.getCursor();
                             //检查鼠标中是否为规定物品
-                            boolean isItem = (checkSwItem(cursorItem, swItemByIndex(slot)) != null);
+                            boolean isItem = ItemUtils.isSwItem(cursorItem);
                             //检查鼠标中是否为空气
                             boolean isAir = (cursorItem != null && cursorItem.getType() == Material.AIR);
                             if (isItem || isAir) {
@@ -153,7 +153,7 @@ public class StrengthenMenuListener implements Listener {
                             break;
                         case SW_RESULT_INDEX:
                             ItemStack stack = event.getCurrentItem();
-                            if (stack != null && checkSwItem(stack, strengthenWeapons) != null) {
+                            if (stack != null && ItemUtils.isSwItem(stack)) {
                                 ItemStack swResult = strengthen(anvilInv, player);
                                 anvilInv.setItem(SW_RESULT_INDEX, swResult);
                                 cancel = false;
@@ -192,7 +192,8 @@ public class StrengthenMenuListener implements Listener {
         ItemStack swWeapon = anvilInv.getItem(SW_WEAPON_INDEX);
         ItemStack swStone = anvilInv.getItem(SW_STONE_INDEX);
         ItemStack swResult = null;
-        StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
+        // TODO: HERE 同步配置相关改动
+        StrengthenItem strengthenItem = ItemUtils.checkSwItem(swWeapon, strengthenWeapons);
         StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
 
         if (strengthenItem != null && strengthenStone != null) {
