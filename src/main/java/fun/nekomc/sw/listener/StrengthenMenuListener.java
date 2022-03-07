@@ -191,14 +191,10 @@ public class StrengthenMenuListener implements Listener {
     private void checkRecipe(Inventory anvilInv) {
         ItemStack swWeapon = anvilInv.getItem(SW_WEAPON_INDEX);
         ItemStack swStone = anvilInv.getItem(SW_STONE_INDEX);
-        ItemStack swResult = null;
-        // TODO: HERE 同步配置相关改动
-        StrengthenItem strengthenItem = ItemUtils.checkSwItem(swWeapon, strengthenWeapons);
-        StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
-
-        if (strengthenItem != null && strengthenStone != null) {
-            swResult = service.strengthenSuccessResult(swWeapon, strengthenItem);
+        if (null == swWeapon || null == swStone) {
+            return;
         }
+        ItemStack swResult = service.strengthenSuccessResult(swWeapon, swStone);
         anvilInv.setItem(SW_RESULT_INDEX, swResult);
     }
 
@@ -228,14 +224,15 @@ public class StrengthenMenuListener implements Listener {
         ItemStack swResult = null;
 
         if (swWeapon != null && swStone != null) {
-            StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
-            StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
+            // StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
+            // StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
             // ===================================
             // TODO: 临时处理：直接将 swStone 传入，忽略校验结果以恢复强化石功能
-            strengthenStone = new StrengthenStone();
+            // 后续方案：拓展强化石配置（拓展为一个子级 DTO，通过新增的字段以区分如何解析 type）
+            StrengthenStone strengthenStone = new StrengthenStone();
             strengthenStone.setChance(50);
             // ===================================
-            swResult = service.strengthen(player, swWeapon, strengthenItem, strengthenStone, false);
+            swResult = service.strengthen(player, swWeapon, strengthenStone, false);
 
             anvilInv.setItem(SW_WEAPON_INDEX, consumeItem(swWeapon));
             anvilInv.setItem(SW_STONE_INDEX, consumeItem(swStone));

@@ -127,7 +127,6 @@ public class ConfigFactory {
 //    /**
 //     * 初始化强化物品
 //     * <p>
-//     * TODO: Bean 方式重构
 //     */
 //    private void initStrengthenItem(StrengthenItem item) {
 //        String configName = item.getConfigName();

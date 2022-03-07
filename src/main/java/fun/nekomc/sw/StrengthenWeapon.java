@@ -5,6 +5,7 @@ import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.StrengthenMenuListener;
 import fun.nekomc.sw.listener.SwBowListener;
+import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigFactory;
 
 import fun.nekomc.sw.utils.Constants;
@@ -76,7 +77,7 @@ public class StrengthenWeapon extends JavaPlugin {
         getServer().getPluginManager().registerEvents(swBowListener, this);
         strengthenMenuListener = new StrengthenMenuListener();
         strengthenMenuListener.setPlugin(this);
-        strengthenMenuListener.setService(handler.getStrengthService());
+        strengthenMenuListener.setService(new StrengthenServiceImpl());
         getServer().getPluginManager().registerEvents(strengthenMenuListener, this);
         /*damageListener = new OnDamageListener();
         damageListener.setPlugin(this);

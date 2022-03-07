@@ -10,7 +10,7 @@ public interface StrengthenService {
 
     ItemStack giveStrengthenStone(int amount, int level);
 
-    ItemStack strengthen(Player player, ItemStack itemStack, StrengthenItem strengthenItem, StrengthenStone strengthenStone, boolean isAdmin);
+    ItemStack strengthen(Player player, ItemStack itemStack, StrengthenStone strengthenStone, boolean isAdmin);
 
-    ItemStack strengthenSuccessResult(ItemStack itemStack, StrengthenItem strengthenItem);
+    ItemStack strengthenSuccessResult(ItemStack swWeapon, ItemStack swStone);
 }

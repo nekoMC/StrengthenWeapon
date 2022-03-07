@@ -1,10 +1,7 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.util.ArrayUtil;
-import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +18,6 @@ import java.util.Optional;
  * @author ourange
  */
 public class CommandHandler implements CommandExecutor, TabCompleter {
-    private StrengthenServiceImpl strengthService;
     private final SwCommand commandTree;
 
     private static final CommandHandler INSTANCE = new CommandHandler();
@@ -56,26 +52,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return false;
             }
         }).orElse(false);
-    }
-
-    /**
-     * 重载handler本地数据
-     *
-     * @param strengthItems    List<StrengthenItem> 对象
-     * @param strengthenStones List<StrengthenStones> 对象
-     */
-    public void reloadHandlerMethod(List<StrengthenItem> strengthItems, List<StrengthenStone> strengthenStones) {
-        strengthService.setStrengthenWeapons(strengthItems);
-        strengthService.setStrengthenStones(strengthenStones);
-        //strengthService.reloadServiceConfig(strengthExtra);
-    }
-
-    public StrengthenServiceImpl getStrengthService() {
-        return strengthService;
-    }
-
-    public void setStrengthService(StrengthenServiceImpl strengthService) {
-        this.strengthService = strengthService;
     }
 
     @Nullable
