@@ -4,9 +4,8 @@ import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
 import fun.nekomc.sw.service.StrengthenService;
-import fun.nekomc.sw.utils.ItemLoreUtils;
+import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Set;
 
@@ -97,7 +98,7 @@ public class StrengthenMenuListener implements Listener {
                         // 第一个格子中没有物品
                         if (anvilInv.getItem(SW_WEAPON_INDEX) == null) {
                             ItemStack stack2 = event.getCurrentItem();
-                            if (checkSwItem(stack2, strengthenWeapons) != null) {
+                            if (ItemUtils.isSwItem(stack2)) {
                                 anvilInv.setItem(SW_WEAPON_INDEX, stack2);
                                 event.setCurrentItem(null);
                                 cancel = false;
@@ -106,7 +107,7 @@ public class StrengthenMenuListener implements Listener {
                         // 第一个格子中有物品，第二个格子中没有
                         else if (anvilInv.getItem(SW_STONE_INDEX) == null) {
                             ItemStack stack2 = event.getCurrentItem();
-                            if (checkSwItem(stack2, strengthenStones) != null) {
+                            if (ItemUtils.isSwItem(stack2)) {
                                 anvilInv.setItem(SW_STONE_INDEX, stack2);
                                 event.setCurrentItem(null);
                                 cancel = false;
@@ -143,7 +144,7 @@ public class StrengthenMenuListener implements Listener {
                         case SW_STONE_INDEX:
                             ItemStack cursorItem = event.getCursor();
                             //检查鼠标中是否为规定物品
-                            boolean isItem = (checkSwItem(cursorItem, swItemByIndex(slot)) != null);
+                            boolean isItem = ItemUtils.isSwItem(cursorItem);
                             //检查鼠标中是否为空气
                             boolean isAir = (cursorItem != null && cursorItem.getType() == Material.AIR);
                             if (isItem || isAir) {
@@ -152,7 +153,7 @@ public class StrengthenMenuListener implements Listener {
                             break;
                         case SW_RESULT_INDEX:
                             ItemStack stack = event.getCurrentItem();
-                            if (stack != null && checkSwItem(stack, strengthenWeapons) != null) {
+                            if (stack != null && ItemUtils.isSwItem(stack)) {
                                 ItemStack swResult = strengthen(anvilInv, player);
                                 anvilInv.setItem(SW_RESULT_INDEX, swResult);
                                 cancel = false;
@@ -190,13 +191,10 @@ public class StrengthenMenuListener implements Listener {
     private void checkRecipe(Inventory anvilInv) {
         ItemStack swWeapon = anvilInv.getItem(SW_WEAPON_INDEX);
         ItemStack swStone = anvilInv.getItem(SW_STONE_INDEX);
-        ItemStack swResult = null;
-        StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
-        StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
-
-        if (strengthenItem != null && strengthenStone != null) {
-            swResult = service.strengthenSuccessResult(swWeapon, strengthenItem);
+        if (null == swWeapon || null == swStone) {
+            return;
         }
+        ItemStack swResult = service.strengthenSuccessResult(swWeapon, swStone);
         anvilInv.setItem(SW_RESULT_INDEX, swResult);
     }
 
@@ -205,10 +203,10 @@ public class StrengthenMenuListener implements Listener {
             List<String> lore = stack.getItemMeta().getLore();
             if (lore != null) {
                 for (StrengthenItem item: items) {
-                    if (ItemLoreUtils.getItemName(lore).equalsIgnoreCase(item.getName())
+                    if (ItemUtils.getItemName(lore).equalsIgnoreCase(item.getName())
                             && stack.getType().toString().equalsIgnoreCase(item.getMaterial())) {
                         if(item instanceof StrengthenStone) {
-                            if(ItemLoreUtils.getItemLevel(lore, item) != item.getLevel()) {
+                            if(ItemUtils.getItemLevel(lore, item) != item.getLevel()) {
                                 continue;
                             }
                         }
@@ -226,10 +224,15 @@ public class StrengthenMenuListener implements Listener {
         ItemStack swResult = null;
 
         if (swWeapon != null && swStone != null) {
-            StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
-            StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
-
-            swResult = service.strengthen(player, swWeapon, strengthenItem, strengthenStone, false);
+            // StrengthenItem strengthenItem = checkSwItem(swWeapon, strengthenWeapons);
+            // StrengthenStone strengthenStone = (StrengthenStone) checkSwItem(swStone, strengthenStones);
+            // ===================================
+            // TODO: 临时处理：直接将 swStone 传入，忽略校验结果以恢复强化石功能
+            // 后续方案：拓展强化石配置（拓展为一个子级 DTO，通过新增的字段以区分如何解析 type）
+            StrengthenStone strengthenStone = new StrengthenStone();
+            strengthenStone.setChance(50);
+            // ===================================
+            swResult = service.strengthen(player, swWeapon, strengthenStone, false);
 
             anvilInv.setItem(SW_WEAPON_INDEX, consumeItem(swWeapon));
             anvilInv.setItem(SW_STONE_INDEX, consumeItem(swStone));

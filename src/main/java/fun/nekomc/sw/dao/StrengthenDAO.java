@@ -33,19 +33,18 @@ public interface StrengthenDAO {
      *
      * @param player         玩家（用于给他通知）
      * @param itemStack      道具信息
-     * @param strengthenItem SW 道具对象
      * @param isSuccess      是否强化成功
      * @param isSafe         是否有强化保护
      * @return 强化后（可能失败）的道具，损坏时变成 null
      */
-    ItemStack strengthen(Player player, ItemStack itemStack, StrengthenItem strengthenItem, boolean isSuccess, boolean isSafe);
+    ItemStack strengthen(Player player, ItemStack itemStack, boolean isSuccess, boolean isSafe);
 
     /**
      * 铁定成功的强化操作
      *
-     * @param itemStack      道具信息
-     * @param strengthenItem SW 道具对象
+     * @param swWeapon 待强化道具
+     * @param swStone  强化石等消耗品
      * @return 强化后的道具
      */
-    ItemStack strengthenSuccessResult(ItemStack itemStack, StrengthenItem strengthenItem);
+    ItemStack strengthenSuccessResult(ItemStack swWeapon, ItemStack swStone);
 }

@@ -10,4 +10,28 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Constants {
+
+    public static final String CONFIG_FILE_NAME = "config.yml";
+
+    public static final String ITEMS_CONFIG_FILE_NAME = "items.yml";
+
+    /**
+     * 权限节点命名空间
+     */
+    public static final String PERMISSION_NAMESPACE = "sw.";
+
+    /**
+     * 根指令
+     */
+    public static final String BASE_COMMAND = "sw";
+
+    /**
+     * 指令实际参数与预期参数数量不匹配时的报错信息，报这个说明有 BUG
+     */
+    public static final String COMMAND_PARAMETER_SIZE_ERROR_MSG = "COMMAND ERROR!";
+
+    /**
+     * 管理权限节点
+     */
+    public static final String ADMIN_PERMISSION_POINT = "Admin";
 }
