@@ -5,6 +5,7 @@ import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
@@ -22,17 +23,6 @@ import java.util.*;
  */
 @UtilityClass
 public class ItemUtils {
-
-    /**
-     * 获取 SW 道具的强化等级（解析 lore 内容）
-     *
-     * @param lore         解释文案
-     * @param strengthItem 要操作的 SW 道具对象
-     * @return 该道具的强化等级
-     */
-    public static int getItemLevel(List<String> lore, StrengthenItem strengthItem) {
-        return Integer.parseInt(lore.get(0).split(strengthItem.getLevelName())[1]);
-    }
 
     /**
      * 重设 SW 道具的强化等级（修改 lore 第一行文案）
@@ -77,10 +67,14 @@ public class ItemUtils {
         // Meta - 附魔、属性修改
         meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
         itemConfig.getEnchantMap().forEach((enchant, lvl) -> meta.addEnchant(enchant, lvl, true));
-        // Meta - 附加信息
+        // Meta - 附加信息，为白板写入带有初始强化等级的附加信息
+        ItemsTypeEnum itemType = ItemsTypeEnum.valueOf(itemConfig.getType());
+        SwItemAttachData itemDefaultAttachData = itemType == ItemsTypeEnum.BLANK
+                ? SwItemAttachData.LVL0_ATTACH_DATA
+                : SwItemAttachData.EMPTY_ATTACH_DATA;
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
         persistentDataContainer.set(getWarpedKey(itemConfig.getName()),
-                SwItemAttachData.EMPTY_ATTACH_DATA, SwItemAttachData.LVL0_ATTACH_DATA);
+                SwItemAttachData.EMPTY_ATTACH_DATA, itemDefaultAttachData);
 
         itemStack.setItemMeta(meta);
         return Optional.of(itemStack);

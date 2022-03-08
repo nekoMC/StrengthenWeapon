@@ -25,7 +25,13 @@ import java.util.UUID;
  * @author Chiru
  */
 @Data
-public class SwItemConfigDto implements Serializable {
+public abstract class SwItemConfigDto implements Serializable {
+
+    /**
+     * 道具类型
+     * @see fun.nekomc.sw.domain.enumeration.ItemsTypeEnum
+     */
+    private String type;
 
     /**
      * 程序内部使用的道具名

@@ -1,7 +1,7 @@
 package fun.nekomc.sw.service.imp;
 
 import fun.nekomc.sw.dao.imp.StrengthenDAOImpl;
-import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import fun.nekomc.sw.service.StrengthenService;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,9 +32,9 @@ public class StrengthenServiceImpl implements StrengthenService {
 
 
     @Override
-    public ItemStack strengthen(Player player, ItemStack itemStack, StrengthenStone strengthenStone, boolean isAdmin) {
+    public ItemStack strengthen(Player player, ItemStack itemStack, SwStrengthenStoneConfigDto swStrengthenStoneConfigDto, boolean isAdmin) {
         boolean isSafe = false;
-        boolean isSuccess = strengthenSuccess(strengthenStone.getChance());
+        boolean isSuccess = strengthenSuccess(swStrengthenStoneConfigDto.getChance());
         return dao.strengthen(player, itemStack, isSuccess || isAdmin, isSafe);
     }
 

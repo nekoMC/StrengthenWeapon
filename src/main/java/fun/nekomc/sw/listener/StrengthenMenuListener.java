@@ -2,7 +2,7 @@ package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import fun.nekomc.sw.service.StrengthenService;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
@@ -30,8 +30,7 @@ public class StrengthenMenuListener implements Listener {
     private static final int SW_STONE_INDEX = 1;
     private static final int SW_RESULT_INDEX = 2;
     private StrengthenWeapon plugin;
-    private List<StrengthenItem> strengthenWeapons;
-    private List<StrengthenStone> strengthenStones;
+    private List<SwStrengthenStoneConfigDto> swStrengthenStoneConfigDtos;
     private StrengthenService service;
 
     /**
@@ -59,7 +58,7 @@ public class StrengthenMenuListener implements Listener {
     }
 
     /**
-     * 强化容器拖拽事件取消
+     * 强化容器拖拽事件取消。容器内，禁用点击拖拽（拆分）
      * @param event 拖拽事件
      */
     @EventHandler
@@ -121,9 +120,8 @@ public class StrengthenMenuListener implements Listener {
                             // 玩家背包没有满
                             if (!PlayerBagUtils.isItemFull(itemStack, player)) {
                                 if (slot == SW_RESULT_INDEX) {
-                                    if (checkSwItem(itemStack, strengthenWeapons) != null) {
+                                    // TODO:
                                         itemStack = strengthen(anvilInv, player);
-                                    }
                                 }
                                 boolean allPutIn = PlayerBagUtils.itemToBag(itemStack, player, false);
                                 // 没有全部放入背包，在当前格子留下剩余
@@ -174,16 +172,6 @@ public class StrengthenMenuListener implements Listener {
         }
     }
 
-    private List<? extends StrengthenItem> swItemByIndex(int index) {
-        if (index == SW_WEAPON_INDEX) {
-            return strengthenWeapons;
-        }
-        if ( index == SW_STONE_INDEX) {
-            return strengthenStones;
-        }
-        return null;
-    }
-
     private boolean checkInventory(InventoryView inventoryView) {
         return inventoryView.getType() == InventoryType.ANVIL && "Strengthen".equalsIgnoreCase(inventoryView.getTitle());
     }
@@ -198,25 +186,25 @@ public class StrengthenMenuListener implements Listener {
         anvilInv.setItem(SW_RESULT_INDEX, swResult);
     }
 
-    private StrengthenItem checkSwItem(ItemStack stack, List<? extends StrengthenItem> items) {
-        if (stack != null && stack.getItemMeta() != null) {
-            List<String> lore = stack.getItemMeta().getLore();
-            if (lore != null) {
-                for (StrengthenItem item: items) {
-                    if (ItemUtils.getItemName(lore).equalsIgnoreCase(item.getName())
-                            && stack.getType().toString().equalsIgnoreCase(item.getMaterial())) {
-                        if(item instanceof StrengthenStone) {
-                            if(ItemUtils.getItemLevel(lore, item) != item.getLevel()) {
-                                continue;
-                            }
-                        }
-                        return item;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+//    private StrengthenItem checkSwItem(ItemStack stack, List<? extends SwItemConfigDto> items) {
+//        if (stack != null && stack.getItemMeta() != null) {
+//            List<String> lore = stack.getItemMeta().getLore();
+//            if (lore != null) {
+//                for (SwItemConfigDto item: items) {
+//                    if (ItemUtils.getItemName(lore).equalsIgnoreCase(item.getName())
+//                            && stack.getType().toString().equalsIgnoreCase(item.getMaterial())) {
+//                        if(item instanceof SwStrengthenStoneConfigDto) {
+//                            if(ItemUtils.getItemLevel(lore, item) != item.getLevel()) {
+//                                continue;
+//                            }
+//                        }
+//                        return item;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     private ItemStack strengthen(Inventory anvilInv, Player player) {
         ItemStack swWeapon = anvilInv.getItem(SW_WEAPON_INDEX);
@@ -229,10 +217,10 @@ public class StrengthenMenuListener implements Listener {
             // ===================================
             // TODO: 临时处理：直接将 swStone 传入，忽略校验结果以恢复强化石功能
             // 后续方案：拓展强化石配置（拓展为一个子级 DTO，通过新增的字段以区分如何解析 type）
-            StrengthenStone strengthenStone = new StrengthenStone();
-            strengthenStone.setChance(50);
+            SwStrengthenStoneConfigDto swStrengthenStoneConfigDto = new SwStrengthenStoneConfigDto();
+            swStrengthenStoneConfigDto.setChance(50);
             // ===================================
-            swResult = service.strengthen(player, swWeapon, strengthenStone, false);
+            swResult = service.strengthen(player, swWeapon, swStrengthenStoneConfigDto, false);
 
             anvilInv.setItem(SW_WEAPON_INDEX, consumeItem(swWeapon));
             anvilInv.setItem(SW_STONE_INDEX, consumeItem(swStone));
@@ -259,20 +247,12 @@ public class StrengthenMenuListener implements Listener {
         this.plugin = plugin;
     }
 
-    public List<StrengthenItem> getStrengthenWeapons() {
-        return strengthenWeapons;
+    public List<SwStrengthenStoneConfigDto> getStrengthenStones() {
+        return swStrengthenStoneConfigDtos;
     }
 
-    public void setStrengthenWeapons(List<StrengthenItem> strengthenWeapons) {
-        this.strengthenWeapons = strengthenWeapons;
-    }
-
-    public List<StrengthenStone> getStrengthenStones() {
-        return strengthenStones;
-    }
-
-    public void setStrengthenStones(List<StrengthenStone> strengthenStones) {
-        this.strengthenStones = strengthenStones;
+    public void setStrengthenStones(List<SwStrengthenStoneConfigDto> swStrengthenStoneConfigDtos) {
+        this.swStrengthenStoneConfigDtos = swStrengthenStoneConfigDtos;
     }
 
     public StrengthenService getService() {

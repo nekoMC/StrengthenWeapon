@@ -8,7 +8,7 @@ import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
-import org.bukkit.World;
+import fun.nekomc.sw.utils.PlayerBagUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -64,7 +64,7 @@ class SwGiveCommand extends SwCommand {
         if (null == targetPlayer) {
             throw new SwCommandException(sender, "unknown_player");
         }
-        givePlayerItem(targetPlayer, itemStack);
+        PlayerBagUtils.givePlayerItem(targetPlayer, itemStack);
         return true;
     }
 
@@ -83,19 +83,6 @@ class SwGiveCommand extends SwCommand {
                 return ListUtil.of("1", "64");
             default:
                 return ListUtil.empty();
-        }
-    }
-
-    // ========== private ========== //
-
-    /**
-     * 参考：https://github.com/MiniDay/HamsterAPI/blob/master/src/main/java/cn/hamster3/api/HamsterAPI.java
-     * 将物品放入玩家背包，如果玩家背包满，则在玩家位置生成掉落物
-     */
-    private void givePlayerItem(Player player, ItemStack itemStack) {
-        World world = player.getWorld();
-        for (ItemStack dropItem : player.getInventory().addItem(itemStack).values()) {
-            world.dropItem(player.getLocation(), dropItem);
         }
     }
 }

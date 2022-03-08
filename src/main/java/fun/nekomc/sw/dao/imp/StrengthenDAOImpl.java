@@ -2,7 +2,7 @@ package fun.nekomc.sw.dao.imp;
 
 import fun.nekomc.sw.dao.StrengthenDAO;
 import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.domain.StrengthenStone;
+import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.exception.ConfigurationException;
@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 public class StrengthenDAOImpl implements StrengthenDAO {
     private List<StrengthenItem> strengthenWeapons;
-    private List<StrengthenStone> strengthenStones;
+    private List<SwStrengthenStoneConfigDto> swStrengthenStoneConfigDtos;
     private StrengthenItem bow;
 
     public StrengthenDAOImpl() { }
@@ -44,7 +44,7 @@ public class StrengthenDAOImpl implements StrengthenDAO {
     @Override
     public ItemStack giveStrengthenStone(int count, int level) {
         int index = level - 1;
-        StrengthenStone stone = strengthenStones.get(index);
+        SwStrengthenStoneConfigDto stone = swStrengthenStoneConfigDtos.get(index);
 
         Material type = Material.valueOf(stone.getMaterial());
         ItemStack stack = new ItemStack(type);
@@ -129,22 +129,5 @@ public class StrengthenDAOImpl implements StrengthenDAO {
             resItemStack.setItemMeta(itemMeta);
         }
         return resItemStack;
-    }
-
-    public List<StrengthenItem> getStrengthenWeapons() {
-        return strengthenWeapons;
-    }
-
-    public void setStrengthenWeapons(List<StrengthenItem> strengthenWeapons) {
-        this.strengthenWeapons = strengthenWeapons;
-        this.bow = strengthenWeapons.get(ItemsTypeEnum.BOW.ordinal());
-    }
-
-    public List<StrengthenStone> getStrengthenStones() {
-        return strengthenStones;
-    }
-
-    public void setStrengthenStones(List<StrengthenStone> strengthenStones) {
-        this.strengthenStones = strengthenStones;
     }
 }

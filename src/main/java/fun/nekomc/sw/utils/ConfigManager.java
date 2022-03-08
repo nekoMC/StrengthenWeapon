@@ -7,6 +7,7 @@ import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.ConfigYmlDto;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +17,8 @@ import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * 全局配置管理器
@@ -51,8 +50,24 @@ public class ConfigManager {
         // 读取（生成） items.yml
         Map<String, Map<String, ?>> configYmlRawMap = loadConfigFile(rootPath, Constants.ITEMS_CONFIG_FILE_NAME, Map.class);
         // 将 Map 的值转 SwItemConfigDto 对象
-        swItemConfigMap = ServiceUtils.convertMapValue(configYmlRawMap,
-                raw -> BeanUtil.fillBeanWithMap(raw, new SwItemConfigDto(), true, true));
+        Map<String, SwItemConfigDto> newConfigMap = ServiceUtils.convertMapValue(configYmlRawMap, rawMap -> {
+            try {
+                // 根据配置项的 type 决定将该项解析成哪个实例
+                String itemType = Objects.requireNonNull(rawMap.get("type")).toString();
+                ItemsTypeEnum itemsTypeEnum = Objects.requireNonNull(ItemsTypeEnum.valueOf(itemType), "无法识别的 type");
+                Constructor<? extends SwItemConfigDto> configDtoConstructor =
+                        (Constructor<? extends SwItemConfigDto>) itemsTypeEnum.getTypeConfigClass().getConstructor();
+                SwItemConfigDto configDtoToFill = configDtoConstructor.newInstance();
+                return BeanUtil.fillBeanWithMap(rawMap, configDtoToFill, true, true);
+            } catch (Exception e) {
+                MsgUtils.consoleMsg("配置文件解析粗错：%s", e.getMessage());
+                return null;
+            }
+        });
+        // 如果解析结束后，存在为 null 的配置，说明配置文件有问题，不进行更新
+        if (!newConfigMap.containsValue(null)) {
+            swItemConfigMap = newConfigMap;
+        }
     }
 
     /**

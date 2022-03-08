@@ -1,6 +1,7 @@
 package fun.nekomc.sw.domain;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,11 @@ public class SwItemAttachData implements PersistentDataType<String, SwItemAttach
      */
     public static final SwItemAttachData EMPTY_ATTACH_DATA = new SwItemAttachData(null, null);
 
-    private static final Gson JSON_PARSER = new Gson();
+    /**
+     * Json 转化器，默认不处理 null
+     * 如果有其他地方使用 Json 的转化，需要将相关方法抽离出去
+     */
+    private static final Gson JSON_PARSER = new GsonBuilder().create();
 
     /**
      * 洗练等级 refine level
