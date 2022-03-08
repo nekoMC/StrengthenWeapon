@@ -3,9 +3,8 @@ package fun.nekomc.sw.utils;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.domain.StrengthenStone;
-import fun.nekomc.sw.dto.SwItemAttachData;
-import fun.nekomc.sw.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.SwItemAttachData;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
@@ -17,7 +16,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import java.util.*;
 
 /**
- * 操作道具 Lore 的工具类
+ * 操作道具数据的工具类
  *
  * @author ourange
  */
@@ -81,7 +80,7 @@ public class ItemUtils {
         // Meta - 附加信息
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
         persistentDataContainer.set(getWarpedKey(itemConfig.getName()),
-                SwItemAttachData.DEFAULT_ATTACH_DATA, SwItemAttachData.DEFAULT_ATTACH_DATA);
+                SwItemAttachData.EMPTY_ATTACH_DATA, SwItemAttachData.LVL0_ATTACH_DATA);
 
         itemStack.setItemMeta(meta);
         return Optional.of(itemStack);
@@ -96,7 +95,7 @@ public class ItemUtils {
     public static void updateAttachData(ItemMeta itemMeta, SwItemAttachData attachData) {
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
         persistentDataContainer.set(getWarpedKey(getNameFromDataContainer(persistentDataContainer)),
-                SwItemAttachData.DEFAULT_ATTACH_DATA, attachData);
+                SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
     }
 
     /**
@@ -115,7 +114,7 @@ public class ItemUtils {
         }
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
         NamespacedKey warpedItemName = getWarpedKey(getNameFromDataContainer(persistentDataContainer));
-        SwItemAttachData attachData = persistentDataContainer.get(warpedItemName, SwItemAttachData.DEFAULT_ATTACH_DATA);
+        SwItemAttachData attachData = persistentDataContainer.get(warpedItemName, SwItemAttachData.EMPTY_ATTACH_DATA);
         return Optional.ofNullable(attachData);
     }
 
@@ -155,7 +154,7 @@ public class ItemUtils {
             if (null == res) {
                 res = key.getKey();
             } else {
-                throw new ConfigurationException(ConfigFactory.getConfiguredMsg("config_error"));
+                throw new ConfigurationException(ConfigManager.getConfiguredMsg("config_error"));
             }
         }
         return res;

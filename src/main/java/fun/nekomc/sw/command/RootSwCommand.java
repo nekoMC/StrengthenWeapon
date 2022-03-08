@@ -3,7 +3,7 @@ package fun.nekomc.sw.command;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigFactory;
+import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -27,7 +27,7 @@ class RootSwCommand extends SwCommand {
     public boolean rua(CommandSender sender, String[] args) {
         // 预期指令为 `sw`
         if (ArrayUtil.isNotEmpty(args)) {
-            throw new SwCommandException(sender, ConfigFactory.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("grammar_error"));
         }
         Player player = (Player) sender;
         Inventory inv = StrengthenWeapon.server().createInventory(player, InventoryType.ANVIL, "Strengthen");

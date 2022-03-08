@@ -1,11 +1,10 @@
-package fun.nekomc.sw.dto;
+package fun.nekomc.sw.domain.dto;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class ConfigYmlDto implements Serializable {
      * @return 存在时返回配置的消息内容，不存在时返回空串
      */
     public String getMessageByKey(String key) {
-        if (StringUtils.isBlank(key) || CollectionUtil.isEmpty(message) || !message.containsKey(key)) {
+        if (StringUtils.isBlank(key) || CollUtil.isEmpty(message) || !message.containsKey(key)) {
             return StringUtils.EMPTY;
         }
         return message.get(key);

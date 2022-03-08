@@ -34,7 +34,8 @@ public class MsgUtils {
      * @param args 附加参数（用于格式化消息内容）
      */
     public static void consoleMsg(String msg, Object... args) {
-        String formattedMsg = String.format("§a[strengthWeapon] " + msg, args);
+        String templateToFormat = Constants.MSG_PREFIX + msg;
+        String formattedMsg = String.format(templateToFormat, args);
         CONSOLE_SENDER.sendMessage(formattedMsg);
     }
 

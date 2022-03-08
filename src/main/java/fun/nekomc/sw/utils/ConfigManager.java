@@ -1,12 +1,12 @@
 package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.dto.ConfigYmlDto;
-import fun.nekomc.sw.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.dto.ConfigYmlDto;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +29,13 @@ import java.util.Optional;
  */
 @UtilityClass
 @Slf4j
-public class ConfigFactory {
+public class ConfigManager {
 
     /**
      * Yaml 加载器，此处需要指定加载器，否则报错
      * https://stackoverflow.com/questions/26463078/snakeyaml-class-not-found-exception
      */
-    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigFactory.class.getClassLoader()));
+    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigManager.class.getClassLoader()));
     private Map<String, SwItemConfigDto> swItemConfigMap;
     private ConfigYmlDto configYmlDto;
 
@@ -61,7 +61,7 @@ public class ConfigFactory {
      * @return 配置文件中指定的道具列表
      */
     public static List<String> getItemNameList() {
-        if (CollectionUtil.isEmpty(swItemConfigMap)) {
+        if (CollUtil.isEmpty(swItemConfigMap)) {
             return ListUtil.empty();
         }
         return new ArrayList<>(swItemConfigMap.keySet());
@@ -74,7 +74,7 @@ public class ConfigFactory {
      * @return Optional 包装的 SwItemConfigDto 对象，可能为空
      */
     public static Optional<SwItemConfigDto> getItemConfig(String itemName) {
-        if (CollectionUtil.isEmpty(swItemConfigMap)) {
+        if (CollUtil.isEmpty(swItemConfigMap)) {
             return Optional.empty();
         }
         return Optional.ofNullable(swItemConfigMap.get(itemName));

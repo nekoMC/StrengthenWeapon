@@ -34,4 +34,9 @@ public class Constants {
      * 管理权限节点
      */
     public static final String ADMIN_PERMISSION_POINT = "Admin";
+
+    /**
+     * 提示信息的前缀
+     */
+    public static final String MSG_PREFIX = "§a[strengthWeapon] ";
 }

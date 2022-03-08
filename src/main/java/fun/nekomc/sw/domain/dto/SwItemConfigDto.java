@@ -1,6 +1,6 @@
-package fun.nekomc.sw.dto;
+package fun.nekomc.sw.domain.dto;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -69,7 +69,7 @@ public class SwItemConfigDto implements Serializable {
      */
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers() {
         Multimap<Attribute, AttributeModifier> multimapRes = ArrayListMultimap.create();
-        if (CollectionUtil.isEmpty(attributes)) {
+        if (CollUtil.isEmpty(attributes)) {
             return multimapRes;
         }
         // 构建附加属性
@@ -99,7 +99,7 @@ public class SwItemConfigDto implements Serializable {
      * @return Map<Enchantment, Integer> 对象
      */
     public Map<Enchantment, Integer> getEnchantMap() {
-        if (CollectionUtil.isEmpty(enchantments)) {
+        if (CollUtil.isEmpty(enchantments)) {
             return MapUtil.empty();
         }
         HashMap<Enchantment, Integer> enchantMap = new HashMap<>(enchantments.size());

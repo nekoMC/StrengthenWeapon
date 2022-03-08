@@ -3,10 +3,10 @@ package fun.nekomc.sw.dao.imp;
 import fun.nekomc.sw.dao.StrengthenDAO;
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.StrengthenStone;
-import fun.nekomc.sw.domain.enumeration.WeaponsIndex;
-import fun.nekomc.sw.dto.SwItemAttachData;
+import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
+import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.exception.ConfigurationException;
-import fun.nekomc.sw.utils.ConfigFactory;
+import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Material;
@@ -69,7 +69,7 @@ public class StrengthenDAOImpl implements StrengthenDAO {
                 // TODO: 临时处理，读取数据标签中的强化等级
                 Optional<SwItemAttachData> attachDataOpt = ItemUtils.getAttachData(itemStack);
                 if (!attachDataOpt.isPresent()) {
-                    throw new ConfigurationException(ConfigFactory.getConfiguredMsg("config_error"));
+                    throw new ConfigurationException(ConfigManager.getConfiguredMsg("config_error"));
                 }
                 SwItemAttachData attachData = attachDataOpt.get();
                 int level = attachData.getStrLvl();
@@ -137,7 +137,7 @@ public class StrengthenDAOImpl implements StrengthenDAO {
 
     public void setStrengthenWeapons(List<StrengthenItem> strengthenWeapons) {
         this.strengthenWeapons = strengthenWeapons;
-        this.bow = strengthenWeapons.get(WeaponsIndex.BOW.ordinal());
+        this.bow = strengthenWeapons.get(ItemsTypeEnum.BOW.ordinal());
     }
 
     public List<StrengthenStone> getStrengthenStones() {

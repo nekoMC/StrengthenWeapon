@@ -1,6 +1,5 @@
 package fun.nekomc.sw.exception;
 
-import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -11,9 +10,9 @@ import org.bukkit.command.CommandSender;
 public class SwCommandException extends SwException {
 
     /**
-     * 指令执行者
+     * 指令执行者，Throwable 接口要求成员必须为 Serializable 或 transient（不参与序列化）
      */
-    private final CommandSender sender;
+    private final transient CommandSender sender;
 
     public SwCommandException(CommandSender sender, String msg) {
         super(msg);

@@ -5,7 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigFactory;
+import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
@@ -114,7 +114,7 @@ public abstract class SwCommand {
      */
     public boolean rua(CommandSender sender, final String[] args) {
         // 没有重写本方法，摆烂给执行者
-        MsgUtils.returnMsgToSender(sender, ConfigFactory.getConfiguredMsg("unsupported_msg"));
+        MsgUtils.returnMsgToSender(sender, ConfigManager.getConfiguredMsg("unsupported_msg"));
         return false;
     }
 
@@ -127,7 +127,8 @@ public abstract class SwCommand {
      * @return 提示信息列表
      */
     public List<String> hint(CommandSender sender, final String[] args) {
-        if (CollectionUtil.isEmpty(subCmd)) {
+        if (CollUtil.isEmpty(subCmd)) {
+            // return null 可以使用 MC 默认的提示（即玩家名）
             return null;
         }
         return ServiceUtils.convertList(subCmd, SwCommand::getNowCmd);
@@ -175,7 +176,7 @@ public abstract class SwCommand {
         Assert.notNull(args, "args cannot be null");
         boolean notPlayer = !(sender instanceof Player);
         if (playerCmd && notPlayer) {
-            MsgUtils.consoleMsg(ConfigFactory.getConfiguredMsg("not_player"));
+            MsgUtils.consoleMsg(ConfigManager.getConfiguredMsg("not_player"));
             return false;
         }
         if (notPlayer) {
@@ -185,7 +186,7 @@ public abstract class SwCommand {
         // 存在权限要求，且不满足这个要求，返回 false
         if (!StringUtils.isBlank(permissionPoint) &&
                 !player.hasPermission(Constants.PERMISSION_NAMESPACE + permissionPoint)) {
-            MsgUtils.sendMsg(player, ConfigFactory.getConfiguredMsg("no_auth"));
+            MsgUtils.sendMsg(player, ConfigManager.getConfiguredMsg("no_auth"));
             return false;
         }
         return true;

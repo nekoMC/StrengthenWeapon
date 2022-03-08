@@ -1,6 +1,5 @@
 package fun.nekomc.sw.dao;
 
-import fun.nekomc.sw.domain.StrengthenItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

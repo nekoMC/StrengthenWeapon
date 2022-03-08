@@ -1,45 +1,39 @@
 package fun.nekomc.sw;
 
-import fun.nekomc.sw.domain.enumeration.WeaponsIndex;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.StrengthenMenuListener;
 import fun.nekomc.sw.listener.SwBowListener;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
-import fun.nekomc.sw.utils.ConfigFactory;
+import fun.nekomc.sw.utils.ConfigManager;
 
 import fun.nekomc.sw.utils.Constants;
-import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author ourange
  */
 public class StrengthenWeapon extends JavaPlugin {
 
-    private ConfigFactory factory;
     private SwBowListener swBowListener;
     private StrengthenMenuListener strengthenMenuListener;
 
-    private static StrengthenWeapon INSTANCE = null;
+    private static StrengthenWeapon instance = null;
 
     @Override
     public void onLoad() {
         this.saveDefaultConfig();
-        INSTANCE = this;
+        // Sonar 不推荐在成员方法中修改静态变量
+        setInstance(this);
+    }
+
+    private static void setInstance(StrengthenWeapon instance) {
+        StrengthenWeapon.instance = instance;
     }
 
     /**
@@ -49,10 +43,10 @@ public class StrengthenWeapon extends JavaPlugin {
      * @throws SwException 如果插件尚未加载完全时抛出
      */
     public static StrengthenWeapon getInstance() {
-        if (null == INSTANCE) {
+        if (null == instance) {
             throw new SwException("插件正在加载中");
         }
-        return INSTANCE;
+        return instance;
     }
 
     /**
@@ -65,7 +59,7 @@ public class StrengthenWeapon extends JavaPlugin {
     @Override
     public void onEnable() {
         // 初始化配置管理器
-        ConfigFactory.loadConfig(this.getDataFolder().getPath());
+        ConfigManager.loadConfig(this.getDataFolder().getPath());
         // 绑定指令解析器、设置指令 tab 联想
         CommandHandler handler = CommandHandler.getInstance();
         PluginCommand checkedPluginCommand = Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND));
@@ -88,7 +82,7 @@ public class StrengthenWeapon extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
-        ConfigFactory.loadConfig(this.getDataFolder().getPath());
+        ConfigManager.loadConfig(this.getDataFolder().getPath());
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
         /*damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());*/
     }

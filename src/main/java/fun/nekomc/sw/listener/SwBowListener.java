@@ -1,7 +1,7 @@
 package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.dto.SwItemAttachData;
+import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
