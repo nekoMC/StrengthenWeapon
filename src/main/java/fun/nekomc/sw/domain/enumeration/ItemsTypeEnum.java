@@ -13,6 +13,7 @@ import lombok.Getter;
 public enum ItemsTypeEnum implements BaseEnum<Integer> {
     /**
      * 白板，可用于强化洗练的白板道具或装备等
+     * 强化洗炼过数次，仍能继续强化的道具也属于白板
      */
     BLANK(0, SwBlankConfigDto.class),
 
