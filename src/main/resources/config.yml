@@ -12,3 +12,6 @@ message:
     §a§l/sw §e打开强化菜单
     §a§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
     §a§l/sw help §e显示本帮助信息
+
+strengthTitle: §c§l强化台
+refineTitle: §6§l洗炼台

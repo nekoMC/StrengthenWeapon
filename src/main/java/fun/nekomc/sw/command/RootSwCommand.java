@@ -30,7 +30,8 @@ class RootSwCommand extends SwCommand {
             throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("grammar_error"));
         }
         Player player = (Player) sender;
-        Inventory inv = StrengthenWeapon.server().createInventory(player, InventoryType.ANVIL, "Strengthen");
+        // TODO: 集中于容器内完成，将此部分搞到子指令中
+        Inventory inv = StrengthenWeapon.server().createInventory(player, InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle());
         player.openInventory(inv);
         return true;
     }

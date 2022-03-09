@@ -26,6 +26,16 @@ public class ConfigYmlDto implements Serializable {
     private Map<String, String> message;
 
     /**
+     * 强化容器的标题
+     */
+    private String strengthTitle;
+
+    /**
+     * 洗练容器的标题
+     */
+    private String refineTitle;
+
+    /**
      * 获取 message 中指定的消息内容
      *
      * @param key 键

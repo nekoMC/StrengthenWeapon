@@ -1,4 +1,5 @@
 sw_bow:
+  type: BLANK
   displayName: §b[强化弓]
   name: sw_bow
   levelName: §b等级:+
@@ -17,6 +18,7 @@ sw_bow:
     - PROTECTION:3
 
 sw_stone:
+  type: STRENGTHEN_STONE
   displayName: §b[强化石]
   name: sw_stone
   levelName: '§b等级:'

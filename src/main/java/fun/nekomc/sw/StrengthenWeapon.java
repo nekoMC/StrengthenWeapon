@@ -2,7 +2,7 @@ package fun.nekomc.sw;
 
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
-import fun.nekomc.sw.listener.StrengthenMenuListener;
+import fun.nekomc.sw.listener.StrengthAnvilMenuListener;
 import fun.nekomc.sw.listener.SwBowListener;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigManager;
@@ -21,7 +21,7 @@ import java.util.Objects;
 public class StrengthenWeapon extends JavaPlugin {
 
     private SwBowListener swBowListener;
-    private StrengthenMenuListener strengthenMenuListener;
+    private StrengthAnvilMenuListener strengthAnvilMenuListener;
 
     private static StrengthenWeapon instance = null;
 
@@ -69,10 +69,9 @@ public class StrengthenWeapon extends JavaPlugin {
         swBowListener = new SwBowListener();
 //        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
         getServer().getPluginManager().registerEvents(swBowListener, this);
-        strengthenMenuListener = new StrengthenMenuListener();
-        strengthenMenuListener.setPlugin(this);
-        strengthenMenuListener.setService(new StrengthenServiceImpl());
-        getServer().getPluginManager().registerEvents(strengthenMenuListener, this);
+        strengthAnvilMenuListener = new StrengthAnvilMenuListener();
+        strengthAnvilMenuListener.setService(new StrengthenServiceImpl());
+        getServer().getPluginManager().registerEvents(strengthAnvilMenuListener, this);
         /*damageListener = new OnDamageListener();
         damageListener.setPlugin(this);
         damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());

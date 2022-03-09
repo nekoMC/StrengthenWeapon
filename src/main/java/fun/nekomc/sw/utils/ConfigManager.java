@@ -9,8 +9,10 @@ import fun.nekomc.sw.domain.dto.ConfigYmlDto;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
+import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
@@ -123,6 +125,18 @@ public class ConfigManager {
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }
+    }
+
+    /**
+     * 获取 config.yml 加载后对应的 DTO
+     *
+     * @return ConfigYmlDto 实例
+     */
+    public static ConfigYmlDto getConfigYml() {
+        if (null == configYmlDto) {
+            throw new SwException("插件正在加载中");
+        }
+        return configYmlDto;
     }
 
 // 备用，用作参考
