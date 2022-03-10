@@ -141,24 +141,29 @@ public abstract class AbstractComposeGui implements Listener {
                 .slot(slot)
                 .offset(slot - outputCellIndex)
                 .leftClick(leftClick)
+                .inventory(targetInventory)
                 .event(event).build();
 
         if (event.getClick().isShiftClick()) {
             if (slot > outputCellIndex) {
-                // 分发：Shift + 点击背包
+                // 事件重分发：Shift + 点击背包
                 onShiftClickBag(wrappedEvent);
                 return;
             }
-            // 分发：Shift + 点击容器
+            // 事件重分发：Shift + 点击容器
             onShiftClickInventory(wrappedEvent);
             return;
         }
-        // 分发：点击背包
+        // 不是点击事件的情况
+        if (!event.isRightClick() && !event.isLeftClick()) {
+            return;
+        }
+        // 事件重分发：点击背包
         if (slot > outputCellIndex) {
             onClickBag(wrappedEvent);
             return;
         }
-        // 分发：点击容器
+        // 事件重分发：点击容器
         onClickInventory(wrappedEvent);
 
         // 事件是否取消
@@ -226,30 +231,69 @@ public abstract class AbstractComposeGui implements Listener {
     }
 
     /**
-     * Shift + 点击背包事件
+     * Shift + 点击背包事件（不关注左右键）
+     * TODO: 合成时使用堆叠的多个材料时，是否导致多消耗
      */
-    public void onShiftClickBag(WrappedInventoryClickEvent event) {
-
+    public void onShiftClickBag(WrappedInventoryClickEvent wrapped) {
+        // 容器满，取消事件
+        int emptySlotIndex = wrapped.inventory.firstEmpty();
+        if (-1 == emptySlotIndex) {
+            wrapped.cancelEvent();
+            return;
+        }
+        // 将点击的物品转移到容器的空格处
+        ItemStack itemClicked = wrapped.event.getCurrentItem();
+        wrapped.inventory.setItem(emptySlotIndex, itemClicked);
+        wrapped.event.setCurrentItem(null);
+        // 生成预览物品
+        if (emptySlotIndex == outputCellIndex - 1) {
+            wrapped.inventory.setItem(outputCellIndex, generatePreviewItem(wrapped.inventory));
+        }
     }
 
     /**
      * Shift + 点击容器事件
      */
-    public void onShiftClickInventory(WrappedInventoryClickEvent event) {
-
+    public void onShiftClickInventory(WrappedInventoryClickEvent wrapped) {
+        ItemStack itemStack = wrapped.event.getCurrentItem();
+        if (itemStack == null) {
+            return;
+        }
+        // 玩家背包没有满
+        if (PlayerBagUtils.isItemFull(itemStack, wrapped.clickPlayer)) {
+            return;
+        }
+        // 点击输出端，执行实际强化逻辑
+        if (wrapped.slot == outputCellIndex) {
+            itemStack = generateStrengthItem(wrapped.inventory);
+        }
+        boolean allPutIn = PlayerBagUtils.itemToBag(itemStack, wrapped.clickPlayer, false);
+        // 没有全部放入背包，在当前格子留下剩余
+        if (!allPutIn) {
+            wrapped.event.setCurrentItem(itemStack);
+        } else {
+            wrapped.event.setCurrentItem(null);
+        }
     }
 
     /**
      * 点击背包事件
      */
-    public void onClickBag(WrappedInventoryClickEvent event) {
-
+    public void onClickBag(WrappedInventoryClickEvent wrapped) {
+        ItemStack cursorItem = wrapped.event.getCursor();
+        //检查鼠标中是否为规定物品
+        boolean isSwItem = ItemUtils.isSwItem(cursorItem);
+        //检查鼠标中是否为空气
+        boolean isAir = (cursorItem != null && cursorItem.getType() == Material.AIR);
+        if (!isSwItem && !isAir) {
+            wrapped.cancelEvent();
+        }
     }
 
     /**
      * 点击容器事件
      */
-    public void onClickInventory(WrappedInventoryClickEvent event) {
+    public void onClickInventory(WrappedInventoryClickEvent wrapped) {
 
     }
 
@@ -313,8 +357,19 @@ public abstract class AbstractComposeGui implements Listener {
          */
         Player clickPlayer;
         /**
+         * 操作的目标容器对象
+         */
+        Inventory inventory;
+        /**
          * 左键点击
          */
         boolean leftClick;
+
+        /**
+         * 取消该事件
+         */
+        public void cancelEvent() {
+            event.setCancelled(true);
+        }
     }
 }
