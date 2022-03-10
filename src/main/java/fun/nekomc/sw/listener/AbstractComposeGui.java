@@ -4,6 +4,10 @@ import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -122,7 +126,7 @@ public abstract class AbstractComposeGui implements Listener {
      * @param event 点击事件
      */
     @EventHandler
-    public void onInventoryClicked(InventoryClickEvent event) {
+    public void dispatchClickEvent(InventoryClickEvent event) {
         if (cannotHandleView(event)) {
             return;
         }
@@ -130,6 +134,33 @@ public abstract class AbstractComposeGui implements Listener {
         Inventory targetInventory = event.getInventory();
         // 点击位置
         int slot = event.getRawSlot();
+        boolean leftClick = event.isLeftClick();
+        // 包装事件（如果存在更多处理分支则考虑将事件拆分后扔到全局，拆出监听器单独处理）
+        WrappedInventoryClickEvent wrappedEvent = WrappedInventoryClickEvent.builder()
+                .clickPlayer(player)
+                .slot(slot)
+                .offset(slot - outputCellIndex)
+                .leftClick(leftClick)
+                .event(event).build();
+
+        if (event.getClick().isShiftClick()) {
+            if (slot > outputCellIndex) {
+                // 分发：Shift + 点击背包
+                onShiftClickBag(wrappedEvent);
+                return;
+            }
+            // 分发：Shift + 点击容器
+            onShiftClickInventory(wrappedEvent);
+            return;
+        }
+        // 分发：点击背包
+        if (slot > outputCellIndex) {
+            onClickBag(wrappedEvent);
+            return;
+        }
+        // 分发：点击容器
+        onClickInventory(wrappedEvent);
+
         // 事件是否取消
         boolean cancel = true;
         // Shift + 点击
@@ -192,6 +223,33 @@ public abstract class AbstractComposeGui implements Listener {
             StrengthenWeapon.server().getScheduler().scheduleSyncDelayedTask(StrengthenWeapon.getInstance(),
                     () -> targetInventory.setItem(outputCellIndex, generateStrengthItem(targetInventory)), 2L);
         }
+    }
+
+    /**
+     * Shift + 点击背包事件
+     */
+    public void onShiftClickBag(WrappedInventoryClickEvent event) {
+
+    }
+
+    /**
+     * Shift + 点击容器事件
+     */
+    public void onShiftClickInventory(WrappedInventoryClickEvent event) {
+
+    }
+
+    /**
+     * 点击背包事件
+     */
+    public void onClickBag(WrappedInventoryClickEvent event) {
+
+    }
+
+    /**
+     * 点击容器事件
+     */
+    public void onClickInventory(WrappedInventoryClickEvent event) {
 
     }
 
@@ -225,4 +283,38 @@ public abstract class AbstractComposeGui implements Listener {
      * @return 实际给到玩家的物品
      */
     protected abstract ItemStack generateStrengthItem(@NotNull Inventory inventory);
+
+    /**
+     * 对原始容器点击事件的包装
+     * 当前点击事件的划分粒度太粗，进行重新划分以细化
+     * TODO: 确认 CTRL 点击、滚轮的场景是否能覆盖到
+     */
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    protected static class WrappedInventoryClickEvent {
+        /**
+         * 被包装的原始事件
+         */
+        InventoryClickEvent event;
+        /**
+         * 点击的窗格索引
+         */
+        int slot;
+        /**
+         * 点击的位置与输出位置的偏移，以铁砧为例：
+         * offset=0 表示点击的为输出格窗
+         * offset<0 表示点击的为输入端，slot 可能为 0 或 1
+         * offset>0 则表示点击的为玩家背包
+         */
+        int offset;
+        /**
+         * 触发点击的玩家
+         */
+        Player clickPlayer;
+        /**
+         * 左键点击
+         */
+        boolean leftClick;
+    }
 }
