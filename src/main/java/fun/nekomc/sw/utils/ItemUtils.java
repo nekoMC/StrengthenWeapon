@@ -129,6 +129,7 @@ public class ItemUtils {
      * @return 道具名称，如 sw_bow
      * @throws ConfigurationException 当存在多个道具名时抛出
      */
+    @Nullable
     public static String getNameFromMeta(ItemStack itemStack) {
         Optional<PersistentDataContainer> dataContainerFromItem = getDataContainerFromItem(itemStack);
         return dataContainerFromItem.map(ItemUtils::getNameFromDataContainer).orElse(null);
