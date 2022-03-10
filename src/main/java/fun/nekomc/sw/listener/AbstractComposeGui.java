@@ -1,12 +1,9 @@
 package fun.nekomc.sw.listener;
 
-import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -66,8 +63,9 @@ public abstract class AbstractComposeGui implements Listener {
             return true;
         }
         InventoryView inventoryView = inventoryEvent.getView();
-        return !(inventoryView.getPlayer() instanceof Player &&
-                inventoryView.getType() == invType && invTitle.equalsIgnoreCase(inventoryView.getTitle()));
+        boolean playerClickedTargetInventory = inventoryView.getPlayer() instanceof Player &&
+                inventoryView.getType() == invType && invTitle.equalsIgnoreCase(inventoryView.getTitle());
+        return !playerClickedTargetInventory;
     }
 
     /**
@@ -121,7 +119,6 @@ public abstract class AbstractComposeGui implements Listener {
     /**
      * 容器点击事件处理，不推荐子类直接重写本方法（特殊处理除外）
      * 默认实现：如果为合法的点击事件，则交给抽象方法处理，否则取消事件
-     * TODO：瞎TM改
      *
      * @param event 点击事件
      */
@@ -134,6 +131,10 @@ public abstract class AbstractComposeGui implements Listener {
         Inventory targetInventory = event.getInventory();
         // 点击位置
         int slot = event.getRawSlot();
+        // 点击界外，不进行处理
+        if (slot < 0) {
+            return;
+        }
         boolean leftClick = event.isLeftClick();
         // 包装事件（如果存在更多处理分支则考虑将事件拆分后扔到全局，拆出监听器单独处理）
         WrappedInventoryClickEvent wrappedEvent = WrappedInventoryClickEvent.builder()
@@ -165,73 +166,10 @@ public abstract class AbstractComposeGui implements Listener {
         }
         // 事件重分发：点击容器
         onClickInventory(wrappedEvent);
-
-        // 事件是否取消
-        boolean cancel = true;
-        // Shift + 点击
-        if (event.getClick().isShiftClick()) {
-            //点击的是背包
-            if (slot > outputCellIndex) {
-                // 将点击的物品转移到容器的空格处
-                int emptySlotIndex = targetInventory.firstEmpty();
-                ItemStack itemClicked = event.getCurrentItem();
-                targetInventory.setItem(emptySlotIndex, itemClicked);
-                event.setCurrentItem(null);
-                cancel = false;
-                // 生成预览物品，TODO: 瞎TM写
-                if (emptySlotIndex == outputCellIndex - 1) {
-                    targetInventory.setItem(outputCellIndex, generatePreviewItem(targetInventory));
-                }
-            }
-            // 点击的是anvil
-            else {
-                ItemStack itemStack = event.getCurrentItem();
-                if (itemStack != null) {
-                    // 玩家背包没有满
-                    if (!PlayerBagUtils.isItemFull(itemStack, player)) {
-                        if (slot == outputCellIndex) {
-                            itemStack = generateStrengthItem(targetInventory);
-                        }
-                        boolean allPutIn = PlayerBagUtils.itemToBag(itemStack, player, false);
-                        // 没有全部放入背包，在当前格子留下剩余
-                        if (!allPutIn) {
-                            event.setCurrentItem(itemStack);
-                        } else {
-                            event.setCurrentItem(null);
-                        }
-                        cancel = false;
-                    }
-                }
-            }
-        }
-        // 左键或右键
-        else if (event.isLeftClick() || event.isRightClick()) {
-            if (slot < outputCellIndex) {
-                ItemStack cursorItem = event.getCursor();
-                //检查鼠标中是否为规定物品
-                boolean isItem = ItemUtils.isSwItem(cursorItem);
-                //检查鼠标中是否为空气
-                boolean isAir = (cursorItem != null && cursorItem.getType() == Material.AIR);
-                if (isItem || isAir) {
-                    cancel = false;
-                }
-            } else if (slot == outputCellIndex) {
-                targetInventory.setItem(outputCellIndex, generateStrengthItem(targetInventory));
-            } else {
-                cancel = false;
-            }
-        }
-        // 设置事件取消
-        event.setCancelled(cancel);
-        // 事件没有取消，检查是否能够合成
-        if (!cancel) {
-            StrengthenWeapon.server().getScheduler().scheduleSyncDelayedTask(StrengthenWeapon.getInstance(),
-                    () -> targetInventory.setItem(outputCellIndex, generateStrengthItem(targetInventory)), 2L);
-        }
     }
 
     /**
-     * Shift + 点击背包事件（不关注左右键）
+     * Shift + 点击背包事件，含滚轮事件（不关注左右键）
      * TODO: 合成时使用堆叠的多个材料时，是否导致多消耗
      */
     public void onShiftClickBag(WrappedInventoryClickEvent wrapped) {
@@ -246,7 +184,7 @@ public abstract class AbstractComposeGui implements Listener {
         wrapped.inventory.setItem(emptySlotIndex, itemClicked);
         wrapped.event.setCurrentItem(null);
         // 生成预览物品
-        if (emptySlotIndex == outputCellIndex - 1) {
+        if (inventoryFullAfterWrappedEvent(wrapped)) {
             wrapped.inventory.setItem(outputCellIndex, generatePreviewItem(wrapped.inventory));
         }
     }
@@ -255,6 +193,9 @@ public abstract class AbstractComposeGui implements Listener {
      * Shift + 点击容器事件
      */
     public void onShiftClickInventory(WrappedInventoryClickEvent wrapped) {
+        // 点击容器后，清空输出格窗
+        wrapped.inventory.setItem(outputCellIndex, null);
+
         ItemStack itemStack = wrapped.event.getCurrentItem();
         if (itemStack == null) {
             return;
@@ -280,6 +221,20 @@ public abstract class AbstractComposeGui implements Listener {
      * 点击背包事件
      */
     public void onClickBag(WrappedInventoryClickEvent wrapped) {
+    }
+
+    /**
+     * 点击容器事件
+     */
+    public void onClickInventory(WrappedInventoryClickEvent wrapped) {
+        // 点击容器后，清空输出格窗
+        wrapped.inventory.setItem(outputCellIndex, null);
+        // 点击输出格窗，按照强化规则生成强化后的物品
+        if (wrapped.slot == outputCellIndex) {
+            wrapped.inventory.setItem(outputCellIndex, generateStrengthItem(wrapped.inventory));
+            return;
+        }
+        // 点击输入格窗，处理？
         ItemStack cursorItem = wrapped.event.getCursor();
         //检查鼠标中是否为规定物品
         boolean isSwItem = ItemUtils.isSwItem(cursorItem);
@@ -288,28 +243,31 @@ public abstract class AbstractComposeGui implements Listener {
         if (!isSwItem && !isAir) {
             wrapped.cancelEvent();
         }
+        // 生成预览物品
+        if (inventoryFullAfterWrappedEvent(wrapped)) {
+            wrapped.inventory.setItem(outputCellIndex, generatePreviewItem(wrapped.inventory));
+        }
     }
 
     /**
-     * 点击容器事件
+     * 校验当容器输入端指定的索引置入物品后，是否可以填满该容器的输入端
+     * 通常不能直接判断当前容器是否填满，因为物品置入、触发事件时，指定的物品并未放到容器内
      */
-    public void onClickInventory(WrappedInventoryClickEvent wrapped) {
-
-    }
-
-    /**
-     * 校验容器的输入是否填满，如果传入 null 则返回 true
-     */
-    protected boolean inventoryInputNotFull(Inventory inventory) {
-        if (null == inventory) {
-            return true;
+    private boolean inventoryFullAfterWrappedEvent(WrappedInventoryClickEvent event) {
+        // 合法的容器、点击事件，且操作的目标物品不是 null
+        if (null == event.inventory || event.slot < 0 || event.slot > outputCellIndex ||
+                null == event.inventory.getItem(event.slot)) {
+            return false;
         }
         for (int invIndex = 0; invIndex < outputCellIndex; invIndex++) {
-            if (null == inventory.getItem(invIndex)) {
-                return true;
+            boolean nowSlotIsNull = null == event.inventory.getItem(invIndex);
+            boolean isTargetSlot = event.slot == invIndex;
+            // (a && !b) || (!a && b) 条件可以简化为 a ^ b
+            if (nowSlotIsNull ^ isTargetSlot) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**

@@ -7,12 +7,15 @@ import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
+import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -88,8 +91,11 @@ public class ItemUtils {
      */
     public static void updateAttachData(ItemMeta itemMeta, SwItemAttachData attachData) {
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
-        persistentDataContainer.set(getWarpedKey(getNameFromDataContainer(persistentDataContainer)),
-                SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
+        String nameFromDataContainer = getNameFromDataContainer(persistentDataContainer);
+        if (StringUtils.isBlank(nameFromDataContainer)) {
+            throw new SwException(ConfigManager.getConfiguredMsg("unknown_item"));
+        }
+        persistentDataContainer.set(getWarpedKey(nameFromDataContainer), SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
     }
 
     /**
@@ -107,7 +113,11 @@ public class ItemUtils {
             return Optional.empty();
         }
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
-        NamespacedKey warpedItemName = getWarpedKey(getNameFromDataContainer(persistentDataContainer));
+        String nameFromDataContainer = getNameFromDataContainer(persistentDataContainer);
+        if (StringUtils.isBlank(nameFromDataContainer)) {
+            return Optional.empty();
+        }
+        NamespacedKey warpedItemName = getWarpedKey(nameFromDataContainer);
         SwItemAttachData attachData = persistentDataContainer.get(warpedItemName, SwItemAttachData.EMPTY_ATTACH_DATA);
         return Optional.ofNullable(attachData);
     }
@@ -140,6 +150,7 @@ public class ItemUtils {
     /**
      * 从 Container 中获取道具名称，预期名称只有一个，存在多个时抛异常
      */
+    @Nullable
     private static String getNameFromDataContainer(PersistentDataContainer container) {
         Set<NamespacedKey> keys = container.getKeys();
         String res = null;
