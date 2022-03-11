@@ -1,13 +1,16 @@
 package fun.nekomc.sw.listener;
 
 import cn.hutool.core.lang.Assert;
-import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +18,6 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -48,8 +50,6 @@ public abstract class AbstractComposeGui implements Listener {
      */
     private final Map<Integer, ItemsTypeEnum> slotTypeRule;
 
-    private final HashMap<Player, Integer> playerTasks;
-
     /**
      * 输出格子的编号，以铁砧为例，outputCellIndex 为 2
      */
@@ -61,7 +61,6 @@ public abstract class AbstractComposeGui implements Listener {
         this.invSize = invType.getDefaultSize();
         this.outputCellIndex = outputCellIndex;
         slotTypeRule = new HashMap<>(outputCellIndex);
-        playerTasks = new HashMap<>();
     }
 
     /**
@@ -72,7 +71,7 @@ public abstract class AbstractComposeGui implements Listener {
      */
     @EventHandler
     public void onInventoryClosed(InventoryCloseEvent event) {
-        if (cannotHandleView(event)) {
+        if (dontCareInventory(event)) {
             return;
         }
         Player targetPlayer = (Player) event.getPlayer();
@@ -100,7 +99,7 @@ public abstract class AbstractComposeGui implements Listener {
      */
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (cannotHandleView(event)) {
+        if (dontCareInventory(event)) {
             return;
         }
         Set<Integer> slots = event.getRawSlots();
@@ -119,40 +118,50 @@ public abstract class AbstractComposeGui implements Listener {
      * @param event 点击事件
      */
     @EventHandler
-    public void onInventoryClicked(InventoryClickEvent event) {
-        if (cannotHandleView(event)) {
+    public void dispatchClickEvent(InventoryClickEvent event) {
+        if (dontCareInventory(event)) {
             return;
         }
-        // 点击界外，不进行处理
-        int clickSlot = event.getRawSlot();
-        if (clickSlot < 0) {
-            return;
-        }
-        Inventory inventory = event.getInventory();
-        // 点击了目标物品时，执行实际强化逻辑
-        if (outputCellIndex == clickSlot) {
-            ItemStack targetItem = generateStrengthItem(inventory);
-            consume(inventory);
-            inventory.setItem(outputCellIndex, targetItem);
-            return;
-        }
-        // 让其他该死的事件见鬼去吧，编写和维护都太 TM 麻烦
-        // 取消玩家旧的任务
         Player player = (Player) event.getWhoClicked();
-        Integer playerOldTask = playerTasks.get(player);
-        BukkitScheduler scheduler = StrengthenWeapon.server().getScheduler();
-        if (null != playerOldTask) {
-            scheduler.cancelTask(playerOldTask);
+        Inventory targetInventory = event.getInventory();
+        // 点击位置
+        int slot = event.getRawSlot();
+        // 点击界外，不进行处理
+        if (slot < 0) {
+            return;
         }
-        // 记录玩家将要执行的任务
-        Integer playerNowTask = scheduler.scheduleSyncDelayedTask(StrengthenWeapon.getInstance(), () -> {
-            // 通过校验时，生成预览物品供展示
-            if (checkRecipe(inventory)) {
-                inventory.setItem(outputCellIndex, generatePreviewItem(inventory));
-            }
-            playerTasks.remove(player);
-        }, 2L);
-        playerTasks.put(player, playerNowTask);
+        boolean leftClick = event.isLeftClick();
+        // 包装事件（如果存在更多处理分支则考虑将事件拆分后扔到全局，拆出监听器单独处理）
+        WrappedInventoryClickEvent wrappedEvent = WrappedInventoryClickEvent.builder()
+                .clickPlayer(player)
+                .slot(slot)
+                .offset(slot - outputCellIndex)
+                .leftClick(leftClick)
+                .inventory(targetInventory)
+                .event(event).build();
+
+        // 事件重分发：吃掉 shift + 点击事件
+        if (event.getClick().isShiftClick()) {
+            event.setCancelled(true);
+            return;
+        }
+        // 不是点击事件的情况
+        if (!event.isRightClick() && !event.isLeftClick()) {
+            return;
+        }
+        // 事件重分发：点击背包
+        if (slot > outputCellIndex) {
+            onClickBag(wrappedEvent);
+            return;
+        }
+        // 事件重分发：点击容器
+        onClickInventory(wrappedEvent);
+    }
+
+    /**
+     * 点击背包事件
+     */
+    public void onClickBag(WrappedInventoryClickEvent wrapped) {
     }
 
     /**
@@ -161,7 +170,7 @@ public abstract class AbstractComposeGui implements Listener {
      * @param inventoryEvent 指定的容器事件
      * @return 是否能处理，即与注册的容器类型匹配且标题匹配
      */
-    protected boolean cannotHandleView(InventoryEvent inventoryEvent) {
+    protected boolean dontCareInventory(InventoryEvent inventoryEvent) {
         if (null == inventoryEvent) {
             return true;
         }
@@ -172,14 +181,40 @@ public abstract class AbstractComposeGui implements Listener {
     }
 
     /**
-     * 声明指定的窗格要限制的物品类型
-     *
-     * @param slot     输入端窗格编号
-     * @param typeEnum 物品类型
+     * 点击容器事件
      */
-    protected void registerCheckRule(int slot, ItemsTypeEnum typeEnum) {
-        Assert.isTrue(slot < outputCellIndex, "slot cannot greater than outputCellIndex");
-        slotTypeRule.put(slot, typeEnum);
+    public void onClickInventory(WrappedInventoryClickEvent wrapped) {
+        // 点击容器后，清空输出格窗
+        wrapped.inventory.setItem(outputCellIndex, null);
+        // 点击输出格窗，取消事件，进行自定义处理
+        if (wrapped.slot == outputCellIndex) {
+            wrapped.cancelEvent();
+            // 不满足配方要求，不处理
+            if (!checkRecipe(wrapped.inventory)) {
+                return;
+            }
+            ItemStack strengthened = generateStrengthItem(wrapped.inventory);
+            consume(wrapped.inventory);
+            wrapped.event.getView().setCursor(strengthened);
+            return;
+        }
+        ItemStack cursorItem = wrapped.event.getCursor();
+        //检查鼠标中是否为空气
+        boolean cursorIsAir = (cursorItem == null || cursorItem.getType() == Material.AIR);
+        // 空鼠标点击输入格窗，mojang 处理
+        if (cursorIsAir) {
+            return;
+        }
+        // 鼠标不为空，则取消事件排除干扰，进行自定义处理
+        wrapped.cancelEvent();
+        // 交换鼠标和目标窗格中的物品
+        ItemStack itemInSlot = wrapped.inventory.getItem(wrapped.slot);
+        wrapped.event.getView().setCursor(itemInSlot);
+        wrapped.inventory.setItem(wrapped.slot, cursorItem);
+        // 生成预览物品
+        if (checkRecipe(wrapped.inventory)) {
+            wrapped.inventory.setItem(outputCellIndex, generatePreviewItem(wrapped.inventory));
+        }
     }
 
     /**
@@ -209,7 +244,7 @@ public abstract class AbstractComposeGui implements Listener {
     }
 
     /**
-     * 遍历注册的合成规则 Map，从每个输入格窗中减掉一个物品（不校验物品内容）
+     * 遍历注册的合成规则 Map，从每个输入窗格中减掉一个物品（不校验物品内容）
      *
      * @param targetInv 要操作的容器
      * @throws SwException 操作无法完成时抛出，比如容器为空，输入格窗为空等
@@ -234,6 +269,17 @@ public abstract class AbstractComposeGui implements Listener {
     }
 
     /**
+     * 声明指定的窗格要限制的物品类型
+     *
+     * @param slot     输入端窗格编号
+     * @param typeEnum 物品类型
+     */
+    protected void registerCheckRule(int slot, ItemsTypeEnum typeEnum) {
+        Assert.isTrue(slot < outputCellIndex, "slot cannot greater than outputCellIndex");
+        slotTypeRule.put(slot, typeEnum);
+    }
+
+    /**
      * 根据当前容器中物品生成预览用物品
      * 注意，该物品不应该被玩家通过任何方法获得，否则有被玩家利用漏洞进行刷物品的风险
      *
@@ -249,4 +295,48 @@ public abstract class AbstractComposeGui implements Listener {
      * @return 实际给到玩家的物品
      */
     protected abstract ItemStack generateStrengthItem(@NotNull Inventory inventory);
+
+    /**
+     * 对原始容器点击事件的包装
+     * 当前点击事件的划分粒度太粗，进行重新划分以细化
+     */
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    protected static class WrappedInventoryClickEvent {
+        /**
+         * 被包装的原始事件
+         */
+        InventoryClickEvent event;
+        /**
+         * 点击的窗格索引
+         */
+        int slot;
+        /**
+         * 点击的位置与输出位置的偏移，以铁砧为例：
+         * offset=0 表示点击的为输出格窗
+         * offset<0 表示点击的为输入端，slot 可能为 0 或 1
+         * offset>0 则表示点击的为玩家背包
+         */
+        int offset;
+        /**
+         * 触发点击的玩家
+         */
+        Player clickPlayer;
+        /**
+         * 操作的目标容器对象
+         */
+        Inventory inventory;
+        /**
+         * 左键点击
+         */
+        boolean leftClick;
+
+        /**
+         * 取消该事件
+         */
+        public void cancelEvent() {
+            event.setCancelled(true);
+        }
+    }
 }
