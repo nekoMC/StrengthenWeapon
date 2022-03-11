@@ -141,7 +141,9 @@ public abstract class AbstractComposeGui implements Listener {
         Player player = (Player) event.getWhoClicked();
         Integer playerOldTask = playerTasks.get(player);
         BukkitScheduler scheduler = StrengthenWeapon.server().getScheduler();
-        scheduler.cancelTask(playerOldTask);
+        if (null != playerOldTask) {
+            scheduler.cancelTask(playerOldTask);
+        }
         // 记录玩家将要执行的任务
         Integer playerNowTask = scheduler.scheduleSyncDelayedTask(StrengthenWeapon.getInstance(), () -> {
             // 通过校验时，生成预览物品供展示
