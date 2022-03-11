@@ -2,9 +2,9 @@ package fun.nekomc.sw.listener;
 
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
+import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
@@ -15,7 +15,6 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +46,7 @@ public abstract class AbstractComposeGui implements Listener {
     /**
      * 每个 slot 对物品类型的要求
      */
-    private final HashMap<Integer, ItemsTypeEnum> slotTypeRule;
+    private final Map<Integer, ItemsTypeEnum> slotTypeRule;
 
     private final HashMap<Player, Integer> playerTasks;
 
@@ -125,10 +124,18 @@ public abstract class AbstractComposeGui implements Listener {
             return;
         }
         // 点击界外，不进行处理
-        if (event.getRawSlot() < 0) {
+        int clickSlot = event.getRawSlot();
+        if (clickSlot < 0) {
             return;
         }
-        // TODO: 将预览物品替换成实际物品，消耗掉合成用物品
+        Inventory inventory = event.getInventory();
+        // 点击了目标物品时，执行实际强化逻辑
+        if (outputCellIndex == clickSlot) {
+            ItemStack targetItem = generateStrengthItem(inventory);
+            consume(inventory);
+            inventory.setItem(outputCellIndex, targetItem);
+            return;
+        }
         // 让其他该死的事件见鬼去吧，编写和维护都太 TM 麻烦
         // 取消玩家旧的任务
         Player player = (Player) event.getWhoClicked();
@@ -138,7 +145,6 @@ public abstract class AbstractComposeGui implements Listener {
         // 记录玩家将要执行的任务
         Integer playerNowTask = scheduler.scheduleSyncDelayedTask(StrengthenWeapon.getInstance(), () -> {
             // 通过校验时，生成预览物品供展示
-            Inventory inventory = event.getInventory();
             if (checkRecipe(inventory)) {
                 inventory.setItem(outputCellIndex, generatePreviewItem(inventory));
             }
@@ -201,7 +207,33 @@ public abstract class AbstractComposeGui implements Listener {
     }
 
     /**
+     * 遍历注册的合成规则 Map，从每个输入格窗中减掉一个物品（不校验物品内容）
+     *
+     * @param targetInv 要操作的容器
+     * @throws SwException 操作无法完成时抛出，比如容器为空，输入格窗为空等
+     */
+    protected void consume(Inventory targetInv) {
+        if (null == targetInv) {
+            throw new SwException("targetInv cannot be null");
+        }
+        for (Integer slot : slotTypeRule.keySet()) {
+            ItemStack item = targetInv.getItem(slot);
+            if (null == item) {
+                throw new SwException("cannot consume input slots");
+            }
+            int itemAmount = item.getAmount();
+            if (itemAmount == 1) {
+                targetInv.setItem(slot, null);
+            } else {
+                item.setAmount(itemAmount - 1);
+                targetInv.setItem(slot, item);
+            }
+        }
+    }
+
+    /**
      * 根据当前容器中物品生成预览用物品
+     * 注意，该物品不应该被玩家通过任何方法获得，否则有被玩家利用漏洞进行刷物品的风险
      *
      * @param inventory 容器
      * @return 预览用物品，仅用于展示

@@ -2,6 +2,7 @@ package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
+import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.service.StrengthenService;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigManager;
@@ -38,6 +39,9 @@ public class StrengthAnvilMenuListener extends AbstractComposeGui implements Lis
 
     public StrengthAnvilMenuListener() {
         super(InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle(), 2);
+        // 注册校验规则
+        registerCheckRule(0, ItemsTypeEnum.BLANK);
+        registerCheckRule(1, ItemsTypeEnum.STRENGTHEN_STONE);
     }
 
 //    /**
@@ -186,22 +190,8 @@ public class StrengthAnvilMenuListener extends AbstractComposeGui implements Lis
             swStrengthenStoneConfigDto.setChance(50);
             // ===================================
             swResult = service.strengthen(player, swWeapon, swStrengthenStoneConfigDto, false);
-
-            anvilInv.setItem(SW_WEAPON_INDEX, consumeItem(swWeapon));
-            anvilInv.setItem(SW_STONE_INDEX, consumeItem(swStone));
         }
         return swResult;
-    }
-
-    private ItemStack consumeItem(@NotNull ItemStack itemStack) {
-        ItemStack resStack = itemStack.clone();
-        int amount = itemStack.getAmount();
-        if (amount > 1) {
-            resStack.setAmount(amount - 1);
-        } else {
-            resStack = null;
-        }
-        return resStack;
     }
 
     @Override
