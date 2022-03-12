@@ -27,7 +27,7 @@ public class SwItemAttachData implements PersistentDataType<String, SwItemAttach
      * 强化、洗练均为 0 级的默认数据信息
      * 不要修改其中的值
      */
-    public static final SwItemAttachData LVL0_ATTACH_DATA = new SwItemAttachData();
+    public static final SwItemAttachData LVL0_ATTACH_DATA = new SwItemAttachData(0, 0);
 
     /**
      * 数据均为 null 的默认数据信息，用作强化洗脸材料的数据

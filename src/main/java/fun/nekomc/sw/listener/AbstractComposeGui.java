@@ -182,6 +182,7 @@ public abstract class AbstractComposeGui implements Listener {
 
     /**
      * 点击容器事件
+     * 事件整理思路（无关紧要的事件全取消）参考：https://github.com/WesJD/AnvilGUI
      */
     public void onClickInventory(WrappedInventoryClickEvent wrapped) {
         // 点击容器后，清空输出格窗
@@ -193,7 +194,11 @@ public abstract class AbstractComposeGui implements Listener {
             if (!checkRecipe(wrapped.inventory)) {
                 return;
             }
-            ItemStack strengthened = generateStrengthItem(wrapped.inventory);
+            // 执行强化，如果得到 null 则不处理
+            ItemStack strengthened = generateStrengthItem(wrapped);
+            if (null == strengthened) {
+                return;
+            }
             consume(wrapped.inventory);
             wrapped.event.getView().setCursor(strengthened);
             return;
@@ -213,7 +218,7 @@ public abstract class AbstractComposeGui implements Listener {
         wrapped.inventory.setItem(wrapped.slot, cursorItem);
         // 生成预览物品
         if (checkRecipe(wrapped.inventory)) {
-            wrapped.inventory.setItem(outputCellIndex, generatePreviewItem(wrapped.inventory));
+            wrapped.inventory.setItem(outputCellIndex, generatePreviewItem(wrapped));
         }
     }
 
@@ -280,21 +285,22 @@ public abstract class AbstractComposeGui implements Listener {
     }
 
     /**
-     * 根据当前容器中物品生成预览用物品
-     * 注意，该物品不应该被玩家通过任何方法获得，否则有被玩家利用漏洞进行刷物品的风险
+     * 根据当前容器中物品生成预览用物品，只要输入窗格的物品满足注册条件就会触发
+     * 预览用的物品用于描述本次强化的提示，比如成功率，无法强化原因等
      *
-     * @param inventory 容器
+     * @param wrapped 包装后的事件
      * @return 预览用物品，仅用于展示
      */
-    protected abstract ItemStack generatePreviewItem(@NotNull Inventory inventory);
+    protected abstract ItemStack generatePreviewItem(@NotNull WrappedInventoryClickEvent wrapped);
 
     /**
-     * 根据当前容器中物品生成实际强化后的物品
+     * 根据当前容器中物品生成实际强化后的物品，返回 null 时取消本次强化
+     * 返回其他物品时，会覆盖掉预览物品
      *
-     * @param inventory 容器
+     * @param wrapped 包装后的事件
      * @return 实际给到玩家的物品
      */
-    protected abstract ItemStack generateStrengthItem(@NotNull Inventory inventory);
+    protected abstract ItemStack generateStrengthItem(@NotNull WrappedInventoryClickEvent wrapped);
 
     /**
      * 对原始容器点击事件的包装

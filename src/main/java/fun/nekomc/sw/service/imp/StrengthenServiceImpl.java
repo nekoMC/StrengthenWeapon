@@ -20,27 +20,10 @@ public class StrengthenServiceImpl implements StrengthenService {
     }
 
     @Override
-    public ItemStack giveStrengthBow(int amount) {
-
-        return dao.giveStrengthenBow(1);
-    }
-
-    @Override
-    public ItemStack giveStrengthenStone(int amount, int level) {
-        return dao.giveStrengthenStone(amount, level);
-    }
-
-
-    @Override
     public ItemStack strengthen(Player player, ItemStack itemStack, SwStrengthenStoneConfigDto swStrengthenStoneConfigDto, boolean isAdmin) {
         boolean isSafe = false;
         boolean isSuccess = strengthenSuccess(swStrengthenStoneConfigDto.getChance());
         return dao.strengthen(player, itemStack, isSuccess || isAdmin, isSafe);
-    }
-
-    @Override
-    public ItemStack strengthenSuccessResult(ItemStack swWeapon, ItemStack swStone) {
-        return dao.strengthenSuccessResult(swWeapon, swStone);
     }
 
     private boolean strengthenSuccess(int chance) {

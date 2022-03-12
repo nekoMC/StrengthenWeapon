@@ -1,5 +1,6 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.StrengthenItem;
@@ -18,6 +19,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 操作道具数据的工具类
@@ -26,27 +28,6 @@ import java.util.*;
  */
 @UtilityClass
 public class ItemUtils {
-
-    /**
-     * 重设 SW 道具的强化等级（修改 lore 第一行文案）
-     *
-     * @param lore         原 lore
-     * @param strengthItem 要操作的 SW 道具对象
-     * @param level        新的强化等级
-     */
-    public static void setItemLevel(List<String> lore, StrengthenItem strengthItem, int level) {
-        lore.set(0, strengthItem.getLevelName() + level);
-    }
-
-    /**
-     * 获取 SW 道具名（即 lore 最后一项）
-     *
-     * @param lore 解释文案列表
-     * @return SW 道具名
-     */
-    public static String getItemName(List<String> lore) {
-        return lore.get(lore.size() - 1);
-    }
 
     /**
      * 通过 ItemConfigDto 构建道具
@@ -65,7 +46,6 @@ public class ItemUtils {
         // Meta
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
         meta.setDisplayName(itemConfig.getDisplayName());
-        meta.setLore(itemConfig.getLore());
         meta.setUnbreakable(itemConfig.isUnbreakable());
         // Meta - 附魔、属性修改
         meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
@@ -78,6 +58,9 @@ public class ItemUtils {
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
         persistentDataContainer.set(getWarpedKey(itemConfig.getName()),
                 SwItemAttachData.EMPTY_ATTACH_DATA, itemDefaultAttachData);
+        // 包装 lore 信息
+        List<String> replacedLore = replaceLore(itemConfig.getLore(), itemDefaultAttachData);
+        meta.setLore(replacedLore);
 
         itemStack.setItemMeta(meta);
         return Optional.of(itemStack);
@@ -96,6 +79,15 @@ public class ItemUtils {
             throw new SwException(ConfigManager.getConfiguredMsg("unknown_item"));
         }
         persistentDataContainer.set(getWarpedKey(nameFromDataContainer), SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
+        Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(nameFromDataContainer);
+        // 配置文件内容缺失时，不进行后续处理
+        if (!itemConfigOptional.isPresent()) {
+            MsgUtils.consoleMsg("配置项缺失，请检查道具[%s]的配置", nameFromDataContainer);
+            return;
+        }
+        // 更新 lore 信息
+        List<String> replacedLore = replaceLore(itemConfigOptional.get().getLore(), attachData);
+        itemMeta.setLore(replacedLore);
     }
 
     /**
@@ -164,6 +156,22 @@ public class ItemUtils {
             }
         }
         return res;
+    }
+
+    /**
+     * 使用物品内标签的内容替换 Lore
+     */
+    private static List<String> replaceLore(List<String> originLore, SwItemAttachData attachData) {
+        Map<String, Object> attachDataMap = BeanUtil.beanToMap(attachData, true, true);
+        List<String> toReplace = originLore;
+        for (Map.Entry<String, Object> kvEntry : attachDataMap.entrySet()) {
+            String key = kvEntry.getKey();
+            String val = kvEntry.getValue().toString();
+            toReplace = toReplace.stream()
+                    .map(lore -> lore.replace("${" + key + "}", val))
+                    .collect(Collectors.toList());
+        }
+        return toReplace;
     }
 
     /**

@@ -29,7 +29,7 @@ public class SwBowListener implements Listener {
             if (event.getEntity() instanceof Player) {
                 if (event.getBow() != null && event.getBow().getItemMeta() != null
                         && event.getBow().getItemMeta().getLore() != null) {
-                    // 这把弓如果是认证的连发弓，TODO：已恢复强化功能，如果自定义附魔行不通则重构这里
+                    // 这把弓如果是认证的连发弓，TODO：如果自定义附魔行不通则依赖本处实现
                     Optional<SwItemAttachData> swBowOpt = ItemUtils.getAttachData(event.getBow());
                     if(!swBowOpt.isPresent()) {
                         return;

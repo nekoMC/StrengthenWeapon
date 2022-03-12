@@ -1,15 +1,16 @@
 message:
-  unsupported_msg: 不支持的用法
+  unsupported_msg: 不支持的用法，使用 sw help 获取帮助
   reloaded: 配置文件已重新读取
   no_auth: 您没有权限执行该指令
   not_player: 该指令只能被玩家执行
-  grammar_error: 语法错误，请检查指令是否正确
+  grammar_error: 语法错误，使用 sw help 获取帮助
   unknown_item: 不存在的道具
   config_error: 无法解析配置，请检查配置文件
   unknown_player: 玩家不存在
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
-    §a§l/sw §e打开强化菜单
+    §a§l/sw refine [<玩家>] §e打开洗炼菜单
+    §a§l/sw strengthen [<玩家>] §e打开强化菜单
     §a§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
     §a§l/sw help §e显示本帮助信息
 

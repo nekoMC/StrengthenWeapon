@@ -2,11 +2,10 @@ sw_bow:
   type: BLANK
   displayName: §b[强化弓]
   name: sw_bow
-  levelName: §b等级:+
-  level: 1
   lore:
     - §a每强化一级，可以射出一根额外的箭。
-    - §bline 2
+    - §b洗炼等级：§4${ref_lvl}
+    - §b强化等级：§4${str_lvl}
   material: BOW
   unbreakable: true
   attributes:
@@ -21,20 +20,8 @@ sw_stone:
   type: STRENGTHEN_STONE
   displayName: §b[强化石]
   name: sw_stone
-  levelName: '§b等级:'
-  level: 0
   lore:
     - §aline 1
     - §bline 2
   material: RAW_COPPER
-  chance:
-    - 10
-    - 20
-    - 30
-    - 40
-    - 50
-    - 60
-    - 70
-    - 80
-    - 90
-    - 99
+  chance: 50

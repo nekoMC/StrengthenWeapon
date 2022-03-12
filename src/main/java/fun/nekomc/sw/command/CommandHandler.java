@@ -26,6 +26,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         // 构建指令树。根节点：sw
         commandTree = new RootSwCommand().linkSubCmd(
                 // 一级节点：sw xx
+                new SwStrengthenCommand(),
+                new SwRefineCommand(),
                 new SwReloadCommand(),
                 new SwGiveCommand(),
                 new SwHelpCommand()
