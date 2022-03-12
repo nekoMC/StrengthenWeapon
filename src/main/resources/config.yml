@@ -16,3 +16,5 @@ message:
 
 strengthTitle: §c§l强化台
 refineTitle: §6§l洗炼台
+# 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
+enablePlayerEnchant: false

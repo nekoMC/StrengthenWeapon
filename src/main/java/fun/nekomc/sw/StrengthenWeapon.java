@@ -2,6 +2,7 @@ package fun.nekomc.sw;
 
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
+import fun.nekomc.sw.listener.ItemSecurityListener;
 import fun.nekomc.sw.listener.StrengthAnvilMenuListener;
 import fun.nekomc.sw.listener.SwBowListener;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
@@ -11,6 +12,7 @@ import fun.nekomc.sw.utils.Constants;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -20,15 +22,12 @@ import java.util.Objects;
  */
 public class StrengthenWeapon extends JavaPlugin {
 
-    private SwBowListener swBowListener;
-    private StrengthAnvilMenuListener strengthAnvilMenuListener;
-
     private static StrengthenWeapon instance = null;
 
     @Override
     public void onLoad() {
         this.saveDefaultConfig();
-        // Sonar 不推荐在成员方法中修改静态变量
+        // Sonar 不推荐在成员方法中直接修改静态变量
         setInstance(this);
     }
 
@@ -60,29 +59,41 @@ public class StrengthenWeapon extends JavaPlugin {
     public void onEnable() {
         // 初始化配置管理器
         ConfigManager.loadConfig(this.getDataFolder().getPath());
-        // 绑定指令解析器、设置指令 tab 联想
-        CommandHandler handler = CommandHandler.getInstance();
-        PluginCommand checkedPluginCommand = Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND));
-        checkedPluginCommand.setExecutor(handler);
-        checkedPluginCommand.setTabCompleter(handler);
-        //初始化并绑定监听器
-        swBowListener = new SwBowListener();
-//        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
-        getServer().getPluginManager().registerEvents(swBowListener, this);
-        strengthAnvilMenuListener = new StrengthAnvilMenuListener();
-        strengthAnvilMenuListener.setService(new StrengthenServiceImpl());
-        getServer().getPluginManager().registerEvents(strengthAnvilMenuListener, this);
-        /*damageListener = new OnDamageListener();
-        damageListener.setPlugin(this);
-        damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());
-        getServer().getPluginManager().registerEvents(damageListener,this);*/
+        loadCommandHandler();
+        loadListeners();
     }
 
     @Override
     public void reloadConfig() {
         super.reloadConfig();
         ConfigManager.loadConfig(this.getDataFolder().getPath());
-//        swBowListener.setStrengthenBow(factory.getStrengthenWeapons().get(WeaponsIndex.BOW.ordinal()));
-        /*damageListener.setDamageExtra(factory.getStrengthExtra().getDamageExtra());*/
+    }
+
+    // ========== private ==========
+
+    /**
+     * 绑定指令解析器、设置指令 tab 联想
+     */
+    private void loadCommandHandler() {
+        CommandHandler handler = CommandHandler.getInstance();
+        PluginCommand checkedPluginCommand = Objects.requireNonNull(Bukkit.getPluginCommand(Constants.BASE_COMMAND));
+        checkedPluginCommand.setExecutor(handler);
+        checkedPluginCommand.setTabCompleter(handler);
+    }
+
+    /**
+     * 初始化并绑定事件监听器
+     */
+    private void loadListeners() {
+        PluginManager pluginManager = getServer().getPluginManager();
+        // 连发弓支持
+        SwBowListener swBowListener = new SwBowListener();
+        pluginManager.registerEvents(swBowListener, this);
+        StrengthAnvilMenuListener strengthAnvilMenuListener = new StrengthAnvilMenuListener();
+        strengthAnvilMenuListener.setService(new StrengthenServiceImpl());
+        // 容器
+        pluginManager.registerEvents(strengthAnvilMenuListener, this);
+        // 防自定义附魔
+        pluginManager.registerEvents(new ItemSecurityListener(), this);
     }
 }

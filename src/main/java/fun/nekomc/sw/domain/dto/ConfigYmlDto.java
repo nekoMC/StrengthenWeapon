@@ -36,6 +36,11 @@ public class ConfigYmlDto implements Serializable {
     private String refineTitle;
 
     /**
+     * 是否允许玩家进行自定义附魔
+     */
+    private Boolean enablePlayerEnchant;
+
+    /**
      * 获取 message 中指定的消息内容
      *
      * @param key 键
