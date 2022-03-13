@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,9 +37,14 @@ public class ConfigYmlDto implements Serializable {
     private String refineTitle;
 
     /**
-     * 是否允许玩家进行自定义附魔
+     * 是否允许玩家对插件物品进行自定义附魔
      */
     private Boolean enablePlayerEnchant;
+
+    /**
+     * 自定义附魔配置
+     */
+    private List<EnchantmentConfigDto> enchantments;
 
     /**
      * 获取 message 中指定的消息内容

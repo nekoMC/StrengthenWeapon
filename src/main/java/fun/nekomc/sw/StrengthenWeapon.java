@@ -12,6 +12,8 @@ import fun.nekomc.sw.utils.Constants;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
