@@ -1,6 +1,8 @@
 package fun.nekomc.sw.enchant;
 
-import lombok.Getter;
+import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -10,7 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 自定义附魔，参考：https://github.com/Auxilor/EcoEnchants
@@ -18,44 +22,52 @@ import java.util.Set;
  *
  * @author Chiru
  */
+@Builder
 public abstract class AbstractSwEnchantment extends Enchantment implements Listener {
 
     /**
      * The materials of the targets.
      */
     @Getter
-    private final Set<Material> targetMaterials = new HashSet<>();
+    private final Set<Material> targetMaterials;
 
     /**
      * The display name of the enchantment.
      */
     @Getter
-    private String displayName;
+    private final String displayName;
 
     /**
      * The maximum level for the enchantment to be obtained naturally.
      */
-    private int maxLevel;
+    private final int maxLevel;
 
     /**
-     * The enchantments that conflict with this enchantment.
+     * The enchantments key that conflict with this enchantment.
      */
     @Getter
-    private Set<Enchantment> conflicts;
+    private final List<String> conflicts;
 
     /**
      * The description of the enchantment.
      */
     @Getter
-    private String description;
+    private final String description;
 
     /**
      * If the enchantment is enabled.
      */
-    private boolean enabled;
+    @Getter
+    private final boolean enabled;
 
-    public AbstractSwEnchantment(@NotNull NamespacedKey key) {
-        super(key);
+    protected AbstractSwEnchantment(@NotNull EnchantmentConfigDto config) {
+        super(new NamespacedKey(StrengthenWeapon.getInstance(), config.getKey()));
+        displayName = config.getDisplayName();
+        targetMaterials = config.getTargetMaterials().stream().map(Material::getMaterial).collect(Collectors.toSet());
+        maxLevel = config.getMaxLevel();
+        conflicts = config.getConflicts();
+        description = config.getDescription();
+        enabled = config.isEnabled();
     }
 
     @Override
@@ -81,11 +93,21 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
 
     @Override
     public boolean conflictsWith(@NotNull Enchantment other) {
-        return false;
+        return conflicts.contains(other.getKey().getKey());
     }
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
         return false;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj) && ((AbstractSwEnchantment) obj).displayName.equals(displayName);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
