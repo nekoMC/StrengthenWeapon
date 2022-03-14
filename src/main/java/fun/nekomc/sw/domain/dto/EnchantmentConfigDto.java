@@ -42,12 +42,20 @@ public class EnchantmentConfigDto implements Serializable {
     /**
      * The description of the enchantment.
      */
-    @Getter
     private String description;
 
     /**
      * If the enchantment is enabled.
      */
-    @Getter
     private boolean enabled;
+
+    /**
+     * 宝藏附魔？
+     */
+    private boolean treasure;
+
+    /**
+     * 每级附魔增加的属性值
+     */
+    private int addition;
 }

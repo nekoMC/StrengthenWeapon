@@ -44,7 +44,7 @@ public class ConfigYmlDto implements Serializable {
     /**
      * 自定义附魔配置
      */
-    private List<EnchantmentConfigDto> enchantments;
+    private Map<String, EnchantmentConfigDto> enchantments;
 
     /**
      * 获取 message 中指定的消息内容
