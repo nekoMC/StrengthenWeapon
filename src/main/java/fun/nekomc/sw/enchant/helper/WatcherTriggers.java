@@ -32,23 +32,26 @@ public class WatcherTriggers implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onArrowDamage(@NotNull final EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Arrow arrow)) {
+        if (!(event.getDamager() instanceof Arrow)) {
+            return;
+        }
+        Arrow arrow = (Arrow) event.getDamager();
+
+        if (!(event.getEntity() instanceof LivingEntity)) {
+            return;
+        }
+        LivingEntity victim = (LivingEntity) event.getDamager();
+
+        if (arrow.getShooter() == null) {
             return;
         }
 
-        if (!(event.getEntity() instanceof LivingEntity victim)) {
+        if (!(arrow.getShooter() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity attacker = (LivingEntity) ((Arrow) event.getDamager()).getShooter();
 
-        if (((Arrow) event.getDamager()).getShooter() == null) {
-            return;
-        }
-
-        if (!(((Arrow) event.getDamager()).getShooter() instanceof LivingEntity attacker)) {
-            return;
-        }
-
-        if (attacker instanceof Player) {
+        if (null == attacker || attacker instanceof Player) {
             return;
         }
 
@@ -64,21 +67,24 @@ public class WatcherTriggers implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onTridentDamage(@NotNull final EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Trident trident)) {
+        if (!(event.getDamager() instanceof Trident)) {
+            return;
+        }
+        Trident trident = (Trident) event.getDamager();
+
+        if (!(trident.getShooter() instanceof LivingEntity)) {
+            return;
+        }
+        LivingEntity attacker = (LivingEntity) trident.getShooter();
+
+        if (trident.getShooter() == null) {
             return;
         }
 
-        if (!(((Trident) event.getDamager()).getShooter() instanceof LivingEntity attacker)) {
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
-
-        if (((Trident) event.getDamager()).getShooter() == null) {
-            return;
-        }
-
-        if (!(event.getEntity() instanceof LivingEntity victim)) {
-            return;
-        }
+        LivingEntity victim = (LivingEntity) event.getEntity();
 
         ItemStack item = trident.getItem();
 
@@ -93,13 +99,15 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onMeleeAttack(@NotNull final EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof LivingEntity attacker)) {
+        if (!(event.getDamager() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity attacker = (LivingEntity) event.getDamager();
 
-        if (!(event.getEntity() instanceof LivingEntity victim)) {
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity victim = (LivingEntity) event.getEntity();
 
         if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) {
             return;
@@ -153,8 +161,8 @@ public class WatcherTriggers implements Listener {
 
         ItemStack item = shooter.getEquipment().getItemInMainHand();
 
-        if (projectile instanceof Trident trident) {
-            item = trident.getItem();
+        if (projectile instanceof Trident) {
+            item = ((Trident) projectile).getItem();
         }
 
         EnchantHelper.getEnchantsOnItem(item)
@@ -172,9 +180,10 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        if (!(event.getEntity() instanceof LivingEntity victim)) {
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity victim = (LivingEntity) event.getEntity();
 
         EnchantHelper.getEnchantsOnArmor(victim)
                 .forEach((enchant, level) -> enchant.onFallDamage(victim, level, event));
@@ -187,13 +196,15 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onArrowHit(@NotNull final ProjectileHitEvent event) {
-        if (!(event.getEntity().getShooter() instanceof LivingEntity shooter)) {
+        if (!(event.getEntity() instanceof Arrow)) {
             return;
         }
+        Arrow arrow = (Arrow) event.getEntity();
 
-        if (!(event.getEntity() instanceof Arrow arrow)) {
+        if (!(arrow.getShooter() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity shooter = (LivingEntity) arrow.getShooter();
 
         if (event.getEntity().getShooter() == null) {
             return;
@@ -210,15 +221,17 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onTridentHit(@NotNull final ProjectileHitEvent event) {
-        if (!(event.getEntity().getShooter() instanceof LivingEntity shooter)) {
+        if (!(event.getEntity() instanceof Trident)) {
             return;
         }
+        Trident trident = (Trident) event.getEntity();
 
-        if (event.getEntity().getShooter() == null) {
+        if (!(trident.getShooter() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity shooter = (LivingEntity) trident.getShooter();
 
-        if (!(event.getEntity() instanceof Trident trident)) {
+        if (shooter == null) {
             return;
         }
 
@@ -249,9 +262,10 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onDamageWearingArmor(@NotNull final EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof LivingEntity victim)) {
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
+        LivingEntity victim = (LivingEntity) event.getEntity();
 
         EnchantHelper.getEnchantsOnArmor(victim)
                 .forEach((enchant, level) -> enchant.onDamageWearingArmor(victim, level, event));
@@ -282,11 +296,12 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onTridentLaunch(@NotNull final ProjectileLaunchEvent event) {
-        if (!(event.getEntity() instanceof Trident trident)) {
+        if (!(event.getEntity() instanceof Trident)) {
             return;
         }
+        Trident trident = (Trident) event.getEntity();
 
-        if (!(event.getEntity().getShooter() instanceof LivingEntity)) {
+        if (!(trident.getShooter() instanceof LivingEntity)) {
             return;
         }
 
@@ -305,9 +320,10 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onDeflect(@NotNull final EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player blocker)) {
+        if (!(event.getEntity() instanceof Player)) {
             return;
         }
+        Player blocker = (Player) event.getEntity();
 
         LivingEntity attacker = ItemUtils.tryAsPlayer(event.getDamager());
 

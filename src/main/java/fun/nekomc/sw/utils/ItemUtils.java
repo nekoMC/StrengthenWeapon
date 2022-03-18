@@ -163,13 +163,15 @@ public class ItemUtils {
     }
 
     public Player tryAsPlayer(Entity entity) {
-        if (entity instanceof Projectile projectile) {
+        if (entity instanceof Projectile) {
+            Projectile projectile = (Projectile) entity;
             return (Player) projectile.getShooter();
         }
-        if (entity instanceof Player player) {
-            return player;
+        if (entity instanceof Player) {
+            return (Player) entity;
         }
-        if (entity instanceof Tameable tameable) {
+        if (entity instanceof Tameable) {
+            Tameable tameable = (Tameable) entity;
             return (Player) tameable.getOwner();
         }
         return null;

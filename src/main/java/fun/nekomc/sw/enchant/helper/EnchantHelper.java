@@ -418,7 +418,8 @@ public class EnchantHelper {
      */
     public static void register(@NotNull final Enchantment enchantment) {
         removeAndHandle(enchantment, byNameMap -> {
-            if (enchantment instanceof AbstractSwEnchantment swEnchantment) {
+            if (enchantment instanceof AbstractSwEnchantment) {
+                AbstractSwEnchantment swEnchantment = (AbstractSwEnchantment) enchantment;
                 byNameMap.put(swEnchantment.getConfig().getDisplayName(), enchantment);
             }
         });
