@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +43,7 @@ public class ConfigYmlDto implements Serializable {
     /**
      * 自定义附魔配置
      */
-    private Map<String, EnchantmentConfigDto> enchantments;
+    private Map<String, EnchantmentConfigDto> enchants;
 
     /**
      * 获取 message 中指定的消息内容

@@ -13,9 +13,13 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -135,6 +139,40 @@ public class ItemUtils {
      */
     public boolean isSwItem(ItemStack stack) {
         return getAttachData(stack).isPresent();
+    }
+
+    /**
+     * Get the bow from an arrow.
+     *
+     * @param arrow The arrow.
+     * @return The bow, or null if no bow.
+     */
+    @Nullable
+    public static ItemStack getArrowsBow(@NotNull final Arrow arrow) {
+        List<MetadataValue> values = arrow.getMetadata("shot-from");
+
+        if (values.isEmpty()) {
+            return null;
+        }
+
+        if (!(values.get(0).value() instanceof ItemStack)) {
+            return null;
+        }
+
+        return (ItemStack) values.get(0).value();
+    }
+
+    public Player tryAsPlayer(Entity entity) {
+        if (entity instanceof Projectile projectile) {
+            return (Player) projectile.getShooter();
+        }
+        if (entity instanceof Player player) {
+            return player;
+        }
+        if (entity instanceof Tameable tameable) {
+            return (Player) tameable.getOwner();
+        }
+        return null;
     }
 
     // ========== private ========== //

@@ -12,7 +12,6 @@ import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
@@ -139,71 +138,4 @@ public class ConfigManager {
         return configYmlDto;
     }
 
-// 备用，用作参考
-//
-//    /**
-//     * 初始化所有强化物品以及强化石
-//     */
-//    public void initItems() {
-//        StrengthenBow strengthenBow = new StrengthenBow();
-//        initStrengthenItem(strengthenBow);
-//        strengthenWeapons.add(strengthenBow);
-//
-//        strengthenStones = initStrengthenStone();
-//        plugin.consoleMsg("§6§l配置文件读取成功！");
-//    }
-//
-//    /**
-//     * 初始化强化物品
-//     * <p>
-//     */
-//    private void initStrengthenItem(StrengthenItem item) {
-//        String configName = item.getConfigName();
-//
-//        item.setDisplayName(yamlConfigFileLoader.getString(configName + ".displayName"));
-//        item.setName(yamlConfigFileLoader.getString(configName + ".name"));
-//        item.setLore(yamlConfigFileLoader.getStringList(configName + ".lore"));
-//        item.setLevelName(yamlConfigFileLoader.getString(configName + ".levelName"));
-//        item.setLevel(yamlConfigFileLoader.getInt(configName + ".level"));
-//        item.setMaterial(yamlConfigFileLoader.getString(configName + ".material"));
-//
-//    }
-//
-//    /**
-//     * 初始化强化石
-//     */
-//    private List<StrengthenStone> initStrengthenStone() {
-//        List<StrengthenStone> stones = new ArrayList<>();
-//
-//
-//        String configName = StrengthenStone.STONE_NAME;
-//        List<Integer> chances = yamlConfigFileLoader.getIntegerList(configName + ".chance");
-//        // 根据 chance 的配置生成不同强化石
-//        for (int i = 0; i < chances.size(); i++) {
-//            StrengthenStone stone = new StrengthenStone();
-//
-//            stone.setChance(chances.get(i));
-//            initStrengthenItem(stone);
-//            stone.setLevel(i + 1);
-//            stones.add(stone);
-//        }
-//
-//        return stones;
-//    }
-//
-//    public List<StrengthenItem> getStrengthenWeapons() {
-//        return strengthenWeapons;
-//    }
-//
-//    public void setStrengthenWeapons(List<StrengthenItem> strengthenWeapons) {
-//        this.strengthenWeapons = strengthenWeapons;
-//    }
-//
-//    public List<StrengthenStone> getStrengthenStones() {
-//        return strengthenStones;
-//    }
-//
-//    public void setStrengthenStones(List<StrengthenStone> strengthenStones) {
-//        this.strengthenStones = strengthenStones;
-//    }
 }

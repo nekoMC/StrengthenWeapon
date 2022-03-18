@@ -14,6 +14,19 @@ message:
     §a§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
     §a§l/sw help §e显示本帮助信息
 
+# 自定义附魔
+enchants:
+  # 注释掉整个配置即可禁用一个附魔
+  ARROW_RAIN:
+    key: ARROW_RAIN
+    targetMaterials: BOW
+    displayName: §b箭雨
+    maxLevel: 3
+    conflicts: INFINITY
+    description: 没什么卵用
+    treasure: true
+    addition: 1
+
 strengthTitle: §c§l强化台
 refineTitle: §6§l洗炼台
 # 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等

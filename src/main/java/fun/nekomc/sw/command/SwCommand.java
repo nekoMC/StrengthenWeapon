@@ -1,7 +1,6 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;

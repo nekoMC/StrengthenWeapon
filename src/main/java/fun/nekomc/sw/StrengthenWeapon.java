@@ -1,5 +1,8 @@
 package fun.nekomc.sw;
 
+import cn.hutool.core.collection.CollUtil;
+import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
+import fun.nekomc.sw.enchant.ArrowRainEnchantment;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
@@ -9,15 +12,17 @@ import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigManager;
 
 import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * @author ourange
@@ -59,9 +64,13 @@ public class StrengthenWeapon extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // 初始化配置管理器
+        // 配置管理器
         ConfigManager.loadConfig(this.getDataFolder().getPath());
+        // 指令解析器
         loadCommandHandler();
+        // 自定义附魔
+        loadCustomEnchantments();
+        // 其他事件监听器
         loadListeners();
     }
 
@@ -97,5 +106,33 @@ public class StrengthenWeapon extends JavaPlugin {
         pluginManager.registerEvents(strengthAnvilMenuListener, this);
         // 防自定义附魔
         pluginManager.registerEvents(new ItemSecurityListener(), this);
+    }
+
+    /**
+     * 初始化自定义附魔
+     */
+    private void loadCustomEnchantments() {
+        Map<String, EnchantmentConfigDto> customEnchants = ConfigManager.getConfigYml().getEnchants();
+        if (CollUtil.isEmpty(customEnchants)) {
+            return;
+        }
+        PluginManager pluginManager = getServer().getPluginManager();
+        Set<String> configEnchants = customEnchants.keySet();
+        // 在这里声明全部自定义附魔的键
+        Stream.of(ArrowRainEnchantment.class)
+                // 注册要启用的附魔
+                .forEach(enchantClass -> {
+                    try {
+                        String enchantKey = (String) enchantClass.getField("ENCHANT_KEY").get(enchantClass);
+                        if (!configEnchants.contains(enchantKey)) {
+                            MsgUtils.consoleMsg("Unsupported enchant key: {}", enchantKey);
+                            return;
+                        }
+                        ArrowRainEnchantment enchantment = enchantClass.getConstructor().newInstance();
+                        pluginManager.registerEvents(enchantment, this);
+                    } catch (ReflectiveOperationException e) {
+                        MsgUtils.consoleMsg("Malformed Enchantment Class: {}", enchantClass);
+                    }
+                });
     }
 }

@@ -3,6 +3,8 @@ package fun.nekomc.sw.enchant;
 import cn.hutool.core.collection.CollUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
+import fun.nekomc.sw.enchant.helper.Watcher;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.utils.ConfigManager;
 import lombok.*;
@@ -13,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -20,9 +23,9 @@ import java.util.List;
  * created: 2022/3/13 20:32
  *
  * @author Chiru
+ * @see <a href="https://github.com/Auxilor/EcoEnchants">参考 EcoEnchants</a>
  */
-@Builder
-public abstract class AbstractSwEnchantment extends Enchantment implements Listener {
+public abstract class AbstractSwEnchantment extends Enchantment implements Listener, Watcher {
 
     @Getter
     private final String configKey;
@@ -30,6 +33,7 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
     protected AbstractSwEnchantment(@NotNull String key) {
         super(new NamespacedKey(StrengthenWeapon.getInstance(), key));
         this.configKey = key;
+        EnchantHelper.register(this);
     }
 
     @Override
@@ -85,10 +89,25 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
      */
     @NotNull
     public EnchantmentConfigDto getConfig() {
-        EnchantmentConfigDto enchantmentConfigDto = ConfigManager.getConfigYml().getEnchantments().get(configKey);
+        EnchantmentConfigDto enchantmentConfigDto = ConfigManager.getConfigYml().getEnchants().get(configKey);
         if (null == enchantmentConfigDto) {
             throw new ConfigurationException(ConfigManager.getConfiguredMsg("config_error"));
         }
         return enchantmentConfigDto;
+    }
+
+    // ========== FFF，已弃用还得实现 ========== //
+
+    @NotNull
+    @Override
+    @Deprecated
+    public String getName() {
+        return getKey().getKey();
+    }
+
+    @Override
+    @Deprecated
+    public boolean isCursed() {
+        return false;
     }
 }

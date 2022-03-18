@@ -1,7 +1,6 @@
 package fun.nekomc.sw.domain.dto;
 
 import lombok.Data;
-import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -43,11 +42,6 @@ public class EnchantmentConfigDto implements Serializable {
      * The description of the enchantment.
      */
     private String description;
-
-    /**
-     * If the enchantment is enabled.
-     */
-    private boolean enabled;
 
     /**
      * 宝藏附魔？
