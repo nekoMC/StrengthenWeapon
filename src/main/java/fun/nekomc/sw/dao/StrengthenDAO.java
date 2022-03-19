@@ -1,6 +1,5 @@
 package fun.nekomc.sw.dao;
 
-import fun.nekomc.sw.domain.StrengthenItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,23 +9,6 @@ import org.bukkit.inventory.ItemStack;
  * @author ourange
  */
 public interface StrengthenDAO {
-
-    /**
-     * 整一把弓
-     *
-     * @param count 堆叠数量
-     * @return 弓的 ItemStack
-     */
-    ItemStack giveStrengthenBow(int count);
-
-    /**
-     * 整个强化石
-     *
-     * @param count 堆叠数量
-     * @param level 强化等级，N级强化石
-     * @return 强化石的 ItemStack
-     */
-    ItemStack giveStrengthenStone(int count, int level);
 
     /**
      * 强化操作

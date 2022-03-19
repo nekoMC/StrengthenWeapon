@@ -1,9 +1,10 @@
-package fun.nekomc.sw.dto;
+package fun.nekomc.sw.domain.dto;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.Data;
 import org.bukkit.NamespacedKey;
@@ -25,7 +26,14 @@ import java.util.UUID;
  * @author Chiru
  */
 @Data
-public class SwItemConfigDto implements Serializable {
+public abstract class SwItemConfigDto implements Serializable {
+
+    /**
+     * 道具类型
+     *
+     * @see fun.nekomc.sw.domain.enumeration.ItemsTypeEnum
+     */
+    private String type;
 
     /**
      * 程序内部使用的道具名
@@ -69,7 +77,7 @@ public class SwItemConfigDto implements Serializable {
      */
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers() {
         Multimap<Attribute, AttributeModifier> multimapRes = ArrayListMultimap.create();
-        if (CollectionUtil.isEmpty(attributes)) {
+        if (CollUtil.isEmpty(attributes)) {
             return multimapRes;
         }
         // 构建附加属性
@@ -99,7 +107,7 @@ public class SwItemConfigDto implements Serializable {
      * @return Map<Enchantment, Integer> 对象
      */
     public Map<Enchantment, Integer> getEnchantMap() {
-        if (CollectionUtil.isEmpty(enchantments)) {
+        if (CollUtil.isEmpty(enchantments)) {
             return MapUtil.empty();
         }
         HashMap<Enchantment, Integer> enchantMap = new HashMap<>(enchantments.size());
@@ -108,6 +116,10 @@ public class SwItemConfigDto implements Serializable {
             String[] enchantNameAndLevel = enchantment.split(":");
             String enchantmentName = enchantNameAndLevel[0].toLowerCase();
             Enchantment targetEnchant = Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName));
+            if (null == targetEnchant) {
+                // 无法解析时，尝试作为自定义附魔进行解析
+                targetEnchant = Enchantment.getByKey(new NamespacedKey(StrengthenWeapon.getInstance(), enchantmentName));
+            }
             if (null == targetEnchant) {
                 throw new ConfigurationException("无法识别的附魔：" + enchantment);
             }

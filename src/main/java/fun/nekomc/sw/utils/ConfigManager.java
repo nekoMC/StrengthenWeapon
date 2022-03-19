@@ -1,13 +1,15 @@
 package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.dto.ConfigYmlDto;
-import fun.nekomc.sw.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.dto.ConfigYmlDto;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
+import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
@@ -16,10 +18,8 @@ import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * 全局配置管理器
@@ -29,13 +29,13 @@ import java.util.Optional;
  */
 @UtilityClass
 @Slf4j
-public class ConfigFactory {
+public class ConfigManager {
 
     /**
      * Yaml 加载器，此处需要指定加载器，否则报错
      * https://stackoverflow.com/questions/26463078/snakeyaml-class-not-found-exception
      */
-    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigFactory.class.getClassLoader()));
+    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigManager.class.getClassLoader()));
     private Map<String, SwItemConfigDto> swItemConfigMap;
     private ConfigYmlDto configYmlDto;
 
@@ -51,8 +51,24 @@ public class ConfigFactory {
         // 读取（生成） items.yml
         Map<String, Map<String, ?>> configYmlRawMap = loadConfigFile(rootPath, Constants.ITEMS_CONFIG_FILE_NAME, Map.class);
         // 将 Map 的值转 SwItemConfigDto 对象
-        swItemConfigMap = ServiceUtils.convertMapValue(configYmlRawMap,
-                raw -> BeanUtil.fillBeanWithMap(raw, new SwItemConfigDto(), true, true));
+        Map<String, SwItemConfigDto> newConfigMap = ServiceUtils.convertMapValue(configYmlRawMap, rawMap -> {
+            try {
+                // 根据配置项的 type 决定将该项解析成哪个实例
+                String itemType = Objects.requireNonNull(rawMap.get("type")).toString();
+                ItemsTypeEnum itemsTypeEnum = Objects.requireNonNull(ItemsTypeEnum.valueOf(itemType), "无法识别的 type");
+                Constructor<? extends SwItemConfigDto> configDtoConstructor =
+                        (Constructor<? extends SwItemConfigDto>) itemsTypeEnum.getTypeConfigClass().getConstructor();
+                SwItemConfigDto configDtoToFill = configDtoConstructor.newInstance();
+                return BeanUtil.fillBeanWithMap(rawMap, configDtoToFill, true, true);
+            } catch (Exception e) {
+                MsgUtils.consoleMsg("配置文件解析粗错：%s", e.getMessage());
+                return null;
+            }
+        });
+        // 如果解析结束后，存在为 null 的配置，说明配置文件有问题，不进行更新
+        if (!newConfigMap.containsValue(null)) {
+            swItemConfigMap = newConfigMap;
+        }
     }
 
     /**
@@ -61,7 +77,7 @@ public class ConfigFactory {
      * @return 配置文件中指定的道具列表
      */
     public static List<String> getItemNameList() {
-        if (CollectionUtil.isEmpty(swItemConfigMap)) {
+        if (CollUtil.isEmpty(swItemConfigMap)) {
             return ListUtil.empty();
         }
         return new ArrayList<>(swItemConfigMap.keySet());
@@ -74,7 +90,7 @@ public class ConfigFactory {
      * @return Optional 包装的 SwItemConfigDto 对象，可能为空
      */
     public static Optional<SwItemConfigDto> getItemConfig(String itemName) {
-        if (CollectionUtil.isEmpty(swItemConfigMap)) {
+        if (CollUtil.isEmpty(swItemConfigMap)) {
             return Optional.empty();
         }
         return Optional.ofNullable(swItemConfigMap.get(itemName));
@@ -110,71 +126,16 @@ public class ConfigFactory {
         }
     }
 
-// 备用，用作参考
-//
-//    /**
-//     * 初始化所有强化物品以及强化石
-//     */
-//    public void initItems() {
-//        StrengthenBow strengthenBow = new StrengthenBow();
-//        initStrengthenItem(strengthenBow);
-//        strengthenWeapons.add(strengthenBow);
-//
-//        strengthenStones = initStrengthenStone();
-//        plugin.consoleMsg("§6§l配置文件读取成功！");
-//    }
-//
-//    /**
-//     * 初始化强化物品
-//     * <p>
-//     */
-//    private void initStrengthenItem(StrengthenItem item) {
-//        String configName = item.getConfigName();
-//
-//        item.setDisplayName(yamlConfigFileLoader.getString(configName + ".displayName"));
-//        item.setName(yamlConfigFileLoader.getString(configName + ".name"));
-//        item.setLore(yamlConfigFileLoader.getStringList(configName + ".lore"));
-//        item.setLevelName(yamlConfigFileLoader.getString(configName + ".levelName"));
-//        item.setLevel(yamlConfigFileLoader.getInt(configName + ".level"));
-//        item.setMaterial(yamlConfigFileLoader.getString(configName + ".material"));
-//
-//    }
-//
-//    /**
-//     * 初始化强化石
-//     */
-//    private List<StrengthenStone> initStrengthenStone() {
-//        List<StrengthenStone> stones = new ArrayList<>();
-//
-//
-//        String configName = StrengthenStone.STONE_NAME;
-//        List<Integer> chances = yamlConfigFileLoader.getIntegerList(configName + ".chance");
-//        // 根据 chance 的配置生成不同强化石
-//        for (int i = 0; i < chances.size(); i++) {
-//            StrengthenStone stone = new StrengthenStone();
-//
-//            stone.setChance(chances.get(i));
-//            initStrengthenItem(stone);
-//            stone.setLevel(i + 1);
-//            stones.add(stone);
-//        }
-//
-//        return stones;
-//    }
-//
-//    public List<StrengthenItem> getStrengthenWeapons() {
-//        return strengthenWeapons;
-//    }
-//
-//    public void setStrengthenWeapons(List<StrengthenItem> strengthenWeapons) {
-//        this.strengthenWeapons = strengthenWeapons;
-//    }
-//
-//    public List<StrengthenStone> getStrengthenStones() {
-//        return strengthenStones;
-//    }
-//
-//    public void setStrengthenStones(List<StrengthenStone> strengthenStones) {
-//        this.strengthenStones = strengthenStones;
-//    }
+    /**
+     * 获取 config.yml 加载后对应的 DTO
+     *
+     * @return ConfigYmlDto 实例
+     */
+    public static ConfigYmlDto getConfigYml() {
+        if (null == configYmlDto) {
+            throw new SwException("插件正在加载中");
+        }
+        return configYmlDto;
+    }
+
 }

@@ -1,14 +1,43 @@
 message:
-  unsupported_msg: 不支持的用法
+  unsupported_msg: 不支持的用法，使用 sw help 获取帮助
   reloaded: 配置文件已重新读取
   no_auth: 您没有权限执行该指令
   not_player: 该指令只能被玩家执行
-  grammar_error: 语法错误，请检查指令是否正确
+  grammar_error: 语法错误，使用 sw help 获取帮助
   unknown_item: 不存在的道具
   config_error: 无法解析配置，请检查配置文件
   unknown_player: 玩家不存在
+  line_number: 行号
+  cannot_operate: 无法完成操作
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
-    §a§l/sw §e打开强化菜单
-    §a§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
+    §a§l/sw refine [<玩家>] §e打开洗炼菜单
+    §a§l/sw strengthen [<玩家>] §e打开强化菜单
     §a§l/sw help §e显示本帮助信息
+  admin_help_msg: |
+    §c§l--- §aSW 管理指令 §c§l---
+    §b§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
+    §b§l/sw enchant <附魔ID> <附魔等级> §e对主手上的物品进行附魔
+    §b§l/sw lore set <行号> <Lore内容> §e修改主手上物品的 Lore
+    §b§l/sw lore del <行号> §e删除主手上物品指定行的 Lore
+
+# 自定义附魔
+enchants:
+  # 注释掉整个配置即可禁用一个附魔
+  ARROW_RAIN:
+    key: ARROW_RAIN
+    targetMaterials:
+    - BOW
+    displayName: §b箭雨
+    maxLevel: 3
+    conflicts:
+    - INFINITY
+    description: 没什么卵用
+    treasure: true
+    addition: 1
+    hideLore: false
+
+strengthTitle: §c§l强化台
+refineTitle: §6§l洗炼台
+# 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
+enablePlayerEnchant: false

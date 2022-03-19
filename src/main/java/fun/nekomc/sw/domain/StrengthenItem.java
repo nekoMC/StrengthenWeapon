@@ -1,7 +1,6 @@
 package fun.nekomc.sw.domain;
 
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.List;
 

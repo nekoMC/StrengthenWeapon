@@ -1,7 +1,7 @@
 package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.domain.StrengthenItem;
-import fun.nekomc.sw.dto.SwItemAttachData;
+import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
@@ -18,7 +18,9 @@ import java.util.Random;
  * 连发弓监听器、功能实现
  *
  * @author ourange
+ * @deprecated 改用附魔实现：{@link fun.nekomc.sw.enchant.ArrowRainEnchantment}
  */
+@Deprecated
 public class SwBowListener implements Listener {
     private StrengthenItem strengthenBow;
 
@@ -29,7 +31,7 @@ public class SwBowListener implements Listener {
             if (event.getEntity() instanceof Player) {
                 if (event.getBow() != null && event.getBow().getItemMeta() != null
                         && event.getBow().getItemMeta().getLore() != null) {
-                    // 这把弓如果是认证的连发弓，TODO：已恢复强化功能，如果自定义附魔行不通则重构这里
+                    // 这把弓如果是认证的连发弓
                     Optional<SwItemAttachData> swBowOpt = ItemUtils.getAttachData(event.getBow());
                     if(!swBowOpt.isPresent()) {
                         return;

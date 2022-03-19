@@ -1,5 +1,7 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.lang.Assert;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -8,11 +10,28 @@ import org.bukkit.inventory.ItemStack;
  * @author ourange
  */
 public class PlayerBagUtils {
+
+    /**
+     * 参考：https://github.com/MiniDay/HamsterAPI/blob/master/src/main/java/cn/hamster3/api/HamsterAPI.java
+     * 将物品放入玩家背包，如果玩家背包满，则在玩家位置生成掉落物
+     */
+    public static void givePlayerItem(Player player, ItemStack itemStack) {
+        Assert.notNull(player, "player cannot be null");
+        Assert.notNull(itemStack, "itemStack cannot be null");
+
+        World world = player.getWorld();
+        // addItem 返回放不下的物品 Map，遍历以生成掉落物
+        for (ItemStack dropItem : player.getInventory().addItem(itemStack).values()) {
+            world.dropItem(player.getLocation(), dropItem);
+        }
+    }
+
     /**
      * 物品放入玩家背包
+     *
      * @param itemStack 物品
-     * @param player 玩家
-     * @param drop 背包满，剩余物品是否丢到地面
+     * @param player    玩家
+     * @param drop      背包满，剩余物品是否丢到地面
      * @return 物品是否成功全部放入玩家背包
      */
     public static boolean itemToBag(ItemStack itemStack, Player player, boolean drop) {
@@ -51,8 +70,9 @@ public class PlayerBagUtils {
 
     /**
      * 检查物品在玩家背包中是否还存在空位
+     *
      * @param itemStack 物品
-     * @param player 玩家
+     * @param player    玩家
      * @return 该物品在玩家背包中是否还存在空位
      */
     public static boolean isItemFull(ItemStack itemStack, Player player) {
@@ -67,12 +87,13 @@ public class PlayerBagUtils {
 
     /**
      * 返回背包中该物品所在的第一个位置
-     * @param itemStack 物品
+     *
+     * @param itemStack      物品
      * @param inventoryItems 所有物品
      * @return 第一个位置
      */
-    private static int getIndexItem(ItemStack itemStack, ItemStack[] inventoryItems){
-        for(int i = 0; i < inventoryItems.length; i++) {
+    private static int getIndexItem(ItemStack itemStack, ItemStack[] inventoryItems) {
+        for (int i = 0; i < inventoryItems.length; i++) {
             if (itemStack.isSimilar(inventoryItems[i])) {
                 if (inventoryItems[i].getAmount() < itemStack.getMaxStackSize()) {
                     return i;

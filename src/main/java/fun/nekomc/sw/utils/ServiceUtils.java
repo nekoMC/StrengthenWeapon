@@ -1,6 +1,6 @@
 package fun.nekomc.sw.utils;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import lombok.experimental.UtilityClass;
 
@@ -29,7 +29,7 @@ public class ServiceUtils {
      */
     public static <KEY, SRC, TAR> Map<KEY, TAR> convertMapValue(Map<KEY, SRC> srcMap, Function<SRC, TAR> valueConverter) {
         Assert.notNull(valueConverter, "valueConverter cannot be null");
-        if (CollectionUtil.isEmpty(srcMap)) {
+        if (CollUtil.isEmpty(srcMap)) {
             return Collections.emptyMap();
         }
 
@@ -49,7 +49,7 @@ public class ServiceUtils {
      */
     public static <SRC, TAR> List<TAR> convertList(List<SRC> srcList, Function<SRC, TAR> converter) {
         Assert.notNull(converter, "converter cannot be null");
-        if (CollectionUtil.isEmpty(srcList)) {
+        if (CollUtil.isEmpty(srcList)) {
             return Collections.emptyList();
         }
         return srcList.stream().map(converter).collect(Collectors.toList());

@@ -2,13 +2,14 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigFactory;
+import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
-import org.bukkit.World;
+import fun.nekomc.sw.utils.PlayerBagUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,15 +37,15 @@ class SwGiveCommand extends SwCommand {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         if (actualArgs.length < REQUIRE_ARG_MIN_SIZE || actualArgs.length > REQUIRE_ARG_MAX_SIZE) {
-            throw new SwCommandException(sender, ConfigFactory.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("grammar_error"));
         }
         String playerName = actualArgs[0];
         String itemName = actualArgs[1];
         int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(actualArgs[2]);
         // 获取指定名称道具的配置
-        Optional<SwItemConfigDto> itemConfigOptional = ConfigFactory.getItemConfig(itemName);
+        Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(itemName);
         if (!itemConfigOptional.isPresent()) {
-            throw new SwCommandException(sender, ConfigFactory.getConfiguredMsg("unknown_item"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("unknown_item"));
         }
         // 给玩家指定的道具
         ItemStack itemStack;
@@ -56,6 +57,8 @@ class SwGiveCommand extends SwCommand {
                 throw new SwCommandException(sender, "config_error");
             }
             itemStack = itemStackOpt.get();
+            // 刷新附魔 Lore
+            EnchantHelper.updateLore(itemStack);
         } catch (IllegalArgumentException | ConfigurationException e) {
             throw new SwCommandException(sender, e.getMessage());
         }
@@ -64,7 +67,7 @@ class SwGiveCommand extends SwCommand {
         if (null == targetPlayer) {
             throw new SwCommandException(sender, "unknown_player");
         }
-        givePlayerItem(targetPlayer, itemStack);
+        PlayerBagUtils.givePlayerItem(targetPlayer, itemStack);
         return true;
     }
 
@@ -78,24 +81,11 @@ class SwGiveCommand extends SwCommand {
             case 0:
                 return null;
             case 1:
-                return ConfigFactory.getItemNameList();
+                return ConfigManager.getItemNameList();
             case 2:
                 return ListUtil.of("1", "64");
             default:
                 return ListUtil.empty();
-        }
-    }
-
-    // ========== private ========== //
-
-    /**
-     * 参考：https://github.com/MiniDay/HamsterAPI/blob/master/src/main/java/cn/hamster3/api/HamsterAPI.java
-     * 将物品放入玩家背包，如果玩家背包满，则在玩家位置生成掉落物
-     */
-    private void givePlayerItem(Player player, ItemStack itemStack) {
-        World world = player.getWorld();
-        for (ItemStack dropItem : player.getInventory().addItem(itemStack).values()) {
-            world.dropItem(player.getLocation(), dropItem);
         }
     }
 }
