@@ -5,8 +5,6 @@
 /out/
 /target/
 # 排除库文件目录
-/src/lib/
 /**/lib/
 # 排除测试用 Spigot 目录
 /spigot/
-/spigot/**
