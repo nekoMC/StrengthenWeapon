@@ -52,4 +52,9 @@ public class EnchantmentConfigDto implements Serializable {
      * 每级附魔增加的属性值
      */
     private int addition;
+
+    /**
+     * 是否在 Lore 中隐藏
+     */
+    private boolean hideLore;
 }

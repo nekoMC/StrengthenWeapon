@@ -30,8 +30,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 new SwRefineCommand(),
                 new SwReloadCommand(),
                 new SwGiveCommand(),
-                new SwHelpCommand()
-        );
+                new SwEnchantCommand(),
+                new SwLoreCommand().linkSubCmd(
+                        // 二级节点：sw lore xx
+                        new SwLoreSetCommand(),
+                        new SwLoreDelCommand()),
+                new SwHelpCommand());
+        // 构建指令树结构
+        commandTree.buildCmdTree();
     }
 
     public static CommandHandler getInstance() {
@@ -44,6 +50,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         String[] argsRemovedBlank = ArrayUtil.removeBlank(commandArray);
         Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(argsRemovedBlank);
         return cmdNodeDispatchTo.map(swCommand -> {
+            // 指令预校验，满足注册的条件时，才有可能被分配到相关节点执行
             if (!swCommand.preCheck(commandSender, argsRemovedBlank)) {
                 return false;
             }
@@ -59,7 +66,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(ArrayUtil.removeBlank(args));
+        String[] removedLast = ArrayUtil.remove(args, args.length - 1);
+        Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(ArrayUtil.removeBlank(removedLast));
         return cmdNodeDispatchTo.map(swCommand -> {
             try {
                 return swCommand.hint(sender, args);

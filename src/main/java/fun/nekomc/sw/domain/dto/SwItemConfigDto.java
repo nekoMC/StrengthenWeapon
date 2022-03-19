@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.exception.ConfigurationException;
 import lombok.Data;
 import org.bukkit.NamespacedKey;
@@ -29,6 +30,7 @@ public abstract class SwItemConfigDto implements Serializable {
 
     /**
      * 道具类型
+     *
      * @see fun.nekomc.sw.domain.enumeration.ItemsTypeEnum
      */
     private String type;
@@ -114,6 +116,10 @@ public abstract class SwItemConfigDto implements Serializable {
             String[] enchantNameAndLevel = enchantment.split(":");
             String enchantmentName = enchantNameAndLevel[0].toLowerCase();
             Enchantment targetEnchant = Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName));
+            if (null == targetEnchant) {
+                // 无法解析时，尝试作为自定义附魔进行解析
+                targetEnchant = Enchantment.getByKey(new NamespacedKey(StrengthenWeapon.getInstance(), enchantmentName));
+            }
             if (null == targetEnchant) {
                 throw new ConfigurationException("无法识别的附魔：" + enchantment);
             }

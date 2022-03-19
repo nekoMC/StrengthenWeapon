@@ -3,6 +3,7 @@ package fun.nekomc.sw.command;
 import cn.hutool.core.collection.ListUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.ConfigManager;
@@ -56,6 +57,8 @@ class SwGiveCommand extends SwCommand {
                 throw new SwCommandException(sender, "config_error");
             }
             itemStack = itemStackOpt.get();
+            // 刷新附魔 Lore
+            EnchantHelper.updateLore(itemStack);
         } catch (IllegalArgumentException | ConfigurationException e) {
             throw new SwCommandException(sender, e.getMessage());
         }

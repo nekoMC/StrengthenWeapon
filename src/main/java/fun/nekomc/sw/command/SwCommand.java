@@ -82,10 +82,22 @@ public abstract class SwCommand {
     public SwCommand linkSubCmd(SwCommand... subCmdArray) {
         for (SwCommand swCommand : subCmdArray) {
             swCommand.parentCmd = this;
-            swCommand.depth = this.depth + 1;
         }
         this.subCmd = Arrays.asList(subCmdArray);
         return this;
+    }
+
+    /**
+     * 构建指令树，只需要在根节点上调一次
+     */
+    public void buildCmdTree() {
+        if (CollUtil.isEmpty(subCmd)) {
+            return;
+        }
+        for (SwCommand swCommand : subCmd) {
+            swCommand.depth = depth + 1;
+            swCommand.buildCmdTree();
+        }
     }
 
     /**
@@ -202,6 +214,9 @@ public abstract class SwCommand {
      */
     private Optional<SwCommand> getRunnableSubCommand(String[] args) {
         if (CollUtil.isEmpty(subCmd) || ArrayUtil.isEmpty(args)) {
+            return Optional.empty();
+        }
+        if (args.length <= depth) {
             return Optional.empty();
         }
         String subCmdToMatch = args[depth];

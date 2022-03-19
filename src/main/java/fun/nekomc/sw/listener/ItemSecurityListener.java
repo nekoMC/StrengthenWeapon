@@ -1,5 +1,6 @@
 package fun.nekomc.sw.listener;
 
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.event.EventHandler;
@@ -8,6 +9,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * 自定义道具的附魔、祛魔事件保护（禁止玩家自定义进行附魔与祛魔）
@@ -52,8 +54,14 @@ public class ItemSecurityListener implements Listener {
         }
         // 禁止玩家对插件物品进行自定义附魔时，取消事件（祛魔、改名、铁砧附魔等）
         boolean clickResult = event.getSlotType() == InventoryType.SlotType.RESULT;
-        if (clickResult && ItemUtils.isSwItem(event.getCurrentItem())) {
+        ItemStack currentItem = event.getCurrentItem();
+        if (clickResult && ItemUtils.isSwItem(currentItem)) {
             event.setCancelled(true);
+            return;
         }
+        if (null == currentItem) {
+            return;
+        }
+        EnchantHelper.updateLore(currentItem);
     }
 }

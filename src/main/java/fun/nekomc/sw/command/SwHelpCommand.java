@@ -1,6 +1,7 @@
 package fun.nekomc.sw.command;
 
 import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -21,6 +22,9 @@ public class SwHelpCommand extends SwCommand {
     public boolean rua(CommandSender sender, String[] args) {
         // Help 指令不会校验参数数量
         String helpMsg = ConfigManager.getConfiguredMsg("help_msg");
+        if (sender.hasPermission(Constants.ADMIN_PERMISSION_POINT)) {
+            helpMsg += ConfigManager.getConfiguredMsg("admin_help_msg");
+        }
         MsgUtils.returnMsgToSender(sender, helpMsg);
         return true;
     }

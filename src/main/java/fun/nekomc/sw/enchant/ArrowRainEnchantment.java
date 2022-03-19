@@ -5,7 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +22,7 @@ public class ArrowRainEnchantment extends AbstractSwEnchantment {
      */
     public static final String ENCHANT_KEY = "ARROW_RAIN";
 
-    protected ArrowRainEnchantment() {
+    public ArrowRainEnchantment() {
         super(ENCHANT_KEY);
     }
 
@@ -29,25 +30,28 @@ public class ArrowRainEnchantment extends AbstractSwEnchantment {
      * 实体（玩家）用含有本附魔的弓射出箭时
      */
     @Override
-    public void onArrowDamage(@NotNull LivingEntity attacker, @NotNull LivingEntity victim, @NotNull Arrow arrow, int level, @NotNull EntityDamageByEntityEvent event) {
+    public void onProjectileLaunch(@NotNull LivingEntity shooter, @NotNull Projectile projectile, int level, @NotNull ProjectileLaunchEvent event) {
+        if (!(projectile instanceof Arrow)) {
+            return;
+        }
+        Arrow arrow = (Arrow) projectile;
         double range = 2.0;
         // 计算
         int addArrowCount = level * getConfig().getAddition();
         for (int i = 0; i < addArrowCount; i++) {
             // 计算额外箭的生成位置
-            Location location = attacker.getEyeLocation().clone();
+            Location location = shooter.getEyeLocation().clone();
             double ranX = (NumberUtils.randFloat(0, 1.0) - 0.5) * range;
             double ranY = (NumberUtils.randFloat(0, 1.0) - 0.5) * range;
             double ranZ = (NumberUtils.randFloat(0, 1.0) - 0.5) * range;
             location.add(ranX, ranY, ranZ);
             // 额外的箭，每高一级，多射一支
-            Arrow extraArrow = attacker.getWorld().spawn(location, Arrow.class);
+            Arrow extraArrow = shooter.getWorld().spawn(location, Arrow.class);
             // 速度
             extraArrow.setVelocity(arrow.getVelocity());
-            extraArrow.setShooter(attacker);
+            extraArrow.setShooter(shooter);
             // 不可拾取
             extraArrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-            arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         }
     }
 }

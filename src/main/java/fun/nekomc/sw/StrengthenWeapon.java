@@ -3,11 +3,12 @@ package fun.nekomc.sw;
 import cn.hutool.core.collection.CollUtil;
 import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.enchant.ArrowRainEnchantment;
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
+import fun.nekomc.sw.enchant.helper.WatcherTriggers;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
 import fun.nekomc.sw.listener.StrengthAnvilMenuListener;
-import fun.nekomc.sw.listener.SwBowListener;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.utils.ConfigManager;
 
@@ -16,6 +17,7 @@ import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -66,10 +68,10 @@ public class StrengthenWeapon extends JavaPlugin {
     public void onEnable() {
         // 配置管理器
         ConfigManager.loadConfig(this.getDataFolder().getPath());
-        // 指令解析器
-        loadCommandHandler();
         // 自定义附魔
         loadCustomEnchantments();
+        // 指令解析器
+        loadCommandHandler();
         // 其他事件监听器
         loadListeners();
     }
@@ -97,12 +99,9 @@ public class StrengthenWeapon extends JavaPlugin {
      */
     private void loadListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
-        // 连发弓支持
-        SwBowListener swBowListener = new SwBowListener();
-        pluginManager.registerEvents(swBowListener, this);
+        // 容器
         StrengthAnvilMenuListener strengthAnvilMenuListener = new StrengthAnvilMenuListener();
         strengthAnvilMenuListener.setService(new StrengthenServiceImpl());
-        // 容器
         pluginManager.registerEvents(strengthAnvilMenuListener, this);
         // 防自定义附魔
         pluginManager.registerEvents(new ItemSecurityListener(), this);
@@ -129,10 +128,14 @@ public class StrengthenWeapon extends JavaPlugin {
                             return;
                         }
                         ArrowRainEnchantment enchantment = enchantClass.getConstructor().newInstance();
-                        pluginManager.registerEvents(enchantment, this);
+                        EnchantHelper.register(enchantment);
                     } catch (ReflectiveOperationException e) {
                         MsgUtils.consoleMsg("Malformed Enchantment Class: {}", enchantClass);
                     }
                 });
+        Enchantment.stopAcceptingRegistrations();
+        // 注册自定义附魔触发器
+        pluginManager.registerEvents(WatcherTriggers.getInstance(), this);
+        MsgUtils.consoleMsg("Enchantments registered.");
     }
 }

@@ -1,5 +1,6 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import org.jetbrains.annotations.NotNull;
 
@@ -117,6 +118,20 @@ public final class NumberUtils {
             }
         }
         return 0;
+    }
+
+    /**
+     * 检验字符串是否能通过本类提供的方法成功转换
+     *
+     * @param numeral 数字的罗马表示，如 XII
+     * @return 是否能安全转换
+     */
+    public static boolean isValidNumeral(final String numeral) {
+        if (StrUtil.isEmptyIfStr(numeral)) {
+            return false;
+        }
+        int converted = fromNumeral(numeral);
+        return toNumeral(converted).equals(numeral);
     }
 
     /**

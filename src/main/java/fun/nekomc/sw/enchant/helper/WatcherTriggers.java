@@ -1,16 +1,19 @@
 package fun.nekomc.sw.enchant.helper;
 
+import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -23,6 +26,12 @@ import java.util.Map;
  * @see <a href="https://github.com/Auxilor/EcoEnchants">参考 EcoEnchants</a>
  */
 public class WatcherTriggers implements Listener {
+
+    private static final WatcherTriggers INSTANCE = new WatcherTriggers();
+
+    public static WatcherTriggers getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Called when an entity shoots another entity with an arrow.
@@ -40,7 +49,7 @@ public class WatcherTriggers implements Listener {
         if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
-        LivingEntity victim = (LivingEntity) event.getDamager();
+        LivingEntity victim = (LivingEntity) event.getEntity();
 
         if (arrow.getShooter() == null) {
             return;
@@ -49,11 +58,7 @@ public class WatcherTriggers implements Listener {
         if (!(arrow.getShooter() instanceof LivingEntity)) {
             return;
         }
-        LivingEntity attacker = (LivingEntity) ((Arrow) event.getDamager()).getShooter();
-
-        if (null == attacker || attacker instanceof Player) {
-            return;
-        }
+        LivingEntity attacker = (LivingEntity) arrow.getShooter();
 
         EnchantHelper.getEnchantsOnArrow(arrow)
                 .forEach(((enchant, level) -> enchant.onArrowDamage(attacker, victim, arrow, level, event)));
@@ -160,6 +165,11 @@ public class WatcherTriggers implements Listener {
         }
 
         ItemStack item = shooter.getEquipment().getItemInMainHand();
+
+        // 主手不是弓和弩，检查副手
+        if (item.getType() != Material.BOW && item.getType() != Material.CROSSBOW) {
+            item = shooter.getEquipment().getItemInOffHand();
+        }
 
         if (projectile instanceof Trident) {
             item = ((Trident) projectile).getItem();
@@ -340,5 +350,40 @@ public class WatcherTriggers implements Listener {
                 : EnchantHelper.getEnchantsOnOffhand(blocker);
 
         enchants.forEach((enchant, level) -> enchant.onDeflect(blocker, attacker, level, event));
+    }
+
+    /**
+     * 将弓绑定到箭的元数据上
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onLaunchArrow(ProjectileLaunchEvent event) {
+        Projectile arrow = event.getEntity();
+
+        if (!(arrow instanceof Arrow)) {
+            return;
+        }
+
+        if (!(arrow.getShooter() instanceof LivingEntity)) {
+            return;
+        }
+
+        LivingEntity shooter = (LivingEntity) arrow.getShooter();
+
+        if (shooter.getEquipment() == null) {
+            return;
+        }
+
+        ItemStack item = shooter.getEquipment().getItemInMainHand();
+
+        // 主手不是弓和弩，检查副手
+        if (item.getType() != Material.BOW && item.getType() != Material.CROSSBOW) {
+            item = shooter.getEquipment().getItemInOffHand();
+        }
+
+        if (item.getType() == Material.AIR || !item.hasItemMeta() || item.getItemMeta() == null) {
+            return;
+        }
+
+        arrow.setMetadata("shot-from", new FixedMetadataValue(StrengthenWeapon.getInstance(), item));
     }
 }
