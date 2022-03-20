@@ -85,7 +85,7 @@ class SwEnchantCommand extends AbstractMainHandItemCommand {
             case 0:
                 return enchantNames;
             case 1:
-                return ListUtil.of("0", "1", "2");
+                return ListUtil.of(Constants.STR_ZERO, "1", "2");
             default:
                 return ListUtil.empty();
         }

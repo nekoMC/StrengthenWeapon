@@ -7,6 +7,7 @@ message:
   unknown_item: 不存在的道具
   config_error: 无法解析配置，请检查配置文件
   unknown_player: 玩家不存在
+  unknown_attribute: 不存在的属性
   line_number: 行号
   cannot_operate: 无法完成操作
   help_msg: |
