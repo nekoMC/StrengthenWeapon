@@ -2,6 +2,8 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;
+import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,6 +33,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 new SwReloadCommand(),
                 new SwGiveCommand(),
                 new SwEnchantCommand(),
+                new SwAttributeCommand(),
                 new SwLoreCommand().linkSubCmd(
                         // 二级节点：sw lore xx
                         new SwLoreSetCommand(),
@@ -58,8 +61,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return swCommand.rua(commandSender, argsRemovedBlank);
             } catch (SwCommandException e) {
                 e.feedback();
-                return false;
+            } catch (Exception e) {
+                MsgUtils.returnMsgToSender(commandSender, ConfigManager.getConfiguredMsg("command_error"), e.getMessage());
             }
+            return false;
         }).orElse(false);
     }
 

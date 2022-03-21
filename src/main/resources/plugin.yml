@@ -6,5 +6,5 @@ author: ourange
 
 commands:
   sw:
-    description: My INventory Test Command
-    usage: /<command>
+    description: Strengthen plugin for NekoMC.
+    usage: §4Wrong usage, type §b/<command> help §4for help.

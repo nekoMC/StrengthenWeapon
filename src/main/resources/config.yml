@@ -1,15 +1,15 @@
 message:
-  unsupported_msg: 不支持的用法，使用 sw help 获取帮助
-  reloaded: 配置文件已重新读取
-  no_auth: 您没有权限执行该指令
-  not_player: 该指令只能被玩家执行
-  grammar_error: 语法错误，使用 sw help 获取帮助
-  unknown_item: 不存在的道具
-  config_error: 无法解析配置，请检查配置文件
-  unknown_player: 玩家不存在
-  unknown_attribute: 不存在的属性
+  no_auth: §4您没有权限执行该指令
+  command_error: §4指令解析出错：{}
+  not_player: §4该指令只能被玩家执行
+  grammar_error: §4语法错误，使用 sw help 获取帮助
+  unknown_item: §4不存在的道具
+  config_error: §4无法解析配置，请检查配置文件
+  unknown_player: §4玩家不存在
+  unknown_attribute: §4不存在的属性
+  cannot_operate: §4无法完成操作
   line_number: 行号
-  cannot_operate: 无法完成操作
+  reloaded: §a配置文件已重新读取
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
     §a§l/sw refine [<玩家>] §e打开洗炼菜单
