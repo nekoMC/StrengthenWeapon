@@ -1,9 +1,8 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
-import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.*;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -40,17 +39,46 @@ class SwEnchantCommand extends AbstractMainHandItemCommand {
     protected boolean handleMainHandItem(@NotNull Player player, @NotNull ItemStack targetItem, String[] actualArgs) {
         // 查找要附魔的附魔对象
         String enchantName = actualArgs[0];
+        String level = actualArgs[1];
+
         Enchantment targetEnchant = EnchantHelper.getRegisteredEnchants().stream()
                 .filter(enchant -> enchant.getKey().getKey().equals(enchantName))
                 .findFirst()
-                .map(swEnchant -> (Enchantment) swEnchant)
+                .map(Enchantment.class::cast)
                 .orElseGet(() -> Enchantment.getByKey(NamespacedKey.minecraft(enchantName)));
-        String level = actualArgs[1];
         // 校验附魔、等级有效
-        if (!StrUtil.isNumeric(level) || null == targetEnchant) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
+        if (!CharSequenceUtil.isNumeric(level) || null == targetEnchant) {
+            return false;
         }
         int targetLevel = Integer.parseInt(level);
+
+        return updateItemEnchant(targetItem, targetEnchant, targetLevel);
+    }
+
+    @Override
+    public List<String> hint(CommandSender sender, String[] args) {
+        // 获取 give 指令的参数
+        String[] actualArgs = ignoreDontCareArgs(args);
+        int actualArgLength = getArgsActualLength(actualArgs, args);
+        switch (actualArgLength) {
+            case 0:
+                return enchantNames;
+            case 1:
+                return ListUtil.of(Constants.STR_ZERO, "1", "2");
+            default:
+                return ListUtil.empty();
+        }
+    }
+
+    /**
+     * 更新道具的指定附魔及覆膜等级
+     *
+     * @param targetItem    目标道具
+     * @param targetEnchant 要更新的附魔
+     * @param targetLevel   更新后的附魔等级，如果为 0 则删除附魔
+     * @return 操作是否成功
+     */
+    public boolean updateItemEnchant(ItemStack targetItem, Enchantment targetEnchant, int targetLevel) {
         ItemMeta itemMeta = targetItem.getItemMeta();
         if (null == itemMeta) {
             return false;
@@ -74,20 +102,5 @@ class SwEnchantCommand extends AbstractMainHandItemCommand {
         // 刷新附魔 Lore
         EnchantHelper.updateLore(targetItem);
         return true;
-    }
-
-    @Override
-    public List<String> hint(CommandSender sender, String[] args) {
-        // 获取 give 指令的参数
-        String[] actualArgs = ignoreDontCareArgs(args);
-        int actualArgLength = getArgsActualLength(actualArgs, args);
-        switch (actualArgLength) {
-            case 0:
-                return enchantNames;
-            case 1:
-                return ListUtil.of("0", "1", "2");
-            default:
-                return ListUtil.empty();
-        }
     }
 }

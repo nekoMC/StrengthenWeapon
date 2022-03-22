@@ -124,8 +124,6 @@ public abstract class SwCommand {
      * @throws SwCommandException 当指令执行异常时抛出，回执消息统一由外部处理
      */
     public boolean rua(CommandSender sender, final String[] args) {
-        // 没有重写本方法，摆烂给执行者
-        MsgUtils.returnMsgToSender(sender, ConfigManager.getConfiguredMsg("unsupported_msg"));
         return false;
     }
 

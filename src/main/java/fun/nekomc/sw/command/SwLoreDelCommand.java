@@ -1,7 +1,7 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.Constants;
@@ -29,28 +29,12 @@ class SwLoreDelCommand extends AbstractMainHandItemCommand {
     protected boolean handleMainHandItem(@NotNull Player player, @NotNull ItemStack targetItem, String[] actualArgs) {
         // 校验行号、内容
         String line = actualArgs[0];
-        if (!StrUtil.isNumeric(line)) {
+        if (!CharSequenceUtil.isNumeric(line)) {
             throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
         }
         int lineNumber = Integer.parseInt(line);
-        // 进行 Lore 操作
-        ItemMeta itemMeta = targetItem.getItemMeta();
-        if (null == itemMeta) {
-            return false;
-        }
-        List<String> targetLore = itemMeta.getLore();
-        if (null == targetLore) {
-            return false;
-        }
-        // 空行占位
-        if (targetLore.size() < lineNumber) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg("cannot_operate"));
-        }
-        targetLore.remove(lineNumber - 1);
 
-        itemMeta.setLore(targetLore);
-        targetItem.setItemMeta(itemMeta);
-        return true;
+        return delItemLoreAt(targetItem, lineNumber);
     }
 
     @Override
@@ -62,5 +46,33 @@ class SwLoreDelCommand extends AbstractMainHandItemCommand {
             return ListUtil.of(ConfigManager.getConfiguredMsg("line_number"));
         }
         return ListUtil.empty();
+    }
+
+    /**
+     * 删除道具指定行的 Lore
+     *
+     * @param targetItem 要操作的道具
+     * @param lineNumber 行号
+     * @return 操作状态
+     */
+    public static boolean delItemLoreAt(ItemStack targetItem, int lineNumber) {
+        // 进行 Lore 操作
+        ItemMeta itemMeta = targetItem.getItemMeta();
+        if (null == itemMeta) {
+            return false;
+        }
+        List<String> targetLore = itemMeta.getLore();
+        if (null == targetLore) {
+            return false;
+        }
+        // 空行占位
+        if (targetLore.size() < lineNumber) {
+            return false;
+        }
+        targetLore.remove(lineNumber - 1);
+
+        itemMeta.setLore(targetLore);
+        targetItem.setItemMeta(itemMeta);
+        return true;
     }
 }

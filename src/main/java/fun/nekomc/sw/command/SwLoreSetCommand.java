@@ -1,7 +1,7 @@
 package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.utils.ConfigManager;
 import fun.nekomc.sw.utils.Constants;
@@ -31,33 +31,14 @@ class SwLoreSetCommand extends AbstractMainHandItemCommand {
         // 校验行号、内容
         String line = actualArgs[0];
         String newLore = actualArgs[1];
-        if (!StrUtil.isNumeric(line) || StrUtil.isBlank(newLore)) {
+        if (!CharSequenceUtil.isNumeric(line) || CharSequenceUtil.isBlank(newLore)) {
             throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
         }
         int lineNumber = Integer.parseInt(line);
         if (lineNumber <= 0) {
             throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
         }
-        // 进行 Lore 操作
-        ItemMeta itemMeta = targetItem.getItemMeta();
-        if (null == itemMeta) {
-            return false;
-        }
-        List<String> targetLore = itemMeta.getLore();
-        if (null == targetLore) {
-            targetLore = new ArrayList<>(lineNumber);
-        }
-        // 空行占位
-        while(targetLore.size() < lineNumber) {
-            targetLore.add(StrUtil.EMPTY);
-        }
-        // & 替换为 §
-        newLore = newLore.replace('&', '§');
-        targetLore.set(lineNumber - 1, newLore);
-
-        itemMeta.setLore(targetLore);
-        targetItem.setItemMeta(itemMeta);
-        return true;
+        return setItemLoreAt(targetItem, lineNumber, newLore);
     }
 
     @Override
@@ -73,5 +54,36 @@ class SwLoreSetCommand extends AbstractMainHandItemCommand {
             default:
                 return ListUtil.empty();
         }
+    }
+
+    /**
+     * 设置道具指定行的 Lore 显示内容
+     *
+     * @param targetItem 目标道具
+     * @param lineNumber 行号
+     * @param content    显示内容
+     * @return 操作状态
+     */
+    public static boolean setItemLoreAt(ItemStack targetItem, int lineNumber, String content) {
+        // 进行 Lore 操作
+        ItemMeta itemMeta = targetItem.getItemMeta();
+        if (null == itemMeta) {
+            return false;
+        }
+        List<String> targetLore = itemMeta.getLore();
+        if (null == targetLore) {
+            targetLore = new ArrayList<>(lineNumber);
+        }
+        // 空行占位
+        while (targetLore.size() < lineNumber) {
+            targetLore.add(CharSequenceUtil.EMPTY);
+        }
+        // & 替换为 §
+        content = content.replace('&', '§');
+        targetLore.set(lineNumber - 1, content);
+
+        itemMeta.setLore(targetLore);
+        targetItem.setItemMeta(itemMeta);
+        return true;
     }
 }
