@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * SW 道具配置
+ * SW 道具配置，含部分配置解析逻辑
  * created: 2022/3/3 02:44
  *
  * @author Chiru
