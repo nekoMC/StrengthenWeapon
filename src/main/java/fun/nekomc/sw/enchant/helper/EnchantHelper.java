@@ -540,4 +540,19 @@ public class EnchantHelper {
         itemStack.setItemMeta(meta);
     }
 
+    /**
+     * 通过附魔名获取附魔对象，支持原生附魔和自定义附魔
+     *
+     * @param enchantName 附魔名
+     * @return 指定的附魔对象
+     */
+    public static Optional<Enchantment> getByName(String enchantName) {
+        Optional<Enchantment> target = getRegisteredEnchants().stream()
+                .filter(enchant -> enchant.getKey().getKey().equals(enchantName))
+                .findFirst()
+                .map(Enchantment.class::cast);
+        return target.isPresent()
+                ? target
+                : Optional.ofNullable(Enchantment.getByKey(NamespacedKey.minecraft(enchantName)));
+    }
 }

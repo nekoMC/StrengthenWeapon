@@ -2,8 +2,8 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.CommandSender;
 

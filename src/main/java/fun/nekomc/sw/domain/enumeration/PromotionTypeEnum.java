@@ -37,4 +37,11 @@ public enum PromotionTypeEnum implements BaseEnum<Integer> {
     PromotionTypeEnum(Integer code) {
         this.code = code;
     }
+
+    /**
+     * 指定的强化类型是否针对 Attribute
+     */
+    public static boolean isAttribute(PromotionTypeEnum type) {
+        return type == ATTR || type == ATTR_UP;
+    }
 }

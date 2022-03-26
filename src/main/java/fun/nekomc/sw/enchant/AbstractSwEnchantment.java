@@ -6,8 +6,8 @@ import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.Watcher;
 import fun.nekomc.sw.exception.ConfigurationException;
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import lombok.*;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**

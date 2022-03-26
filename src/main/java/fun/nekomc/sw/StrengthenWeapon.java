@@ -10,9 +10,9 @@ import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
 import fun.nekomc.sw.listener.StrengthAnvilMenuListener;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
 
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;

@@ -4,7 +4,7 @@ import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.SwException;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
 import lombok.AllArgsConstructor;

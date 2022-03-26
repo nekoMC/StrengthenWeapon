@@ -4,7 +4,7 @@ import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;

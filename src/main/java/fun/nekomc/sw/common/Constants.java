@@ -1,4 +1,4 @@
-package fun.nekomc.sw.utils;
+package fun.nekomc.sw.common;
 
 import lombok.experimental.UtilityClass;
 

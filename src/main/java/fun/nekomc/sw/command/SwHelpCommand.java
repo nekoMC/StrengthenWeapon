@@ -1,7 +1,7 @@
 package fun.nekomc.sw.command;
 
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;

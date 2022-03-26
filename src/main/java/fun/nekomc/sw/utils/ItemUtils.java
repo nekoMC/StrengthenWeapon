@@ -2,18 +2,28 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -173,6 +183,80 @@ public class ItemUtils {
             return (Player) tameable.getOwner();
         }
         return null;
+    }
+
+    /**
+     * 更新元数据中描述的道具属性信息
+     *
+     * @param originMeta  需要修改的元数据，会在调用后发生变化
+     * @param slot        生效槽位
+     * @param attribute   目标属性
+     * @param modifyValue 变更的属性值，如 0.2 2 2.2
+     * @return 变更后的元数据对象
+     */
+    public static ItemMeta updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
+                                                         Attribute attribute, String modifyValue) {
+        if (null == originMeta) {
+            return null;
+        }
+        // Meta 中的原属性
+        Multimap<Attribute, AttributeModifier> attributeModifiers = originMeta.getAttributeModifiers();
+        attributeModifiers = null == attributeModifiers
+                ? LinkedListMultimap.create()
+                : LinkedListMultimap.create(attributeModifiers);
+        // 移除旧属性
+        List<AttributeModifier> modifiers = attributeModifiers.get(attribute).stream()
+                .filter(modifier -> modifier.getSlot() != slot)
+                .collect(Collectors.toList());
+        // 不为 0 时，解析并设置新属性值
+        if (!Constants.STR_ZERO.equals(modifyValue)) {
+            AttributeModifier.Operation operation = modifyValue.contains(".")
+                    ? AttributeModifier.Operation.MULTIPLY_SCALAR_1
+                    : AttributeModifier.Operation.ADD_NUMBER;
+            double modifierDoubleValue = Double.parseDouble(modifyValue);
+            String modifierName = String.format("%s.%s.%s", attribute.name(), slot, modifyValue);
+            AttributeModifier targetModifier = new AttributeModifier(UUID.randomUUID(),
+                    modifierName, modifierDoubleValue, operation, slot);
+            // 设置属性
+            modifiers.add(targetModifier);
+        }
+        attributeModifiers.replaceValues(attribute, modifiers);
+        originMeta.setAttributeModifiers(attributeModifiers);
+        return originMeta;
+    }
+
+    /**
+     * 更新道具的指定附魔及覆膜等级
+     *
+     * @param targetItem    目标道具
+     * @param targetEnchant 要更新的附魔
+     * @param targetLevel   更新后的附魔等级，如果为 0 则删除附魔
+     * @return 操作是否成功
+     */
+    public static boolean updateItemEnchant(ItemStack targetItem, Enchantment targetEnchant, int targetLevel) {
+        ItemMeta itemMeta = targetItem.getItemMeta();
+        if (null == itemMeta) {
+            return false;
+        }
+        // 附魔书时，需要基于 EnchantmentStorageMeta 进行操作
+        if (targetItem.getType() == Material.ENCHANTED_BOOK) {
+            EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) itemMeta;
+            if (0 == targetLevel) {
+                bookMeta.removeStoredEnchant(targetEnchant);
+            } else {
+                bookMeta.addStoredEnchant(targetEnchant, targetLevel, true);
+            }
+        } else {
+            if (0 == targetLevel) {
+                itemMeta.removeEnchant(targetEnchant);
+            } else {
+                itemMeta.addEnchant(targetEnchant, targetLevel, true);
+            }
+        }
+        targetItem.setItemMeta(itemMeta);
+        // 刷新附魔 Lore
+        EnchantHelper.updateLore(targetItem);
+        return true;
     }
 
     // ========== private ========== //

@@ -1,6 +1,6 @@
 package fun.nekomc.sw.command;
 
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.Constants;
 import org.apache.commons.lang.StringUtils;
 
 /**
