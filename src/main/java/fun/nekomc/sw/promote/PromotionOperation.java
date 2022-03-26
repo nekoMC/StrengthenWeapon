@@ -33,7 +33,7 @@ import java.util.Optional;
  */
 @Getter
 @AllArgsConstructor
-public class PromoteOperation {
+public class PromotionOperation {
 
     /**
      * 配置文件描述规则时，一个规则字符串需要分割成多少个部分。
@@ -77,11 +77,11 @@ public class PromoteOperation {
     /**
      * 以配置文件中的格式构建当前对象
      *
-     * @param configStr 如 ATTR_UP-HAND:ARMOR:+4:80、ENCH:ARROW_RAIN:2:10
+     * @param configStr 如 ATTR_UP-HAND:ARMOR:-4:80、ENCH:ARROW_RAIN:2:10
      * @return 描述提升规则的 PromoteOperation 实例
      * @throws fun.nekomc.sw.exception.ConfigurationException,IllegalArgumentException 传入的字符串无法解析时抛出
      */
-    public static PromoteOperation buildByConfigStr(String configStr) {
+    public static PromotionOperation buildByConfigStr(String configStr) {
         // 校验格式
         if (CharSequenceUtil.isEmpty(configStr)) {
             throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
@@ -97,7 +97,7 @@ public class PromoteOperation {
         if (PromotionTypeEnum.isAttribute(promotionType)) {
             slot = EquipmentSlot.valueOf(promoteTypeAndSlot[1]);
         }
-        // 解析参数：强化等级，如 +4
+        // 解析参数：强化等级，如 -4
         boolean rewrite = !(rules[2].startsWith("-") || rules[2].startsWith("+"));
         String promoteValue = rules[2];
         if (!rewrite) {
@@ -112,7 +112,7 @@ public class PromoteOperation {
         // 解析参数：概率权重，如 80
         int weight = Integer.parseInt(rules[3]);
         // 构建
-        return new PromoteOperation(promotionType, targetToPromote, promoteValue, rewrite, weight, slot);
+        return new PromotionOperation(promotionType, targetToPromote, promoteValue, rewrite, weight, slot);
     }
 
     /**

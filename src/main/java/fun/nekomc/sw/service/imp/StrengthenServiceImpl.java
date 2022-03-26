@@ -15,8 +15,12 @@ public class StrengthenServiceImpl implements StrengthenService {
     private final StrengthenDAOImpl dao;
     private final Random random = new Random();
 
-    public StrengthenServiceImpl() {
+    private StrengthenServiceImpl() {
         dao = new StrengthenDAOImpl();
+    }
+
+    public static StrengthenService getInstance() {
+        return null;
     }
 
     @Override

@@ -3,6 +3,7 @@ package fun.nekomc.sw.listener;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
+import fun.nekomc.sw.service.StrengthenService;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
@@ -20,18 +21,19 @@ import java.util.Optional;
  *
  * @author ourange
  */
-public class StrengthAnvilMenuListener extends AbstractComposeGui implements Listener {
+public class StrengthAnvilGuiListener extends AbstractComposeGui implements Listener {
 
     private static final int SW_WEAPON_INDEX = 0;
     private static final int SW_STONE_INDEX = 1;
 
-    private StrengthenServiceImpl service;
+    private final StrengthenService service;
 
-    public StrengthAnvilMenuListener() {
+    public StrengthAnvilGuiListener() {
         super(InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle(), 2);
         // 注册校验规则
         registerCheckRule(SW_WEAPON_INDEX, ItemsTypeEnum.BLANK);
         registerCheckRule(SW_STONE_INDEX, ItemsTypeEnum.STRENGTHEN_STONE);
+        service = StrengthenServiceImpl.getInstance();
     }
 
     @Override
@@ -54,9 +56,5 @@ public class StrengthAnvilMenuListener extends AbstractComposeGui implements Lis
         return stoneConfig.map(swItemConfigDto ->
                 service.strengthen(wrapped.clickPlayer, item, (SwStrengthenStoneConfigDto) swItemConfigDto, false)
         ).orElse(null);
-    }
-
-    public void setService(StrengthenServiceImpl service) {
-        this.service = service;
     }
 }

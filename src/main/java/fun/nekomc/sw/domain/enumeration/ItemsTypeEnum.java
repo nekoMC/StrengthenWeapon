@@ -1,6 +1,7 @@
 package fun.nekomc.sw.domain.enumeration;
 
 import fun.nekomc.sw.domain.dto.SwBlankConfigDto;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.dto.SwRefineStoneConfigDto;
 import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,11 @@ public enum ItemsTypeEnum implements BaseEnum<Integer> {
      * 强化石，可以强化配置属性的消耗品
      */
     STRENGTHEN_STONE(2, SwStrengthenStoneConfigDto.class),
+
+    /**
+     * 默认物品类别，如普通的方块
+     */
+    DEFAULT(10, SwItemConfigDto.class),
     ;
 
     /**

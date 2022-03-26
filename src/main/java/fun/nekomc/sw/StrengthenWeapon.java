@@ -8,7 +8,7 @@ import fun.nekomc.sw.enchant.helper.WatcherTriggers;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
-import fun.nekomc.sw.listener.StrengthAnvilMenuListener;
+import fun.nekomc.sw.listener.StrengthAnvilGuiListener;
 import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.common.ConfigManager;
 
@@ -100,9 +100,8 @@ public class StrengthenWeapon extends JavaPlugin {
     private void loadListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
         // 容器
-        StrengthAnvilMenuListener strengthAnvilMenuListener = new StrengthAnvilMenuListener();
-        strengthAnvilMenuListener.setService(new StrengthenServiceImpl());
-        pluginManager.registerEvents(strengthAnvilMenuListener, this);
+        StrengthAnvilGuiListener strengthAnvilGuiListener = new StrengthAnvilGuiListener();
+        pluginManager.registerEvents(strengthAnvilGuiListener, this);
         // 防自定义附魔
         pluginManager.registerEvents(new ItemSecurityListener(), this);
     }
