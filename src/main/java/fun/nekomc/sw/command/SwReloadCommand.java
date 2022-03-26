@@ -23,7 +23,7 @@ class SwReloadCommand extends SwCommand {
     public boolean rua(CommandSender sender, String[] args) {
         Assert.isTrue(args.length == 1, Constants.COMMAND_PARAMETER_SIZE_ERROR_MSG);
         StrengthenWeapon.getInstance().reloadConfig();
-        MsgUtils.returnMsgToSender(sender, ConfigManager.getConfiguredMsg("reloaded"));
+        MsgUtils.returnMsgToSender(sender, ConfigManager.getConfiguredMsg(Constants.Msg.RELOADED));
         return true;
     }
 }

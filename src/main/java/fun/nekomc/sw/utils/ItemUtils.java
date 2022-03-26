@@ -78,7 +78,7 @@ public class ItemUtils {
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
         String nameFromDataContainer = getNameFromDataContainer(persistentDataContainer);
         if (StringUtils.isBlank(nameFromDataContainer)) {
-            throw new SwException(ConfigManager.getConfiguredMsg("unknown_item"));
+            throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
         }
         persistentDataContainer.set(getWarpedKey(nameFromDataContainer), SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
         Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(nameFromDataContainer);
@@ -189,7 +189,7 @@ public class ItemUtils {
             if (null == res) {
                 res = key.getKey();
             } else {
-                throw new ConfigurationException(ConfigManager.getConfiguredMsg("config_error"));
+                throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
             }
         }
         return res;

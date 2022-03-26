@@ -21,9 +21,9 @@ public class SwHelpCommand extends SwCommand {
     @Override
     public boolean rua(CommandSender sender, String[] args) {
         // Help 指令不会校验参数数量
-        String helpMsg = ConfigManager.getConfiguredMsg("help_msg");
+        String helpMsg = ConfigManager.getConfiguredMsg(Constants.Msg.HELP_MSG);
         if (sender.hasPermission(Constants.ADMIN_PERMISSION_POINT)) {
-            helpMsg += ConfigManager.getConfiguredMsg("admin_help_msg");
+            helpMsg += ConfigManager.getConfiguredMsg(Constants.Msg.ADMIN_HELP_MSG);
         }
         MsgUtils.returnMsgToSender(sender, helpMsg);
         return true;

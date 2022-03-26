@@ -32,11 +32,11 @@ class SwLoreSetCommand extends AbstractMainHandItemCommand {
         String line = actualArgs[0];
         String newLore = actualArgs[1];
         if (!CharSequenceUtil.isNumeric(line) || CharSequenceUtil.isBlank(newLore)) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
         int lineNumber = Integer.parseInt(line);
         if (lineNumber <= 0) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
         return setItemLoreAt(targetItem, lineNumber, newLore);
     }
@@ -48,7 +48,7 @@ class SwLoreSetCommand extends AbstractMainHandItemCommand {
         int actualArgLength = getArgsActualLength(actualArgs, args);
         switch (actualArgLength) {
             case 0:
-                return ListUtil.of(ConfigManager.getConfiguredMsg("line_number"));
+                return ListUtil.of(ConfigManager.getConfiguredMsg(Constants.Msg.LINE_NUMBER));
             case 1:
                 return ListUtil.of("lore");
             default:

@@ -28,7 +28,7 @@ abstract class AbstractMainHandItemCommand extends SwCommand {
 
     final int fixQueryArgCount;
 
-    public AbstractMainHandItemCommand(String cmd, String permissionNode, int fixQueryArgCount) {
+    protected AbstractMainHandItemCommand(String cmd, String permissionNode, int fixQueryArgCount) {
         super(cmd, true, permissionNode);
         this.fixQueryArgCount = fixQueryArgCount;
     }
@@ -38,7 +38,7 @@ abstract class AbstractMainHandItemCommand extends SwCommand {
         // 获取参数
         String[] actualArgs = ignoreDontCareArgs(args);
         if (actualArgs.length != fixQueryArgCount) {
-            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
         if (!(sender instanceof Player)) {
             return false;

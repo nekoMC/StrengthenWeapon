@@ -21,7 +21,7 @@ public abstract class AbstractGuiCommand extends SwCommand {
 
     private static final int REQUIRE_ARG_MAX_SIZE = 1;
 
-    public AbstractGuiCommand(String command) {
+    protected AbstractGuiCommand(String command) {
         super(command, false, StringUtils.EMPTY);
     }
 
@@ -38,19 +38,19 @@ public abstract class AbstractGuiCommand extends SwCommand {
         // 获取指令参数
         String[] actualArgs = ignoreDontCareArgs(args);
         if (actualArgs.length > REQUIRE_ARG_MAX_SIZE) {
-            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
         Player targetPlayer;
         // 指定了玩家时，需要管理员权限
         if (ArrayUtil.isNotEmpty(actualArgs)) {
             if (!sender.hasPermission(Constants.PERMISSION_NAMESPACE + Constants.ADMIN_PERMISSION_POINT)) {
-                throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("no_auth"));
+                throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.NO_AUTH));
             }
             targetPlayer = StrengthenWeapon.server().getPlayer(actualArgs[0]);
         } else {
             // 未指定玩家时，为当前玩家打开 GUI
             if (!(sender instanceof Player)) {
-                throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("not_player"));
+                throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.NOT_PLAYER));
             }
             targetPlayer = (Player) sender;
         }

@@ -7,6 +7,7 @@ import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.Watcher;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.utils.Constants;
 import lombok.*;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -91,7 +92,7 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
     public EnchantmentConfigDto getConfig() {
         EnchantmentConfigDto enchantmentConfigDto = ConfigManager.getConfigYml().getEnchants().get(configKey);
         if (null == enchantmentConfigDto) {
-            throw new ConfigurationException(ConfigManager.getConfiguredMsg("config_error"));
+            throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
         }
         return enchantmentConfigDto;
     }
@@ -100,13 +101,11 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
 
     @NotNull
     @Override
-    @Deprecated
     public String getName() {
         return getKey().getKey();
     }
 
     @Override
-    @Deprecated
     public boolean isCursed() {
         return false;
     }

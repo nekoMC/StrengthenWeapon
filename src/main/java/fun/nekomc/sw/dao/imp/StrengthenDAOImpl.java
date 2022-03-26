@@ -4,6 +4,7 @@ import fun.nekomc.sw.dao.StrengthenDAO;
 import fun.nekomc.sw.domain.SwItemAttachData;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.utils.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class StrengthenDAOImpl implements StrengthenDAO {
                 // TODO: 临时处理，读取数据标签中的强化等级
                 Optional<SwItemAttachData> attachDataOpt = ItemUtils.getAttachData(itemStack);
                 if (!attachDataOpt.isPresent()) {
-                    throw new ConfigurationException(ConfigManager.getConfiguredMsg("config_error"));
+                    throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                 }
                 SwItemAttachData attachData = attachDataOpt.get();
                 int level = attachData.getStrLvl();

@@ -37,7 +37,7 @@ class SwGiveCommand extends SwCommand {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         if (actualArgs.length < REQUIRE_ARG_MIN_SIZE || actualArgs.length > REQUIRE_ARG_MAX_SIZE) {
-            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
         String playerName = actualArgs[0];
         String itemName = actualArgs[1];
@@ -45,7 +45,7 @@ class SwGiveCommand extends SwCommand {
         // 获取指定名称道具的配置
         Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(itemName);
         if (!itemConfigOptional.isPresent()) {
-            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg("unknown_item"));
+            throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
         }
         // 给玩家指定的道具
         ItemStack itemStack;
@@ -54,7 +54,7 @@ class SwGiveCommand extends SwCommand {
             // 根据配置文件构建物品
             Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig);
             if (!itemStackOpt.isPresent()) {
-                throw new SwCommandException(sender, "config_error");
+                throw new SwCommandException(sender, Constants.Msg.CONFIG_ERROR);
             }
             itemStack = itemStackOpt.get();
             // 刷新附魔 Lore
