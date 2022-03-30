@@ -1,6 +1,7 @@
 package fun.nekomc.sw.utils;
 
 import cn.hutool.core.lang.Assert;
+import lombok.experimental.UtilityClass;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * @author ourange
  */
+@UtilityClass
 public class PlayerBagUtils {
 
     /**
@@ -94,10 +96,10 @@ public class PlayerBagUtils {
      */
     private static int getIndexItem(ItemStack itemStack, ItemStack[] inventoryItems) {
         for (int i = 0; i < inventoryItems.length; i++) {
-            if (itemStack.isSimilar(inventoryItems[i])) {
-                if (inventoryItems[i].getAmount() < itemStack.getMaxStackSize()) {
-                    return i;
-                }
+            boolean itemMatch = itemStack.isSimilar(inventoryItems[i])
+                    && inventoryItems[i].getAmount() < itemStack.getMaxStackSize();
+            if (itemMatch) {
+                return i;
             }
         }
         return -1;

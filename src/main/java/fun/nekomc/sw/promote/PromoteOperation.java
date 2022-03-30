@@ -105,7 +105,7 @@ public class PromoteOperation {
         }
         // 解析参数：强化目标，如 ARMOR
         Keyed targetToPromote = null;
-        Optional<Keyed> targetOpt = checkPromoteValue(promoteValue, promotionType, rules[1]);
+        Optional<Keyed> targetOpt = checkPromoteValue(promoteValue, promotionType);
         if (targetOpt.isPresent()) {
             targetToPromote = targetOpt.get();
         }
@@ -178,7 +178,7 @@ public class PromoteOperation {
      * 校验 promoteValue 在当前的 promotionType 下是否可以正常解析
      * 可以正常解析时，返回要增强的目标对象
      */
-    private static Optional<Keyed> checkPromoteValue(String promoteValue, PromotionTypeEnum promotionType, String promotionTarget) {
+    private static Optional<Keyed> checkPromoteValue(String promoteValue, PromotionTypeEnum promotionType) {
         boolean noNumeric = !CharSequenceUtil.isNumeric(promoteValue);
         String[] promoteSplit = promoteValue.split("\\.");
         boolean noFloat = promoteSplit.length != 2
