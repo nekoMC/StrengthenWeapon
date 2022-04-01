@@ -3,6 +3,7 @@ package fun.nekomc.sw.utils;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.common.Constants;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Keyed;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -53,5 +54,10 @@ public class MsgUtils {
         } else {
             consoleMsg(msg, args);
         }
+    }
+
+    public static void sendToSenderInHolder(String configuredMsg, Object... args) {
+        CommandSender sender = PlayerHolder.getSender();
+        returnMsgToSender(sender, configuredMsg, args);
     }
 }

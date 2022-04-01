@@ -60,5 +60,9 @@ public class Constants {
         public static final String UNKNOWN_ITEM = "unknown_item";
         public static final String COMMAND_ERROR = "command_error";
         public static final String RELOADED = "reloaded";
+        public static final String REFINE_CHANGE = "refine_change";
+        public static final String REFINE_RESET = "refine_reset";
+        public static final String REFINE_SUCCESS = "refine_success";
+        public static final String REFINE_FAIL = "refine_fail";
     }
 }

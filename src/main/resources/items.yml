@@ -31,21 +31,26 @@ sw_bow:
         - §4洗炼成功率会逐级降低！
       material: PAPER
       enchantments:
-        - LUCK:1
+        - FORTUNE:1
+    broke: speed_feather # 洗练失败时的产物
 
 speed_feather:
+  material: FEATHER
   type: REFINE_STONE
   display: §d青鸾尾羽
   name: speed_feather
   lore:
     - §5这里还是文案
     - §5稀有度：§d史诗
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  minOnce: 1
+  maxOnce: 2
   candidates:
-    - ATTR-HAND:MOVEMENT_SPEED:0.05:10
-    - ATTR-HAND:MOVEMENT_SPEED:0.01:30
-    - ATTR-HAND:ATTACK_SPEED:0.02:30
-    - ATTR-HAND:ARMOR:-5:50
-    - ATTR-HAND:KNOCKBACK_RESISTANCE:-5:50
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:10
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:30
+    - ATTR-HAND:GENERIC_ATTACK_SPEED:0.02:30
+    - ATTR-HAND:GENERIC_ARMOR:-5:50
+    - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.1:50
 
 
 sw_stone:

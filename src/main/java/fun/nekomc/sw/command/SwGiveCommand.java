@@ -54,7 +54,7 @@ class SwGiveCommand extends SwCommand {
             // 根据配置文件构建物品
             Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig);
             if (!itemStackOpt.isPresent()) {
-                throw new SwCommandException(sender, Constants.Msg.CONFIG_ERROR);
+                throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
             }
             itemStack = itemStackOpt.get();
             // 刷新附魔 Lore

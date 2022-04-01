@@ -1,8 +1,10 @@
 package fun.nekomc.sw.promote;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Multimap;
 import fun.nekomc.sw.domain.enumeration.PromotionTypeEnum;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
@@ -11,18 +13,23 @@ import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
+import fun.nekomc.sw.utils.MsgUtils;
+import fun.nekomc.sw.utils.PlayerHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Keyed;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -100,9 +107,6 @@ public class PromotionOperation {
         // 解析参数：强化等级，如 -4
         boolean rewrite = !(rules[2].startsWith("-") || rules[2].startsWith("+"));
         String promoteValue = rules[2];
-        if (!rewrite) {
-            promoteValue = promoteValue.substring(1);
-        }
         // 解析参数：强化目标，如 ARMOR
         Keyed targetToPromote = null;
         Optional<Keyed> targetOpt = checkPromoteValue(promoteValue, promotionType, rules[1]);
@@ -127,6 +131,34 @@ public class PromotionOperation {
             doPromoteAttribute(itemStack);
         } else {
             doPromoteEnchantment(itemStack);
+        }
+    }
+
+    public static void doPromoteByCandidatesRandomly(@NotNull ItemStack itemStack, List<String> candidates, int repeat) {
+        Assert.notNull(itemStack, "itemStack cannot be null");
+        if (CollUtil.isEmpty(candidates)) {
+            return;
+        }
+        int totalWeight = 0;
+        List<PromotionOperation> promotionList = new LinkedList<>();
+        for (String candidate : candidates) {
+            PromotionOperation promotionOperation = PromotionOperation.buildByConfigStr(candidate);
+            promotionList.add(promotionOperation);
+            totalWeight += promotionOperation.getWeight();
+        }
+        while (repeat-- > 0) {
+            int nowWeight = 0;
+            int target = RandomUtil.randomInt(0, totalWeight);
+            for (PromotionOperation nowPromotion : promotionList) {
+                // 目标权重位于指定区间内
+                if (nowWeight <= target && target < nowWeight + nowPromotion.weight) {
+                    nowPromotion.doPromote(itemStack);
+                    String template = nowPromotion.isRewrite() ? Constants.Msg.REFINE_RESET : Constants.Msg.REFINE_CHANGE;
+                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template), nowPromotion.getTarget(), nowPromotion.getPromotionValue());
+                    break;
+                }
+                nowWeight += nowPromotion.weight;
+            }
         }
     }
 
@@ -179,11 +211,8 @@ public class PromotionOperation {
      * 可以正常解析时，返回要增强的目标对象
      */
     private static Optional<Keyed> checkPromoteValue(String promoteValue, PromotionTypeEnum promotionType, String promotionTarget) {
-        boolean noNumeric = !CharSequenceUtil.isNumeric(promoteValue);
-        String[] promoteSplit = promoteValue.split("\\.");
-        boolean noFloat = promoteSplit.length != 2
-                || !CharSequenceUtil.isNumeric(promoteSplit[0])
-                || !CharSequenceUtil.isNumeric(promoteSplit[1]);
+        boolean noNumeric = !NumberUtil.isNumber(promoteValue);
+        boolean noFloat = !NumberUtil.isDouble(promoteValue);
         try {
             switch (promotionType) {
                 case ATTR:
@@ -192,14 +221,14 @@ public class PromotionOperation {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }
                     // 解析为 Attribute
-                    return Optional.of(Attribute.valueOf(promoteValue));
+                    return Optional.of(Attribute.valueOf(promotionTarget));
                 case ENCH:
                 case ENCH_UP:
                     if (noNumeric) {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }
                     // 解析为 Enchantment
-                    Optional<Enchantment> targetEnchantOpt = EnchantHelper.getByName(promoteValue);
+                    Optional<Enchantment> targetEnchantOpt = EnchantHelper.getByName(promotionTarget);
                     if (!targetEnchantOpt.isPresent()) {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }

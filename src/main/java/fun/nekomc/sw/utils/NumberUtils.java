@@ -1,5 +1,6 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import org.jetbrains.annotations.NotNull;
@@ -135,30 +136,6 @@ public final class NumberUtils {
     }
 
     /**
-     * Generate random integer in range.
-     *
-     * @param min Minimum.
-     * @param max Maximum.
-     * @return Random integer.
-     */
-    public static int randInt(final int min,
-                              final int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
-
-    /**
-     * Generate random double in range.
-     *
-     * @param min Minimum.
-     * @param max Maximum.
-     * @return Random double.
-     */
-    public static double randFloat(final double min,
-                                   final double max) {
-        return ThreadLocalRandom.current().nextDouble(min, max);
-    }
-
-    /**
      * Generate random double with a triangular distribution.
      *
      * @param minimum Minimum.
@@ -223,7 +200,7 @@ public final class NumberUtils {
      */
     public static boolean passedChance(@NotNull final AbstractSwEnchantment enchantment,
                                        final int level) {
-        return randFloat(0, 1.0) < (double) (enchantment.getConfig().getAddition() * level) / 100;
+        return RandomUtil.randomDouble(0, 1.0) < (double) (enchantment.getConfig().getAddition() * level) / 100;
     }
 
 }

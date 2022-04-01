@@ -9,6 +9,7 @@ import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,11 @@ public class StrengthAnvilGuiListener extends AbstractComposeGui implements List
         registerCheckRule(SW_WEAPON_INDEX, ItemsTypeEnum.BLANK);
         registerCheckRule(SW_STONE_INDEX, ItemsTypeEnum.STRENGTHEN_STONE);
         service = StrengthenServiceImpl.getInstance();
+    }
+
+    @Override
+    protected boolean recipeMatch(Inventory targetInv) {
+        return true;
     }
 
     @Override

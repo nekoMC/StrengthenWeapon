@@ -16,6 +16,16 @@ import java.util.List;
 public class SwRefineStoneConfigDto extends SwItemConfigDto {
 
     /**
+     * 洗练成功时，最少可获得的属性条目
+     */
+    private int minOnce;
+
+    /**
+     * 洗练成功时，最多可获得的属性条目
+     */
+    private int maxOnce;
+
+    /**
      * 强化候选
      *
      * @see fun.nekomc.sw.promote.PromotionOperation

@@ -26,7 +26,7 @@ import java.util.UUID;
  * @author Chiru
  */
 @Data
-public abstract class SwItemConfigDto implements Serializable {
+public class SwItemConfigDto implements Serializable {
 
     /**
      * 道具类型

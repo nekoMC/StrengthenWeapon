@@ -22,7 +22,7 @@ class SwRefineCommand extends AbstractGuiCommand {
     @Override
     protected boolean rua(Player player) {
         Inventory inv = StrengthenWeapon.server()
-                .createInventory(player, InventoryType.ENCHANTING, ConfigManager.getConfigYml().getRefineTitle());
+                .createInventory(player, InventoryType.FURNACE, ConfigManager.getConfigYml().getRefineTitle());
         player.openInventory(inv);
         return true;
     }

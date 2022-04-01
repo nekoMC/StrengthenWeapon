@@ -121,8 +121,8 @@ public class ConfigManager {
             MsgUtils.consoleMsg("§c§l配置文件[%s]不存在，正在生成配置文件....", targetFileName);
             StrengthenWeapon.getInstance().saveResource(Constants.ITEMS_CONFIG_FILE_NAME, false);
         }
-        try {
-            return yamlLoader.loadAs(new FileInputStream(configYmlFile), targetClass);
+        try (FileInputStream input = new FileInputStream(configYmlFile)) {
+            return yamlLoader.loadAs(input, targetClass);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }

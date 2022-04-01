@@ -14,6 +14,7 @@ import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,6 +23,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
  * @author ourange
  */
 @UtilityClass
+@Slf4j
 public class ItemUtils {
 
     /**
@@ -219,6 +222,7 @@ public class ItemUtils {
                     modifierName, modifierDoubleValue, operation, slot);
             // 设置属性
             modifiers.add(targetModifier);
+            log.info("{} updated [{}]'s Attribute: {}", PlayerHolder.getSender().getName(), originMeta.getDisplayName(), modifierName);
         }
         attributeModifiers.replaceValues(attribute, modifiers);
         originMeta.setAttributeModifiers(attributeModifiers);
@@ -257,6 +261,25 @@ public class ItemUtils {
         // 刷新附魔 Lore
         EnchantHelper.updateLore(targetItem);
         return true;
+    }
+
+    /**
+     * 获取某个物品的配置 DTO
+     *
+     * @param item    目标物品
+     * @param dtoType DTO 的 Class 对象
+     * @param <D>     DTO 类型
+     * @return Optional 包装的该 DTO
+     */
+    @SuppressWarnings("unchecked")
+    public <D> Optional<D> getConfigDtoFromItem(ItemStack item, Class<D> dtoType) {
+        String itemName = ItemUtils.getNameFromMeta(item);
+        Optional<SwItemConfigDto> itemConfig = ConfigManager.getItemConfig(itemName);
+        // 没有配置或没有配置类型不匹配，返回空
+        if (!itemConfig.isPresent() || !(dtoType.isInstance(itemConfig.get()))) {
+            return Optional.empty();
+        }
+        return Optional.of((D) itemConfig.get());
     }
 
     // ========== private ========== //

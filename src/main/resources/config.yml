@@ -11,6 +11,10 @@ message:
   cannot_operate: §4无法完成操作
   line_number: 行号
   reloaded: §a配置文件已重新读取
+  refine_change: §a属性[%s]发生变化:[%s]
+  refine_reset: §a属性[%s]重写为:[%s]
+  refine_success: §b洗炼成功！
+  refine_fail: §4洗炼失败！
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
     §a§l/sw refine [<玩家>] §e打开洗炼菜单
@@ -29,17 +33,17 @@ enchants:
   ARROW_RAIN:
     key: ARROW_RAIN
     targetMaterials:
-    - BOW
+      - BOW
     displayName: §b箭雨
     maxLevel: 3
     conflicts:
-    - INFINITY
+      - INFINITY
     description: 没什么卵用
     treasure: true
     addition: 1
     hideLore: false
 
 strengthTitle: §c§l强化台
-refineTitle: §6§l洗炼台
+refineTitle: §6§l洗炼炉
 # 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
 enablePlayerEnchant: false
