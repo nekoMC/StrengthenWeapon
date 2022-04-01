@@ -3,6 +3,7 @@ package fun.nekomc.sw.utils;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
@@ -17,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Chiru
  * @see <a href="https://github.com/Auxilor/eco">参考 Eco</a>
  */
+@UtilityClass
 public final class NumberUtils {
     /**
      * Sin lookup table.
@@ -44,7 +46,7 @@ public final class NumberUtils {
         NUMERALS.put(1, "I");
 
         for (int i = 0; i < 65536; ++i) {
-            SIN_LOOKUP[i] = Math.sin((double) i * 3.141592653589793D * 2.0D / 65536.0D);
+            SIN_LOOKUP[i] = Math.sin(i * 3.141592653589793D * 2.0D / 65536.0D);
         }
     }
 
