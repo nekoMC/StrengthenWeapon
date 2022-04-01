@@ -1,4 +1,4 @@
-package fun.nekomc.sw.utils;
+package fun.nekomc.sw.common;
 
 import lombok.experimental.UtilityClass;
 
@@ -47,4 +47,22 @@ public class Constants {
 
     /***/
     public static final String STR_ZERO = "0";
+
+    @UtilityClass
+    public static class Msg {
+        public static final String CONFIG_ERROR = "config_error";
+        public static final String GRAMMAR_ERROR = "grammar_error";
+        public static final String NO_AUTH = "no_auth";
+        public static final String NOT_PLAYER = "not_player";
+        public static final String HELP_MSG = "help_msg";
+        public static final String ADMIN_HELP_MSG = "admin_help_msg";
+        public static final String LINE_NUMBER = "line_number";
+        public static final String UNKNOWN_ITEM = "unknown_item";
+        public static final String COMMAND_ERROR = "command_error";
+        public static final String RELOADED = "reloaded";
+        public static final String REFINE_CHANGE = "refine_change";
+        public static final String REFINE_RESET = "refine_reset";
+        public static final String REFINE_SUCCESS = "refine_success";
+        public static final String REFINE_FAIL = "refine_fail";
+    }
 }

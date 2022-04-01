@@ -2,6 +2,7 @@ package fun.nekomc.sw.enchant.helper;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.utils.DurabilityUtils;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 public class EnchantHelper {
 
     @Getter
-    private final static List<AbstractSwEnchantment> registeredEnchants = new LinkedList<>();
+    private static final List<AbstractSwEnchantment> REGISTERED_ENCHANTS = new LinkedList<>();
 
     /**
      * Does the specified ItemStack have a certain Enchantment present?
@@ -91,7 +92,7 @@ public class EnchantHelper {
 
         Map<AbstractSwEnchantment, Integer> swEnchantMap = new HashMap<>(4);
         enchantments.keySet().stream()
-                .filter(enchant -> enchant instanceof AbstractSwEnchantment)
+                .filter(AbstractSwEnchantment.class::isInstance)
                 .forEach(enchant -> swEnchantMap.put((AbstractSwEnchantment) enchant, enchantments.get(enchant)));
         return swEnchantMap;
     }
@@ -296,13 +297,13 @@ public class EnchantHelper {
             return new HashMap<>();
         }
 
-        Map<AbstractSwEnchantment, Integer> AbstractSwEnchantment = new HashMap<>();
+        Map<AbstractSwEnchantment, Integer> enchantsMap = new HashMap<>();
 
         for (ItemStack itemStack : entity.getEquipment().getArmorContents()) {
-            AbstractSwEnchantment.putAll(EnchantHelper.getEnchantsOnItem(itemStack));
+            enchantsMap.putAll(EnchantHelper.getEnchantsOnItem(itemStack));
         }
 
-        return AbstractSwEnchantment;
+        return enchantsMap;
     }
 
     /**
@@ -435,7 +436,7 @@ public class EnchantHelper {
             if (enchantment instanceof AbstractSwEnchantment) {
                 AbstractSwEnchantment swEnchantment = (AbstractSwEnchantment) enchantment;
                 byNameMap.put(swEnchantment.getConfig().getDisplayName(), enchantment);
-                registeredEnchants.add(swEnchantment);
+                REGISTERED_ENCHANTS.add(swEnchantment);
             }
         });
         Enchantment.registerEnchantment(enchantment);
@@ -505,7 +506,7 @@ public class EnchantHelper {
         // 结果 Lore
         List<String> resultLore = new ArrayList<>();
         // 需要移除的附魔名称集合
-        Set<String> enchantNameToDelete = registeredEnchants.stream()
+        Set<String> enchantNameToDelete = REGISTERED_ENCHANTS.stream()
                 .map(swEnchant -> swEnchant.getConfig().getDisplayName())
                 .collect(Collectors.toSet());
         // 获取物品上的 SwEnchantment
@@ -528,7 +529,7 @@ public class EnchantHelper {
             String[] splitLore = row.split(" ");
             // 不符合 {name} {lvl} 的格式，保留
             if (splitLore.length != 2 ||
-                    (!StrUtil.isNumeric(splitLore[1]) && !NumberUtils.isValidNumeral(splitLore[1]))) {
+                    (!CharSequenceUtil.isNumeric(splitLore[1]) && !NumberUtils.isValidNumeral(splitLore[1]))) {
                 return true;
             }
             // 过滤掉附魔名与当前附魔重复的
@@ -540,4 +541,19 @@ public class EnchantHelper {
         itemStack.setItemMeta(meta);
     }
 
+    /**
+     * 通过附魔名获取附魔对象，支持原生附魔和自定义附魔
+     *
+     * @param enchantName 附魔名
+     * @return 指定的附魔对象
+     */
+    public static Optional<Enchantment> getByName(String enchantName) {
+        Optional<Enchantment> target = getREGISTERED_ENCHANTS().stream()
+                .filter(enchant -> enchant.getKey().getKey().equals(enchantName))
+                .findFirst()
+                .map(Enchantment.class::cast);
+        return target.isPresent()
+                ? target
+                : Optional.ofNullable(Enchantment.getByKey(NamespacedKey.minecraft(enchantName)));
+    }
 }

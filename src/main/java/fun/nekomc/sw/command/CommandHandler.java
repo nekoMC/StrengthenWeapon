@@ -2,7 +2,8 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 命令行指令解释器
+ * 命令行指令解释器，指令解析入口
  *
  * @author ourange
  */
@@ -62,7 +63,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             } catch (SwCommandException e) {
                 e.feedback();
             } catch (Exception e) {
-                MsgUtils.returnMsgToSender(commandSender, ConfigManager.getConfiguredMsg("command_error"), e.getMessage());
+                MsgUtils.returnMsgToSender(commandSender, ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR), e.getMessage());
             }
             return false;
         }).orElse(false);

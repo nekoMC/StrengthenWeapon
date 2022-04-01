@@ -1,11 +1,11 @@
 sw_bow:
   type: BLANK
-  displayName: §b[强化弓]
+  displayName: §4残月琴弓
   name: sw_bow
   lore:
-    - §a每强化一级，可以射出一根额外的箭。
-    - §b洗炼等级：§4${ref_lvl}
-    - §b强化等级：§4${str_lvl}
+    - §5这里是文案
+    - §5稀有度：§4传说
+    - §5练度：§4${ref_lvl}§a洗 §7- §4${str_lvl}§a精
   material: BOW
   unbreakable: true
   attributes:
@@ -15,6 +15,43 @@ sw_bow:
   enchantments:
     - UNBREAKING:10
     - PROTECTION:3
+  # 洗炼规则
+  refine:
+    limit: 5 # 最多可以洗炼的次数
+    beginRate: 100 # 0 洗时的成功率
+    rateLvlDown: 10 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）
+      - speed_feather
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: pre
+      lore:
+        - §a最多可以进行五次洗炼。
+        - §4洗炼成功率会逐级降低！
+      material: PAPER
+      enchantments:
+        - FORTUNE:1
+    broke: speed_feather # 洗练失败时的产物
+
+speed_feather:
+  material: FEATHER
+  type: REFINE_STONE
+  display: §d青鸾尾羽
+  name: speed_feather
+  lore:
+    - §5这里还是文案
+    - §5稀有度：§d史诗
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  minOnce: 1
+  maxOnce: 2
+  candidates:
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:10
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:30
+    - ATTR-HAND:GENERIC_ATTACK_SPEED:0.02:30
+    - ATTR-HAND:GENERIC_ARMOR:-5:50
+    - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.1:50
+
 
 sw_stone:
   type: STRENGTHEN_STONE

@@ -2,8 +2,8 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import org.bukkit.command.CommandSender;
 
@@ -23,7 +23,7 @@ class SwReloadCommand extends SwCommand {
     public boolean rua(CommandSender sender, String[] args) {
         Assert.isTrue(args.length == 1, Constants.COMMAND_PARAMETER_SIZE_ERROR_MSG);
         StrengthenWeapon.getInstance().reloadConfig();
-        MsgUtils.returnMsgToSender(sender, ConfigManager.getConfiguredMsg("reloaded"));
+        MsgUtils.returnMsgToSender(sender, ConfigManager.getConfiguredMsg(Constants.Msg.RELOADED));
         return true;
     }
 }

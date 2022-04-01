@@ -1,6 +1,8 @@
 package fun.nekomc.sw.domain.enumeration;
 
 import fun.nekomc.sw.domain.dto.SwBlankConfigDto;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.dto.SwRefineStoneConfigDto;
 import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +20,20 @@ public enum ItemsTypeEnum implements BaseEnum<Integer> {
     BLANK(0, SwBlankConfigDto.class),
 
     /**
+     * 白板，可用于强化洗练的白板道具或装备等
+     * 强化洗炼过数次，仍能继续强化的道具也属于白板
+     */
+    REFINE_STONE(1, SwRefineStoneConfigDto.class),
+
+    /**
      * 强化石，可以强化配置属性的消耗品
      */
     STRENGTHEN_STONE(2, SwStrengthenStoneConfigDto.class),
+
+    /**
+     * 默认物品类别，如普通的方块
+     */
+    DEFAULT(10, SwItemConfigDto.class),
     ;
 
     /**

@@ -1,4 +1,4 @@
-package fun.nekomc.sw.utils;
+package fun.nekomc.sw.common;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -10,6 +10,8 @@ import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwException;
+import fun.nekomc.sw.utils.MsgUtils;
+import fun.nekomc.sw.utils.ServiceUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
@@ -119,8 +121,8 @@ public class ConfigManager {
             MsgUtils.consoleMsg("§c§l配置文件[%s]不存在，正在生成配置文件....", targetFileName);
             StrengthenWeapon.getInstance().saveResource(Constants.ITEMS_CONFIG_FILE_NAME, false);
         }
-        try {
-            return yamlLoader.loadAs(new FileInputStream(configYmlFile), targetClass);
+        try (FileInputStream input = new FileInputStream(configYmlFile)) {
+            return yamlLoader.loadAs(input, targetClass);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }
