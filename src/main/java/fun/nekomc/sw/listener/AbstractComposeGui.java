@@ -1,7 +1,6 @@
 package fun.nekomc.sw.listener;
 
 import cn.hutool.core.lang.Assert;
-import fun.nekomc.sw.domain.dto.SwBlankConfigDto;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.SwException;
@@ -166,6 +165,7 @@ public abstract class AbstractComposeGui implements Listener {
     /**
      * 点击背包事件
      */
+    @SuppressWarnings("unused")
     public void onClickBag(WrappedInventoryClickEvent wrapped) {
     }
 

@@ -14,14 +14,12 @@ import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
-import fun.nekomc.sw.utils.PlayerHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Keyed;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -153,7 +151,7 @@ public class PromotionOperation {
                 // 目标权重位于指定区间内
                 if (nowWeight <= target && target < nowWeight + nowPromotion.weight) {
                     nowPromotion.doPromote(itemStack);
-                    String template = nowPromotion.isRewrite() ? Constants.Msg.REFINE_RESET : Constants.Msg.REFINE_CHANGE;
+                    String template = nowPromotion.isRewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
                     MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template), nowPromotion.getTarget(), nowPromotion.getPromotionValue());
                     break;
                 }

@@ -1,66 +1,42 @@
 package fun.nekomc.sw.listener;
 
-import fun.nekomc.sw.domain.dto.SwItemConfigDto;
-import fun.nekomc.sw.domain.dto.SwStrengthenStoneConfigDto;
+import cn.hutool.core.lang.Assert;
+import fun.nekomc.sw.domain.SwItemAttachData;
+import fun.nekomc.sw.domain.dto.SwBlankConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
-import fun.nekomc.sw.service.StrengthenService;
-import fun.nekomc.sw.service.imp.StrengthenServiceImpl;
 import fun.nekomc.sw.common.ConfigManager;
-import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
-
 
 /**
- * 全局事件监听分发器
+ * 强化 GUI 的监听处理器
  *
  * @author ourange
  */
-public class StrengthAnvilGuiListener extends AbstractComposeGui implements Listener {
-
-    private static final int SW_WEAPON_INDEX = 0;
-    private static final int SW_STONE_INDEX = 1;
-
-    private final StrengthenService service;
+public class StrengthAnvilGuiListener extends TwoInputOneOutputGuiListener implements Listener {
 
     public StrengthAnvilGuiListener() {
-        super(InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle(), 2);
-        // 注册校验规则
-        registerCheckRule(SW_WEAPON_INDEX, ItemsTypeEnum.BLANK);
-        registerCheckRule(SW_STONE_INDEX, ItemsTypeEnum.STRENGTHEN_STONE);
-        service = StrengthenServiceImpl.getInstance();
+        super(InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle(), ItemsTypeEnum.BLANK, ItemsTypeEnum.STRENGTHEN_STONE);
     }
 
     @Override
-    protected boolean recipeMatch(Inventory targetInv) {
-        return true;
+    protected SwBlankConfigDto.StrengthRule getStrengthRuleFromBlankConfig(SwBlankConfigDto blankConfigDto) {
+        Assert.notNull(blankConfigDto, "blankConfigDto cannot be null");
+        return blankConfigDto.getStrength();
     }
 
     @Override
-    protected ItemStack generatePreviewItem(@NotNull WrappedInventoryClickEvent wrapped) {
-        // TODO 生成预览物品
-        ItemStack item = wrapped.inventory.getItem(0).clone();
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName("Demo For Display");
-        item.setItemMeta(itemMeta);
-        return item;
+    protected int getLvlFromAttach(SwItemAttachData attachData) {
+        if (null == attachData || null == attachData.getStrLvl()) {
+            return 0;
+        }
+        return attachData.getStrLvl();
     }
 
     @Override
-    protected ItemStack generateStrengthItem(@NotNull WrappedInventoryClickEvent wrapped) {
-        // TODO 实际强化逻辑
-        ItemStack item = wrapped.inventory.getItem(SW_WEAPON_INDEX);
-        ItemStack stone = wrapped.inventory.getItem(SW_STONE_INDEX);
-        String stoneName = ItemUtils.getNameFromMeta(stone);
-        Optional<SwItemConfigDto> stoneConfig = ConfigManager.getItemConfig(stoneName);
-        return stoneConfig.map(swItemConfigDto ->
-                service.strengthen(wrapped.clickPlayer, item, (SwStrengthenStoneConfigDto) swItemConfigDto, false)
-        ).orElse(null);
+    protected SwItemAttachData newAttachDataAfterLvlUp(SwItemAttachData oldAttach) {
+        int oldStr = (null == oldAttach || null == oldAttach.getStrLvl()) ? 0 : oldAttach.getStrLvl();
+        int oldRef = (null == oldAttach || null == oldAttach.getRefLvl()) ? 0 : oldAttach.getRefLvl();
+        return new SwItemAttachData(oldRef, oldStr + 1);
     }
 }

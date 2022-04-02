@@ -29,7 +29,25 @@ sw_bow:
       lore:
         - §a最多可以进行五次洗炼。
         - §4洗炼成功率会逐级降低！
-      material: PAPER
+      material: CHEST
+      enchantments:
+        - FORTUNE:1
+    broke: speed_feather # 洗练失败时的产物
+  # 强化规则
+  strength:
+    limit: 10 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 9 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的强化材料（名称）
+      - speed_feather
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: pre
+      lore:
+        - §a最多可以进行五次洗炼。
+        - §4洗炼成功率会逐级降低！
+      material: CHEST
       enchantments:
         - FORTUNE:1
     broke: speed_feather # 洗练失败时的产物
@@ -43,15 +61,20 @@ speed_feather:
     - §5这里还是文案
     - §5稀有度：§d史诗
   # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
-  minOnce: 1
-  maxOnce: 2
+  # 配置解释：可获得的条数,概率权重,每提升一级对概率权重的影响
+  times:
+    - time: 1
+      chance: 100
+      rate: 2
+    - time: 2
+      chance: 10
+      rate: -2
   candidates:
     - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:10
     - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:30
     - ATTR-HAND:GENERIC_ATTACK_SPEED:0.02:30
     - ATTR-HAND:GENERIC_ARMOR:-5:50
     - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.1:50
-
 
 sw_stone:
   type: STRENGTHEN_STONE
