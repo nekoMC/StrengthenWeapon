@@ -31,6 +31,11 @@ public class SwRawConfigDto extends SwItemConfigDto {
     private List<String> candidates;
 
     /**
+     * 成功率加成
+     */
+    private int addition;
+
+    /**
      * 强化次数及概率配置
      */
     @Data

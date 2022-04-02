@@ -44,4 +44,8 @@ public enum PromotionTypeEnum implements BaseEnum<Integer> {
     public static boolean isAttribute(PromotionTypeEnum type) {
         return type == ATTR || type == ATTR_UP;
     }
+
+    public static boolean isRewrite(PromotionTypeEnum promotionType) {
+        return promotionType == ATTR || promotionType == ENCH;
+    }
 }

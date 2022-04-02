@@ -64,5 +64,6 @@ public class Constants {
         public static final String PROMOTE_RESET = "promote_reset";
         public static final String PROMOTE_SUCCESS = "promote_success";
         public static final String PROMOTE_FAIL = "promote_fail";
+        public static final String CHECK_NOT_PASS = "check_not_pass";
     }
 }

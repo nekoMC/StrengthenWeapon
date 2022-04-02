@@ -13,8 +13,9 @@ message:
   reloaded: §a配置文件已重新读取
   promote_change: §a属性[%s]发生变化:[%s]
   promote_reset: §a属性[%s]重写为:[%s]
-  promote_success: §b洗炼成功！
-  promote_fail: §4洗炼失败！
+  promote_success: §b操作成功！
+  promote_fail: §4操作失败！
+  check_not_pass: §4强化失败，未发生改变！
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
     §a§l/sw refine [<玩家>] §e打开洗炼菜单

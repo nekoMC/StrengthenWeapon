@@ -16,7 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 public class RefineTableGuiListener extends TwoInputOneOutputGuiListener implements Listener {
 
     public RefineTableGuiListener() {
-        super(InventoryType.FURNACE, ConfigManager.getConfigYml().getRefineTitle(), ItemsTypeEnum.BLANK, ItemsTypeEnum.REFINE_STONE);
+        super(InventoryType.FURNACE, ConfigManager.getConfigYml().getRefineTitle(), ItemsTypeEnum.BLANK, ItemsTypeEnum.REFINE_STONE, false);
     }
 
     @Override

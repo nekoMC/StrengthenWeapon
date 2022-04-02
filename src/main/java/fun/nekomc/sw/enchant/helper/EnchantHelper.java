@@ -65,7 +65,8 @@ public class EnchantHelper {
         if (null == enchantment || null == itemStack) {
             return 0;
         }
-        return itemStack.getEnchantments().get(enchantment);
+        Integer lvl = itemStack.getEnchantments().get(enchantment);
+        return null == lvl ? 0 : lvl;
     }
 
 
@@ -548,7 +549,7 @@ public class EnchantHelper {
      * @return 指定的附魔对象
      */
     public static Optional<Enchantment> getByName(String enchantName) {
-        Optional<Enchantment> target = getREGISTERED_ENCHANTS().stream()
+        Optional<Enchantment> target = REGISTERED_ENCHANTS.stream()
                 .filter(enchant -> enchant.getKey().getKey().equals(enchantName))
                 .findFirst()
                 .map(Enchantment.class::cast);

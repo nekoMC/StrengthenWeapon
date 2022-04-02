@@ -39,7 +39,7 @@ sw_bow:
     beginRate: 100 # 0精时的成功率
     rateLvlDown: 9 # 每洗炼一次，成功率下降多少
     compatible: # 可以使用的强化材料（名称）
-      - speed_feather
+      - speed_stone
     preview: # 洗练时的预览信息
       type: DEFAULT
       displayName: §b点击以进行强化
@@ -47,10 +47,10 @@ sw_bow:
       lore:
         - §a最多可以进行五次洗炼。
         - §4洗炼成功率会逐级降低！
-      material: CHEST
+      material: ENDER_CHEST
       enchantments:
         - FORTUNE:1
-    broke: speed_feather # 洗练失败时的产物
+    broke: arrow_rain_scroll # 洗练失败时的产物
 
 speed_feather:
   material: FEATHER
@@ -60,6 +60,8 @@ speed_feather:
   lore:
     - §5这里还是文案
     - §5稀有度：§d史诗
+  enchantments:
+    - FORTUNE:1
   # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
   # 配置解释：可获得的条数,概率权重,每提升一级对概率权重的影响
   times:
@@ -71,17 +73,41 @@ speed_feather:
       rate: -2
   candidates:
     - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:10
-    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:30
+    - ATTR_UP-HAND:GENERIC_MOVEMENT_SPEED:0.01:30
     - ATTR-HAND:GENERIC_ATTACK_SPEED:0.02:30
     - ATTR-HAND:GENERIC_ARMOR:-5:50
     - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.1:50
+    - ENCH:ARROW_RAIN:1:10
+  # 成功率加成
+  addition: 0
 
-sw_stone:
-  type: STRENGTHEN_STONE
-  displayName: §b[强化石]
-  name: sw_stone
-  lore:
-    - §aline 1
-    - §bline 2
+speed_stone:
   material: RAW_COPPER
-  chance: 50
+  type: STRENGTHEN_STONE
+  displayName: §b迅捷宝石
+  name: speed_stone
+  enchantments:
+    - FORTUNE:1
+  lore:
+    - §5这里还是文案
+    - §5稀有度：§d史诗
+  candidates:
+    - ATTR_UP-HAND:GENERIC_MOVEMENT_SPEED:+0.05:90
+    - ENCH_UP:ARROW_RAIN:+1:10
+  # 成功率加成
+  addition: 0
+
+arrow_rain_scroll:
+  material: PAPER
+  type: STRENGTHEN_STONE
+  displayName: §b缚魔卷轴
+  name: arrow_rain_scroll
+  enchantments:
+    - ARROW_RAIN:1
+  lore:
+    - §5这里还是文案
+    - §5稀有度：§d史诗
+  candidates:
+    - ENCH_UP:ARROW_RAIN:+1:10
+  # 成功率加成
+  addition: 0

@@ -195,10 +195,11 @@ public class ItemUtils {
      * @param slot        生效槽位
      * @param attribute   目标属性
      * @param modifyValue 变更的属性值，如 0.2 2 2.2
+     * @param check       是否只允许修改物品已有的属性（值）
      * @return 变更后的元数据对象
      */
     public static ItemMeta updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
-                                                         Attribute attribute, String modifyValue) {
+                                                         Attribute attribute, String modifyValue, boolean check) {
         if (null == originMeta) {
             return null;
         }
@@ -208,9 +209,14 @@ public class ItemUtils {
                 ? LinkedListMultimap.create()
                 : LinkedListMultimap.create(attributeModifiers);
         // 移除旧属性
-        List<AttributeModifier> modifiers = attributeModifiers.get(attribute).stream()
+        Collection<AttributeModifier> originAttributeModifiers = attributeModifiers.get(attribute);
+        List<AttributeModifier> modifiers = originAttributeModifiers.stream()
                 .filter(modifier -> modifier.getSlot() != slot)
                 .collect(Collectors.toList());
+        if (check && originAttributeModifiers.size() == modifiers.size()) {
+            MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
+            return originMeta;
+        }
         // 不为 0 时，解析并设置新属性值
         if (!Constants.STR_ZERO.equals(modifyValue)) {
             AttributeModifier.Operation operation = modifyValue.contains(".")
@@ -230,7 +236,7 @@ public class ItemUtils {
     }
 
     /**
-     * 更新道具的指定附魔及覆膜等级
+     * 更新道具的指定附魔及附魔等级
      *
      * @param targetItem    目标道具
      * @param targetEnchant 要更新的附魔
