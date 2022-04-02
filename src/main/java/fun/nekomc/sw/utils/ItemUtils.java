@@ -260,6 +260,8 @@ public class ItemUtils {
         targetItem.setItemMeta(itemMeta);
         // 刷新附魔 Lore
         EnchantHelper.updateLore(targetItem);
+        log.info("{} updated [{}]'s Enchantment: {}",
+                PlayerHolder.getSender().getName(), itemMeta.getDisplayName(), targetEnchant.getKey().getKey());
         return true;
     }
 
