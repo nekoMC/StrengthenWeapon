@@ -14,14 +14,12 @@ import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
-import fun.nekomc.sw.utils.PlayerHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Keyed;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -104,8 +102,9 @@ public class PromotionOperation {
         if (PromotionTypeEnum.isAttribute(promotionType)) {
             slot = EquipmentSlot.valueOf(promoteTypeAndSlot[1]);
         }
-        // 解析参数：强化等级，如 -4
-        boolean rewrite = !(rules[2].startsWith("-") || rules[2].startsWith("+"));
+        // 属性重写
+        boolean rewrite = PromotionTypeEnum.isRewrite(promotionType);
+        // 解析参数：强化等级，如 -4;
         String promoteValue = rules[2];
         // 解析参数：强化目标，如 ARMOR
         Keyed targetToPromote = null;
@@ -124,17 +123,17 @@ public class PromotionOperation {
      *
      * @param itemStack 要强化的道具
      */
-    public void doPromote(@NotNull ItemStack itemStack) {
+    public void doPromote(@NotNull ItemStack itemStack, boolean check) {
         Assert.notNull(itemStack, "itemStack cannot be null");
         // 针对 Attribute 的强化
         if (null != attrSlot && PromotionTypeEnum.isAttribute(promotion)) {
-            doPromoteAttribute(itemStack);
+            doPromoteAttribute(itemStack, check);
         } else {
-            doPromoteEnchantment(itemStack);
+            doPromoteEnchantment(itemStack, check);
         }
     }
 
-    public static void doPromoteByCandidatesRandomly(@NotNull ItemStack itemStack, List<String> candidates, int repeat) {
+    public static void doPromoteByCandidatesRandomly(@NotNull ItemStack itemStack, List<String> candidates, int repeat, boolean check) {
         Assert.notNull(itemStack, "itemStack cannot be null");
         if (CollUtil.isEmpty(candidates)) {
             return;
@@ -152,9 +151,10 @@ public class PromotionOperation {
             for (PromotionOperation nowPromotion : promotionList) {
                 // 目标权重位于指定区间内
                 if (nowWeight <= target && target < nowWeight + nowPromotion.weight) {
-                    nowPromotion.doPromote(itemStack);
-                    String template = nowPromotion.isRewrite() ? Constants.Msg.REFINE_RESET : Constants.Msg.REFINE_CHANGE;
-                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template), nowPromotion.getTarget(), nowPromotion.getPromotionValue());
+                    nowPromotion.doPromote(itemStack, check);
+                    String template = nowPromotion.isRewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
+                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template),
+                            nowPromotion.getTarget().getKey().getKey(), nowPromotion.getPromotionValue());
                     break;
                 }
                 nowWeight += nowPromotion.weight;
@@ -167,7 +167,7 @@ public class PromotionOperation {
     /**
      * 对 Attribute 进行增强，本方法中不会进行校验，确保调用时已校验完毕
      */
-    private void doPromoteAttribute(ItemStack itemStack) {
+    private void doPromoteAttribute(ItemStack itemStack, boolean check) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (null == itemMeta) {
             throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
@@ -188,19 +188,23 @@ public class PromotionOperation {
                 toPromote = NumberUtil.decimalFormat("#.##", newPromote);
             }
         }
-        ItemMeta updatedMeta = ItemUtils.updateAttributeModifierInMeta(itemMeta, attrSlot, attributeToPromote, toPromote);
+        ItemMeta updatedMeta = ItemUtils.updateAttributeModifierInMeta(itemMeta, attrSlot, attributeToPromote, toPromote, check);
         itemStack.setItemMeta(updatedMeta);
     }
 
     /**
      * 对 Enchantment 进行增强，本方法中不会进行校验，确保调用时已校验完毕
      */
-    private void doPromoteEnchantment(ItemStack itemStack) {
+    private void doPromoteEnchantment(ItemStack itemStack, boolean check) {
         Enchantment targetEnchant = (Enchantment) this.target;
         int targetLevel = Integer.parseInt(promotionValue);
         // 如果不是重写，则基于原等级变更附魔等级
+        int enchantOldLevel = EnchantHelper.getEnchantLevelOnItem(itemStack, targetEnchant);
+        if (check && 0 == enchantOldLevel) {
+            MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
+            return;
+        }
         if (!rewrite) {
-            int enchantOldLevel = EnchantHelper.getEnchantLevelOnItem(itemStack, targetEnchant);
             targetLevel += enchantOldLevel;
         }
         ItemUtils.updateItemEnchant(itemStack, targetEnchant, targetLevel);
@@ -228,7 +232,7 @@ public class PromotionOperation {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }
                     // 解析为 Enchantment
-                    Optional<Enchantment> targetEnchantOpt = EnchantHelper.getByName(promotionTarget);
+                    Optional<Enchantment> targetEnchantOpt = EnchantHelper.getByName(promotionTarget.toLowerCase());
                     if (!targetEnchantOpt.isPresent()) {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }

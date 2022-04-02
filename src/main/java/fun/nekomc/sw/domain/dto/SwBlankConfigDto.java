@@ -18,32 +18,37 @@ public class SwBlankConfigDto extends SwItemConfigDto implements Serializable {
     /**
      * 洗练规则
      */
-    private RefineRule refine;
+    private StrengthRule refine;
+
+    /**
+     * 强化规则
+     */
+    private StrengthRule strength;
 
     @Data
-    public static class RefineRule {
+    public static class StrengthRule implements Serializable {
         /**
-         * 最多可以洗炼的次数
+         * 最多可以洗炼（强化）的次数
          */
         private int limit;
         /**
-         * 0 洗时的成功率
+         * 0 洗（强化）时的成功率
          */
         private int beginRate;
         /**
-         * 每洗炼一次，成功率下降多少
+         * 每洗炼（强化）一次，成功率下降多少
          */
         private int rateLvlDown;
         /**
-         * 可以使用的洗练材料（名称）
+         * 可以使用的洗练（强化）材料（名称）
          */
         private List<String> compatible;
         /**
-         * 洗练时的预览信息
+         * 洗练（强化）时的预览信息
          */
         private SwItemConfigDto preview;
         /**
-         * 洗练失败后返还的物品名
+         * 洗练（强化）失败后返还的物品 key
          */
         private String broke;
     }

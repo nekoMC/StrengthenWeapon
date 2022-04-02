@@ -37,6 +37,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 new SwGiveCommand(),
                 new SwEnchantCommand(),
                 new SwAttributeCommand(),
+                new SwPromoteCommand(),
+                new SwRenameCommand(),
                 new SwLoreCommand().linkSubCmd(
                         // 二级节点：sw lore xx
                         new SwLoreSetCommand(),

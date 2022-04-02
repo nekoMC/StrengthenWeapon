@@ -60,9 +60,10 @@ public class Constants {
         public static final String UNKNOWN_ITEM = "unknown_item";
         public static final String COMMAND_ERROR = "command_error";
         public static final String RELOADED = "reloaded";
-        public static final String REFINE_CHANGE = "refine_change";
-        public static final String REFINE_RESET = "refine_reset";
-        public static final String REFINE_SUCCESS = "refine_success";
-        public static final String REFINE_FAIL = "refine_fail";
+        public static final String PROMOTE_CHANGE = "promote_change";
+        public static final String PROMOTE_RESET = "promote_reset";
+        public static final String PROMOTE_SUCCESS = "promote_success";
+        public static final String PROMOTE_FAIL = "promote_fail";
+        public static final String CHECK_NOT_PASS = "check_not_pass";
     }
 }

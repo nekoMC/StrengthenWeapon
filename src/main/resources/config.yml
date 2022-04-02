@@ -11,10 +11,11 @@ message:
   cannot_operate: §4无法完成操作
   line_number: 行号
   reloaded: §a配置文件已重新读取
-  refine_change: §a属性[%s]发生变化:[%s]
-  refine_reset: §a属性[%s]重写为:[%s]
-  refine_success: §b洗炼成功！
-  refine_fail: §4洗炼失败！
+  promote_change: §a属性[%s]发生变化:[%s]
+  promote_reset: §a属性[%s]重写为:[%s]
+  promote_success: §b操作成功！
+  promote_fail: §4操作失败！
+  check_not_pass: §4强化失败，未发生改变！
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
     §a§l/sw refine [<玩家>] §e打开洗炼菜单
@@ -26,6 +27,8 @@ message:
     §b§l/sw enchant <附魔ID> <附魔等级> §e对主手上的物品进行附魔
     §b§l/sw lore set <行号> <Lore内容> §e修改主手上物品的 Lore
     §b§l/sw lore del <行号> §e删除主手上物品指定行的 Lore
+    §b§l/sw promote <原料名> §e使用指定的原料对主手上的物品进行强化
+    §b§l/sw rename <新名称> §e重命名道具
 
 # 自定义附魔
 enchants:

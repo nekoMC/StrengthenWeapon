@@ -40,7 +40,7 @@ class SwAttributeCommand extends AbstractMainHandItemCommand {
         if (null == itemMeta) {
             return false;
         }
-        ItemMeta newMeta = ItemUtils.updateAttributeModifierInMeta(itemMeta, slot, attribute, modifyValue);
+        ItemMeta newMeta = ItemUtils.updateAttributeModifierInMeta(itemMeta, slot, attribute, modifyValue, false);
         targetItem.setItemMeta(newMeta);
         return true;
     }
