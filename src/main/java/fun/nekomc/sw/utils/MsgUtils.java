@@ -3,7 +3,6 @@ package fun.nekomc.sw.utils;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.common.Constants;
 import lombok.experimental.UtilityClass;
-import org.bukkit.Keyed;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;

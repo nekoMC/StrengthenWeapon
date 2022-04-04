@@ -1,5 +1,6 @@
 package fun.nekomc.sw.listener;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
@@ -126,10 +127,10 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         // 原料材料
         ItemStack rawItem = targetInv.getItem(RAW_INDEX);
         String rawItemName = ItemUtils.getNameFromMeta(rawItem);
-        // 校验洗练材料
+        // 校验材料
         SwBlankConfigDto blankConfig = blankConfigOpt.get();
         List<String> compatible = getStrengthRuleFromBlankConfig(blankConfig).getCompatible();
-        return compatible.contains(rawItemName);
+        return CollUtil.isEmpty(compatible) || compatible.contains(rawItemName);
     }
 
     // ========== private ========== //

@@ -1,56 +1,67 @@
-sw_bow:
+# ========== #
+# = 白板配置 = #
+# ========== #
+
+speed_bow:
   type: BLANK
-  displayName: §4残月琴弓
-  name: sw_bow
+  displayName: §4残月
+  name: speed_bow
   lore:
-    - §5这里是文案
+    - §5斯凯勒大帝曾使用过的弓，非常罕见。
+    - §5相传为参透斯凯勒圣典后，采用斯凯勒
+    - §5族人舍利炼化制得。坚韧有力，因附有
+    - §5的执念使之产生了魔力。
     - §5稀有度：§4传说
     - §5练度：§4${ref_lvl}§a洗 §7- §4${str_lvl}§a精
   material: BOW
   unbreakable: true
   attributes:
     HAND:
-      GENERIC_MOVEMENT_SPEED: 0.2
-      GENERIC_ARMOR: 3
+      GENERIC_MOVEMENT_SPEED: 0.1
+      GENERIC_ARMOR: -3
   enchantments:
-    - UNBREAKING:10
-    - PROTECTION:3
+    - UNBREAKING:8
+    - MENDING:1
+    - INFINITY:1
+    - POWER:5
   # 洗炼规则
   refine:
     limit: 5 # 最多可以洗炼的次数
-    beginRate: 100 # 0 洗时的成功率
-    rateLvlDown: 10 # 每洗炼一次，成功率下降多少
-    compatible: # 可以使用的洗练材料（名称）
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 15 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
       - speed_feather
+      - ward_arrow
     preview: # 洗练时的预览信息
       type: DEFAULT
       displayName: §b点击以进行洗炼
-      name: pre
+      name: pre_01
       lore:
         - §a最多可以进行五次洗炼。
         - §4洗炼成功率会逐级降低！
+        - §4洗炼失败时，可能损失原物品！
       material: CHEST
-      enchantments:
-        - FORTUNE:1
-    broke: speed_feather # 洗练失败时的产物
+    broke: refine_scrap # 洗练失败时的产物
   # 强化规则
   strength:
     limit: 10 # 最多可以强化的次数
     beginRate: 100 # 0精时的成功率
-    rateLvlDown: 9 # 每洗炼一次，成功率下降多少
-    compatible: # 可以使用的强化材料（名称）
-      - speed_stone
+    rateLvlDown: 7 # 每洗炼一次，成功率下降多少
     preview: # 洗练时的预览信息
       type: DEFAULT
       displayName: §b点击以进行强化
-      name: pre
+      name: pre_02
       lore:
-        - §a最多可以进行五次洗炼。
-        - §4洗炼成功率会逐级降低！
+        - §a最多可以进行10次精炼。
+        - §4精炼成功率会逐级降低！
+        - §4精炼只能强化已有属性，注意选择材料！
+        - §4精炼失败时，可能损失原物品！
       material: ENDER_CHEST
-      enchantments:
-        - FORTUNE:1
-    broke: arrow_rain_scroll # 洗练失败时的产物
+    broke: str_scrap # 精炼失败时的产物
+
+# ========== #
+# = 洗炼原料 = #
+# ========== #
 
 speed_feather:
   material: FEATHER
@@ -58,10 +69,52 @@ speed_feather:
   displayName: §d青鸾尾羽
   name: speed_feather
   lore:
-    - §5这里还是文案
+    - §5上古神鸟的一段尾羽，仍保留
+    - §5着微弱的神力，拿在手上便可
+    - §5感受到神力。
     - §5稀有度：§d史诗-洗炼原料
+    - §5可能使以下属性发生改变：
+    - §a移速 攻速 力量
+    - §4击退抗性 盔甲
+  attributes:
+    HAND:
+      GENERIC_MOVEMENT_SPEED: 0.2
+      GENERIC_KNOCKBACK_RESISTANCE: -3
   enchantments:
     - FORTUNE:1
+  candidates:
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.02:40
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.03:50
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.04:30
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.1:5
+    - ATTR-HAND:GENERIC_ATTACK_SPEED:0.03:30
+    - ATTR-HAND:GENERIC_ATTACK_SPEED:0.1:5
+    - ATTR_UP-HAND:GENERIC_ARMOR:-1:50
+    - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.1:80
+    - ENCH_UP:POWER:+1:30
+  # 成功率加成
+  addition: 0
+  # 稀有度，值越大越容易通过自然途径（钓鱼）获取，为 0 或缺省时无法自然获取
+  rarity: 60
+
+ward_arrow:
+  material: GLOWSTONE_DUST
+  type: REFINE_STONE
+  displayName: §d异界星尘
+  name: ward_arrow
+  lore:
+    - §5来历不明的发光粉尘，虽然能感受到
+    - §5它的光芒，但它的光泽和魔力并不属
+    - §5于这个世界。在特殊的情况下，能对
+    - §5弓产生意外的影响。
+    - §5稀有度：§d臻品-洗炼原料
+    - §5可能使以下属性发生改变1-2次：
+    - §a移速 力量 箭雨
+    - §4击退抗性 最大生命
+  enchantments:
+    - ARROW_RAIN:1
   # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
   # 配置解释：可获得的条数,概率权重,每提升一级对概率权重的影响
   times:
@@ -72,46 +125,127 @@ speed_feather:
       chance: 10
       rate: -2
   candidates:
-    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:10
-    - ATTR_UP-HAND:GENERIC_MOVEMENT_SPEED:0.01:30
-    - ATTR-HAND:GENERIC_ATTACK_SPEED:0.02:30
-    - ATTR-HAND:GENERIC_ARMOR:-5:50
-    - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.1:50
-    - ENCH:ARROW_RAIN:1:10
-  # 成功率加成
-  addition: 0
-  rarity: 50
-
-speed_stone:
-  material: RAW_COPPER
-  type: STRENGTHEN_STONE
-  displayName: §b迅捷宝石
-  name: speed_stone
-  enchantments:
-    - FORTUNE:1
-  lore:
-    - §5这里还是文案
-    - §5稀有度：§d史诗-洗炼原料
-  candidates:
-    - ATTR_UP-HAND:GENERIC_MOVEMENT_SPEED:+0.05:90
-    - ENCH_UP:ARROW_RAIN:+1:10
-  # 成功率加成
-  addition: 0
-  # 稀有度，值越大越容易通过自然途径（钓鱼）获取，为 0 时无法自然获取
-  rarity: 50
-
-arrow_rain_scroll:
-  material: PAPER
-  type: STRENGTHEN_STONE
-  displayName: §b缚魔卷轴
-  name: arrow_rain_scroll
-  enchantments:
-    - ARROW_RAIN:1
-  lore:
-    - §5这里还是文案
-    - §5稀有度：§d史诗-精炼原料
-  candidates:
-    - ENCH_UP:ARROW_RAIN:+1:10
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.02:40
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.03:50
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.04:30
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.1:5
+    - ATTR-HAND:GENERIC_MAX_HEALTH:-2:60
+    - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.2:60
+    - ENCH:ARROW_RAIN:1:30
+    - ENCH_UP:POWER:+1:40
   # 成功率加成
   addition: 0
   rarity: 10
+
+# ========== #
+# = 精炼原料 = #
+# ========== #
+
+speed_ingot:
+  material: COPPER_INGOT
+  type: STRENGTHEN_STONE
+  displayName: §b青鸾魔晶
+  name: speed_ingot
+  enchantments:
+    - SOUL_SPEED:1
+  lore:
+    - §5散落于远古大地的神鸟魔力，经过
+    - §5漫长复杂的沉淀形成的魔力结晶
+    - §5稀有度：§d史诗-精炼原料
+    - §5可能使以下属性增强：
+    - §a主手移速 副手移速
+  candidates:
+    - ATTR_UP-HAND:GENERIC_MOVEMENT_SPEED:+0.05:50
+    - ATTR_UP-OFF_HAND:GENERIC_MOVEMENT_SPEED:+0.05:50
+  # 成功率加成
+  addition: 0
+  rarity: 40
+
+attack_speed_ingot:
+  material: COPPER_INGOT
+  type: STRENGTHEN_STONE
+  displayName: §b青鸾之泪
+  name: speed_ingot
+  enchantments:
+    - SOUL_SPEED:2
+  lore:
+    - §5神鸟栖息时留下的魔力凝珠，被
+    - §5加工切割后用于武器的强化。
+    - §5稀有度：§d史诗-精炼原料
+    - §5可能使以下属性增强：
+    - §a主手攻速 副手攻速
+  candidates:
+    - ATTR_UP-HAND:GENERIC_ATTACK_SPEED:+0.05:50
+    - ATTR_UP-OFF_HAND:GENERIC_ATTACK_SPEED:+0.05:50
+  # 成功率加成
+  addition: 0
+  rarity: 50
+
+bow_scroll:
+  material: PAPER
+  type: STRENGTHEN_STONE
+  displayName: §b缚魔卷轴（弓）
+  name: bow_scroll
+  enchantments:
+    - ARROW_RAIN:1
+    - POWER:1
+  lore:
+    - §5封印了突破神力的卷轴，可以使已有
+    - §5的魔咒得到进一步增强。
+    - §5稀有度：§6臻品-精炼原料
+  candidates:
+    - ENCH_UP:ARROW_RAIN:+1:10
+    - ENCH_UP:POWER:+1:20
+  # 成功率加成
+  addition: 0
+  rarity: 10
+
+# ========== #
+# =  废料   = #
+# ========== #
+
+refine_scrap:
+  material: RAW_IRON
+  type: DEFAULT
+  displayName: §3洗炼废料
+  name: refine_scrap
+  enchantments:
+    - FORTUNE:1
+  lore:
+    - §5即使熟练的工匠，也无法保证
+    - §5万无一失，失败在所难免，但
+    - §5工匠似乎对这些废料很有兴趣
+    - §5稀有度：§3稀有
+
+str_scrap:
+  material: COAL
+  type: DEFAULT
+  displayName: §3精炼废料
+  name: str_scrap
+  enchantments:
+    - FORTUNE:1
+  lore:
+    - §5即使熟练的工匠，也无法保证
+    - §5万无一失，失败在所难免，但
+    - §5工匠似乎对这些废料很有兴趣
+    - §5稀有度：§3稀有
+
+# ========== #
+# =  其他   = #
+# ========== #
+
+fishing_rod1:
+  material: FISHING_ROD
+  type: DEFAULT
+  displayName: §d海王的晾衣杆
+  name: fishing_rod1
+  enchantments:
+    - GIFT_OF_THE_SEA:2
+    - LUCK_OF_THE_SEA:5
+    - LURE:3
+  lore:
+    - §5下海！下海！鬼知道海里有什么。
+    - §5海王护佑，下一杆一定！
+    - §5稀有度：§d史诗

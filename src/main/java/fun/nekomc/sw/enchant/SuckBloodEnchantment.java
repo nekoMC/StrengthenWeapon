@@ -1,24 +1,10 @@
 package fun.nekomc.sw.enchant;
 
-import cn.hutool.core.util.RandomUtil;
-import fun.nekomc.sw.common.ConfigManager;
-import fun.nekomc.sw.common.Constants;
-import fun.nekomc.sw.domain.dto.SwItemConfigDto;
-import fun.nekomc.sw.utils.ItemUtils;
-import fun.nekomc.sw.utils.MsgUtils;
-import fun.nekomc.sw.utils.ServiceUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * 吸血附魔实现
