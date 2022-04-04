@@ -71,7 +71,7 @@ enchants:
     addition: 20
     hideLore: false
 
-strengthTitle: §c§l强化台
+strengthTitle: §c§l精炼台
 refineTitle: §6§l洗炼炉
 # 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
 enablePlayerEnchant: false

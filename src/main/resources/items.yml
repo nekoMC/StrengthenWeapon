@@ -42,7 +42,7 @@ speed_bow:
         - §4洗炼失败时，可能损失原物品！
       material: CHEST
     broke: refine_scrap # 洗练失败时的产物
-  # 强化规则
+  # 精炼规则
   strength:
     limit: 10 # 最多可以强化的次数
     beginRate: 100 # 0精时的成功率
