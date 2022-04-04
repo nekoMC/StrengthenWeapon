@@ -40,11 +40,6 @@ public class Constants {
      */
     public static final String MSG_PREFIX = "§a[strengthWeapon] ";
 
-    /**
-     * 附魔在 Lore 显示的默认前缀
-     */
-    public static final String ENCHANT_DEFAULT_PREFIX = "§7";
-
     /***/
     public static final String STR_ZERO = "0";
 
