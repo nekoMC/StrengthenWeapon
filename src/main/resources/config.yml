@@ -58,6 +58,18 @@ enchants:
     treasure: true
     addition: 10
     hideLore: false
+  SUCK_BLOOD:
+    key: SUCK_BLOOD
+    targetMaterials:
+      - SWORD
+    displayName: §4嗜血
+    maxLevel: 5
+    conflicts:
+      - INFINITY
+    description: 近战攻击时有概率吸血
+    treasure: true
+    addition: 20
+    hideLore: false
 
 strengthTitle: §c§l强化台
 refineTitle: §6§l洗炼炉

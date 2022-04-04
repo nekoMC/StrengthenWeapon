@@ -5,6 +5,7 @@ import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.enchant.ArrowRainEnchantment;
 import fun.nekomc.sw.enchant.GiftOfTheSeaEnchantment;
+import fun.nekomc.sw.enchant.SuckBloodEnchantment;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.WatcherTriggers;
 import fun.nekomc.sw.exception.SwException;
@@ -73,7 +74,8 @@ public class StrengthenWeapon extends JavaPlugin {
         // 自定义附魔
         Class<? extends AbstractSwEnchantment>[] classes = new Class[]{
                 ArrowRainEnchantment.class,
-                GiftOfTheSeaEnchantment.class
+                GiftOfTheSeaEnchantment.class,
+                SuckBloodEnchantment.class,
         };
         loadCustomEnchantments(classes);
         // 指令解析器
