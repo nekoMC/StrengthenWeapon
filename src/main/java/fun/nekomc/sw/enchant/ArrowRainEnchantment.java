@@ -1,6 +1,6 @@
 package fun.nekomc.sw.enchant;
 
-import fun.nekomc.sw.utils.NumberUtils;
+import cn.hutool.core.util.RandomUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
@@ -41,9 +41,9 @@ public class ArrowRainEnchantment extends AbstractSwEnchantment {
         for (int i = 0; i < addArrowCount; i++) {
             // 计算额外箭的生成位置
             Location location = shooter.getEyeLocation().clone();
-            double ranX = (NumberUtils.randFloat(0, 1.0) - 0.5) * range;
-            double ranY = (NumberUtils.randFloat(0, 1.0) - 0.5) * range;
-            double ranZ = (NumberUtils.randFloat(0, 1.0) - 0.5) * range;
+            double ranX = (RandomUtil.randomDouble(0, 1.0) - 0.5) * range;
+            double ranY = (RandomUtil.randomDouble(0, 1.0) - 0.5) * range;
+            double ranZ = (RandomUtil.randomDouble(0, 1.0) - 0.5) * range;
             location.add(ranX, ranY, ranZ);
             // 额外的箭，每高一级，多射一支
             Arrow extraArrow = shooter.getWorld().spawn(location, Arrow.class);

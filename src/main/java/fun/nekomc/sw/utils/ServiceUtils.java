@@ -2,7 +2,10 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.RandomUtil;
+import fun.nekomc.sw.domain.dto.SwRawConfigDto;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -53,5 +56,40 @@ public class ServiceUtils {
             return Collections.emptyList();
         }
         return srcList.stream().map(converter).collect(Collectors.toList());
+    }
+
+    /**
+     * 根据一组带有权重的实体，计算应该返回哪个实体
+     *
+     * @param candidates      需要进行随机的一组实体
+     * @param weightConverter 将实体转化为概率权重的函数
+     * @param <D>             实体类型
+     * @return 随机得到的目标实体，失败时返回 null
+     */
+    @Nullable
+    public static <D> D randomByWeight(Collection<D> candidates, Function<D, Integer> weightConverter) {
+        if (CollUtil.isEmpty(candidates)) {
+            return null;
+        }
+        // 计算总权重
+        int totalWeight = 0;
+        for (D candidate : candidates) {
+            Integer now = weightConverter.apply(candidate);
+            if (null != now) {
+                totalWeight += now;
+            }
+        }
+        // 计算随机数，并寻找满足该随机数范围的配置项
+        int randomInt = RandomUtil.randomInt(0, totalWeight);
+        int nowWeight = 0;
+        for (D candidate : candidates) {
+            Integer newToAdd = weightConverter.apply(candidate);
+            newToAdd = null == newToAdd ? 0 : newToAdd;
+            if (nowWeight <= randomInt && randomInt < newToAdd + nowWeight) {
+                return candidate;
+            }
+            nowWeight += newToAdd;
+        }
+        return null;
     }
 }

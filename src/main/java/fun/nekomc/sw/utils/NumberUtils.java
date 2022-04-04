@@ -1,7 +1,9 @@
 package fun.nekomc.sw.utils;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
@@ -16,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Chiru
  * @see <a href="https://github.com/Auxilor/eco">参考 Eco</a>
  */
+@UtilityClass
 public final class NumberUtils {
     /**
      * Sin lookup table.
@@ -43,7 +46,7 @@ public final class NumberUtils {
         NUMERALS.put(1, "I");
 
         for (int i = 0; i < 65536; ++i) {
-            SIN_LOOKUP[i] = Math.sin((double) i * 3.141592653589793D * 2.0D / 65536.0D);
+            SIN_LOOKUP[i] = Math.sin(i * 3.141592653589793D * 2.0D / 65536.0D);
         }
     }
 
@@ -135,30 +138,6 @@ public final class NumberUtils {
     }
 
     /**
-     * Generate random integer in range.
-     *
-     * @param min Minimum.
-     * @param max Maximum.
-     * @return Random integer.
-     */
-    public static int randInt(final int min,
-                              final int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
-
-    /**
-     * Generate random double in range.
-     *
-     * @param min Minimum.
-     * @param max Maximum.
-     * @return Random double.
-     */
-    public static double randFloat(final double min,
-                                   final double max) {
-        return ThreadLocalRandom.current().nextDouble(min, max);
-    }
-
-    /**
      * Generate random double with a triangular distribution.
      *
      * @param minimum Minimum.
@@ -223,7 +202,7 @@ public final class NumberUtils {
      */
     public static boolean passedChance(@NotNull final AbstractSwEnchantment enchantment,
                                        final int level) {
-        return randFloat(0, 1.0) < (double) (enchantment.getConfig().getAddition() * level) / 100;
+        return RandomUtil.randomDouble(0, 1.0) < (double) (enchantment.getConfig().getAddition() * level) / 100;
     }
 
 }

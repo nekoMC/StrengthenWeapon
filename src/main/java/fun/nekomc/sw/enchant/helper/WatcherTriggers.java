@@ -12,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
@@ -385,5 +387,37 @@ public class WatcherTriggers implements Listener {
         }
 
         arrow.setMetadata("shot-from", new FixedMetadataValue(StrengthenWeapon.getInstance(), item));
+    }
+
+    /**
+     * 钓上鱼时
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerFish(PlayerFishEvent event) {
+        if (PlayerFishEvent.State.CAUGHT_FISH != event.getState()) {
+            return;
+        }
+        // 触发事件的玩家
+        Player player = event.getPlayer();
+        // 触发事件的钓鱼竿
+        EntityEquipment playerEquipment = player.getEquipment();
+        if (null == playerEquipment) {
+            return;
+        }
+        // 主手不是钓鱼竿，检查副手
+        ItemStack fishingRod = playerEquipment.getItemInMainHand().getType() == Material.FISHING_ROD
+                ? playerEquipment.getItemInMainHand()
+                : playerEquipment.getItemInOffHand();
+        if (fishingRod.getType() == Material.AIR || !fishingRod.hasItemMeta() || fishingRod.getItemMeta() == null) {
+            return;
+        }
+        // 钓上来了啥
+        Item caughtItem = (Item) event.getCaught();
+        if (null == caughtItem) {
+            return;
+        }
+        // 鱼竿都有啥附魔
+        Map<AbstractSwEnchantment, Integer> enchants = EnchantHelper.getEnchantsOnItem(fishingRod);
+        enchants.forEach((enchant, level) -> enchant.onFishing(player, fishingRod, caughtItem, level, event));
     }
 }

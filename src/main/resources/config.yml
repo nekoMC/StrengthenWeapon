@@ -5,11 +5,18 @@ message:
   grammar_error: §4语法错误，使用 sw help 获取帮助
   unknown_item: §4不存在的道具
   config_error: §4无法解析配置，请检查配置文件
+  config_cannot_resolve: §4无法解析配置：{}
   unknown_player: §4玩家不存在
   unknown_attribute: §4不存在的属性
   cannot_operate: §4无法完成操作
   line_number: 行号
   reloaded: §a配置文件已重新读取
+  promote_change: §a属性[%s]发生变化:[%s]
+  promote_reset: §a属性[%s]重写为:[%s]
+  promote_success: §b操作成功！
+  promote_fail: §4操作失败！
+  check_not_pass: §4强化失败，未发生改变！
+  got_sea_gift: §b获得了海之馈赠：%s！
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
     §a§l/sw refine [<玩家>] §e打开洗炼菜单
@@ -21,6 +28,8 @@ message:
     §b§l/sw enchant <附魔ID> <附魔等级> §e对主手上的物品进行附魔
     §b§l/sw lore set <行号> <Lore内容> §e修改主手上物品的 Lore
     §b§l/sw lore del <行号> §e删除主手上物品指定行的 Lore
+    §b§l/sw promote <原料名> §e使用指定的原料对主手上的物品进行强化
+    §b§l/sw rename <新名称> §e重命名道具
 
 # 自定义附魔
 enchants:
@@ -28,17 +37,29 @@ enchants:
   ARROW_RAIN:
     key: ARROW_RAIN
     targetMaterials:
-    - BOW
+      - BOW
     displayName: §b箭雨
     maxLevel: 3
     conflicts:
-    - INFINITY
-    description: 没什么卵用
+      - INFINITY
+    description: 每提升一级可以额外射出一支箭
     treasure: true
     addition: 1
     hideLore: false
+  GIFT_OF_THE_SEA:
+    key: GIFT_OF_THE_SEA
+    targetMaterials:
+      - FISHING_ROD
+    displayName: §b海之馈赠
+    maxLevel: 5
+    conflicts:
+      - INFINITY
+    description: 拥有此附魔的鱼竿有概率钓到配置的道具
+    treasure: true
+    addition: 10
+    hideLore: false
 
 strengthTitle: §c§l强化台
-refineTitle: §6§l洗炼台
+refineTitle: §6§l洗炼炉
 # 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
 enablePlayerEnchant: false

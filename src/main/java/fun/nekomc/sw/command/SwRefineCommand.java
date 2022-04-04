@@ -1,22 +1,10 @@
 package fun.nekomc.sw.command;
 
-import cn.hutool.core.collection.ListUtil;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.domain.dto.SwItemConfigDto;
-import fun.nekomc.sw.exception.ConfigurationException;
-import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
-import fun.nekomc.sw.utils.ItemUtils;
-import fun.nekomc.sw.utils.PlayerBagUtils;
-import org.bukkit.command.CommandSender;
+import fun.nekomc.sw.common.ConfigManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * sw refine player 指令实现
@@ -34,7 +22,7 @@ class SwRefineCommand extends AbstractGuiCommand {
     @Override
     protected boolean rua(Player player) {
         Inventory inv = StrengthenWeapon.server()
-                .createInventory(player, InventoryType.ENCHANTING, ConfigManager.getConfigYml().getRefineTitle());
+                .createInventory(player, InventoryType.FURNACE, ConfigManager.getConfigYml().getRefineTitle());
         player.openInventory(inv);
         return true;
     }

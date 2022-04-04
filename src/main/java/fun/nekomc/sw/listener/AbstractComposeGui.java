@@ -4,9 +4,10 @@ import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.SwException;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerBagUtils;
+import fun.nekomc.sw.utils.PlayerHolder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.*;
 
 /**
  * 适用于合成场景的自定义容器实现
+ * 适用于存在输入输出窗格的容器，不适用于附魔台等容器
  * created: 2022/3/9 01:01
  *
  * @author Chiru
@@ -71,7 +73,7 @@ public abstract class AbstractComposeGui implements Listener {
      */
     @EventHandler
     public void onInventoryClosed(InventoryCloseEvent event) {
-        if (dontCareInventory(event)) {
+        if (unCareInventory(event)) {
             return;
         }
         Player targetPlayer = (Player) event.getPlayer();
@@ -99,7 +101,7 @@ public abstract class AbstractComposeGui implements Listener {
      */
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (dontCareInventory(event)) {
+        if (unCareInventory(event)) {
             return;
         }
         Set<Integer> slots = event.getRawSlots();
@@ -119,7 +121,7 @@ public abstract class AbstractComposeGui implements Listener {
      */
     @EventHandler
     public void dispatchClickEvent(InventoryClickEvent event) {
-        if (dontCareInventory(event)) {
+        if (unCareInventory(event)) {
             return;
         }
         Player player = (Player) event.getWhoClicked();
@@ -149,18 +151,21 @@ public abstract class AbstractComposeGui implements Listener {
         if (!event.isRightClick() && !event.isLeftClick()) {
             return;
         }
-        // 事件重分发：点击背包
+        PlayerHolder.setPlayer(player);
+        // 事件重分发：点击背包、容器
         if (slot > outputCellIndex) {
             onClickBag(wrappedEvent);
-            return;
+        } else {
+            // 事件重分发：点击容器
+            onClickInventory(wrappedEvent);
         }
-        // 事件重分发：点击容器
-        onClickInventory(wrappedEvent);
+        PlayerHolder.release();
     }
 
     /**
      * 点击背包事件
      */
+    @SuppressWarnings("unused")
     public void onClickBag(WrappedInventoryClickEvent wrapped) {
     }
 
@@ -170,7 +175,7 @@ public abstract class AbstractComposeGui implements Listener {
      * @param inventoryEvent 指定的容器事件
      * @return 是否能处理，即与注册的容器类型匹配且标题匹配
      */
-    protected boolean dontCareInventory(InventoryEvent inventoryEvent) {
+    protected boolean unCareInventory(InventoryEvent inventoryEvent) {
         if (null == inventoryEvent) {
             return true;
         }
@@ -185,11 +190,12 @@ public abstract class AbstractComposeGui implements Listener {
      * 事件整理思路（无关紧要的事件全取消）参考：https://github.com/WesJD/AnvilGUI
      */
     public void onClickInventory(WrappedInventoryClickEvent wrapped) {
+        // 消除默认处理干扰
+        wrapped.cancelEvent();
         // 点击容器后，清空输出格窗
         wrapped.inventory.setItem(outputCellIndex, null);
-        // 点击输出格窗，取消事件，进行自定义处理
+        // 点击输出格窗，进行自定义处理，防止在输出格窗生成道具后取走原料
         if (wrapped.slot == outputCellIndex) {
-            wrapped.cancelEvent();
             // 不满足配方要求，不处理
             if (!checkRecipe(wrapped.inventory)) {
                 return;
@@ -206,12 +212,10 @@ public abstract class AbstractComposeGui implements Listener {
         ItemStack cursorItem = wrapped.event.getCursor();
         //检查鼠标中是否为空气
         boolean cursorIsAir = (cursorItem == null || cursorItem.getType() == Material.AIR);
-        // 空鼠标点击输入格窗，mojang 处理
+        // 空鼠标点击输入格窗
         if (cursorIsAir) {
-            return;
+            cursorItem = null;
         }
-        // 鼠标不为空，则取消事件排除干扰，进行自定义处理
-        wrapped.cancelEvent();
         // 交换鼠标和目标窗格中的物品
         ItemStack itemInSlot = wrapped.inventory.getItem(wrapped.slot);
         wrapped.event.getView().setCursor(itemInSlot);
@@ -245,8 +249,16 @@ public abstract class AbstractComposeGui implements Listener {
                 return false;
             }
         }
-        return true;
+        return recipeMatch(targetInv);
     }
+
+    /**
+     * 精确校验合成规则，如果需要，则在子类进行重写
+     *
+     * @param targetInv 目标容器，内中元素已经过 checkRecipe 校验
+     * @return 是否能通过精确校验
+     */
+    protected abstract boolean recipeMatch(Inventory targetInv);
 
     /**
      * 遍历注册的合成规则 Map，从每个输入窗格中减掉一个物品（不校验物品内容）

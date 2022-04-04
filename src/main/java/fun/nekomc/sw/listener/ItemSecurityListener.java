@@ -1,7 +1,7 @@
 package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

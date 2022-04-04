@@ -31,7 +31,7 @@ public class ConfigYmlDto implements Serializable {
     private String strengthTitle;
 
     /**
-     * 洗练容器的标题
+     * 洗炼容器的标题
      */
     private String refineTitle;
 

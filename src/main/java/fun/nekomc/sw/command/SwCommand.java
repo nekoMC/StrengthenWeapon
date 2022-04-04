@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
 import lombok.Getter;
@@ -185,7 +185,7 @@ public abstract class SwCommand {
         Assert.notNull(args, "args cannot be null");
         boolean notPlayer = !(sender instanceof Player);
         if (playerCmd && notPlayer) {
-            MsgUtils.consoleMsg(ConfigManager.getConfiguredMsg("not_player"));
+            MsgUtils.consoleMsg(ConfigManager.getConfiguredMsg(Constants.Msg.NOT_PLAYER));
             return false;
         }
         if (notPlayer) {
@@ -195,7 +195,7 @@ public abstract class SwCommand {
         // 存在权限要求，且不满足这个要求，返回 false
         if (!StringUtils.isBlank(permissionPoint) &&
                 !player.hasPermission(Constants.PERMISSION_NAMESPACE + permissionPoint)) {
-            MsgUtils.sendMsg(player, ConfigManager.getConfiguredMsg("no_auth"));
+            MsgUtils.sendMsg(player, ConfigManager.getConfiguredMsg(Constants.Msg.NO_AUTH));
             return false;
         }
         return true;

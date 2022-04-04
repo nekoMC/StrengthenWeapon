@@ -1,7 +1,7 @@
 package fun.nekomc.sw.command;
 
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;

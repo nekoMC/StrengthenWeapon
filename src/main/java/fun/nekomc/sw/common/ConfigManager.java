@@ -1,4 +1,4 @@
-package fun.nekomc.sw.utils;
+package fun.nekomc.sw.common;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -10,6 +10,8 @@ import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwException;
+import fun.nekomc.sw.utils.MsgUtils;
+import fun.nekomc.sw.utils.ServiceUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
@@ -84,6 +86,18 @@ public class ConfigManager {
     }
 
     /**
+     * 获取当前可用的道具配置
+     *
+     * @return 配置文件中指定的道具列表
+     */
+    public static Collection<SwItemConfigDto> getItemConfigList() {
+        if (CollUtil.isEmpty(swItemConfigMap)) {
+            return ListUtil.empty();
+        }
+        return swItemConfigMap.values();
+    }
+
+    /**
      * 根据道具名获取指定道具的配置（配置文件中定义的配置）
      *
      * @param itemName 道具配置名，在配置文件中，一个配置项的名称
@@ -119,8 +133,8 @@ public class ConfigManager {
             MsgUtils.consoleMsg("§c§l配置文件[%s]不存在，正在生成配置文件....", targetFileName);
             StrengthenWeapon.getInstance().saveResource(Constants.ITEMS_CONFIG_FILE_NAME, false);
         }
-        try {
-            return yamlLoader.loadAs(new FileInputStream(configYmlFile), targetClass);
+        try (FileInputStream input = new FileInputStream(configYmlFile)) {
+            return yamlLoader.loadAs(input, targetClass);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }

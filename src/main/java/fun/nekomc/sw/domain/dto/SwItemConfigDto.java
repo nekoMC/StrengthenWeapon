@@ -26,7 +26,7 @@ import java.util.UUID;
  * @author Chiru
  */
 @Data
-public abstract class SwItemConfigDto implements Serializable {
+public class SwItemConfigDto implements Serializable {
 
     /**
      * 道具类型
@@ -69,6 +69,11 @@ public abstract class SwItemConfigDto implements Serializable {
      * 附魔列表
      */
     private List<String> enchantments;
+
+    /**
+     * 稀有度权重
+     */
+    private int rarity;
 
     /**
      * 将 slotAndAttributeMap 属性解析为 Bukkit 能识别的 Map

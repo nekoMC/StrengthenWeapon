@@ -2,12 +2,15 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.util.ArrayUtil;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigManager;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
+import fun.nekomc.sw.utils.PlayerHolder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 命令行指令解释器
+ * 命令行指令解释器，指令解析入口
  *
  * @author ourange
  */
@@ -34,6 +37,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 new SwGiveCommand(),
                 new SwEnchantCommand(),
                 new SwAttributeCommand(),
+                new SwPromoteCommand(),
+                new SwRenameCommand(),
                 new SwLoreCommand().linkSubCmd(
                         // 二级节点：sw lore xx
                         new SwLoreSetCommand(),
@@ -50,22 +55,34 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command,
                              @NotNull String mainCommand, String[] commandArray) {
+        // 玩家执行该指令时，将目标玩家扔到 holder 中
+        boolean playerTriggered = commandSender instanceof Player;
+        if (playerTriggered) {
+            PlayerHolder.setPlayer((Player) commandSender);
+        }
         String[] argsRemovedBlank = ArrayUtil.removeBlank(commandArray);
         Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(argsRemovedBlank);
-        return cmdNodeDispatchTo.map(swCommand -> {
-            // 指令预校验，满足注册的条件时，才有可能被分配到相关节点执行
-            if (!swCommand.preCheck(commandSender, argsRemovedBlank)) {
+        try {
+            return cmdNodeDispatchTo.map(swCommand -> {
+                // 指令预校验，满足注册的条件时，才有可能被分配到相关节点执行
+                if (!swCommand.preCheck(commandSender, argsRemovedBlank)) {
+                    return false;
+                }
+                try {
+                    return swCommand.rua(commandSender, argsRemovedBlank);
+                } catch (SwCommandException e) {
+                    e.feedback();
+                } catch (Exception e) {
+                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR), e.getMessage());
+                }
                 return false;
+            }).orElse(false);
+        } finally {
+            // 指令执行结束，释放 Holder 中的 Player
+            if (playerTriggered) {
+                PlayerHolder.release();
             }
-            try {
-                return swCommand.rua(commandSender, argsRemovedBlank);
-            } catch (SwCommandException e) {
-                e.feedback();
-            } catch (Exception e) {
-                MsgUtils.returnMsgToSender(commandSender, ConfigManager.getConfiguredMsg("command_error"), e.getMessage());
-            }
-            return false;
-        }).orElse(false);
+        }
     }
 
     @Nullable

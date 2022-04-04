@@ -1,11 +1,7 @@
 package fun.nekomc.sw.enchant.helper;
 
 import org.bukkit.block.Block;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Trident;
+import org.bukkit.entity.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -13,7 +9,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -226,6 +224,23 @@ public interface Watcher {
                            @NotNull final LivingEntity attacker,
                            final int level,
                            @NotNull final EntityDamageByEntityEvent event) {
+        // Empty default as enchantments only override required watchers.
+    }
+
+    /**
+     * 当玩家成功钓上鱼时触发（鱼上钩后，成功收钩）
+     *
+     * @param player     钓鱼的玩家
+     * @param fishingRod 使用的鱼竿
+     * @param caught     钓上来的东西
+     * @param level      鱼竿上指定附魔的等级
+     * @param event      The event that called this watcher.
+     */
+    default void onFishing(@NotNull final Player player,
+                           @NotNull final ItemStack fishingRod,
+                           @NotNull final Item caught,
+                           final int level,
+                           @NotNull final PlayerFishEvent event) {
         // Empty default as enchantments only override required watchers.
     }
 }

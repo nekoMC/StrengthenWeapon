@@ -2,20 +2,18 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.utils.*;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,18 +39,14 @@ class SwEnchantCommand extends AbstractMainHandItemCommand {
         String enchantName = actualArgs[0];
         String level = actualArgs[1];
 
-        Enchantment targetEnchant = EnchantHelper.getRegisteredEnchants().stream()
-                .filter(enchant -> enchant.getKey().getKey().equals(enchantName))
-                .findFirst()
-                .map(Enchantment.class::cast)
-                .orElseGet(() -> Enchantment.getByKey(NamespacedKey.minecraft(enchantName)));
+        Optional<Enchantment> targetEnchantOpt = EnchantHelper.getByName(enchantName);
         // 校验附魔、等级有效
-        if (!CharSequenceUtil.isNumeric(level) || null == targetEnchant) {
+        if (!CharSequenceUtil.isNumeric(level) || !targetEnchantOpt.isPresent()) {
             return false;
         }
         int targetLevel = Integer.parseInt(level);
 
-        return updateItemEnchant(targetItem, targetEnchant, targetLevel);
+        return ItemUtils.updateItemEnchant(targetItem, targetEnchantOpt.get(), targetLevel);
     }
 
     @Override
@@ -68,39 +62,5 @@ class SwEnchantCommand extends AbstractMainHandItemCommand {
             default:
                 return ListUtil.empty();
         }
-    }
-
-    /**
-     * 更新道具的指定附魔及覆膜等级
-     *
-     * @param targetItem    目标道具
-     * @param targetEnchant 要更新的附魔
-     * @param targetLevel   更新后的附魔等级，如果为 0 则删除附魔
-     * @return 操作是否成功
-     */
-    public boolean updateItemEnchant(ItemStack targetItem, Enchantment targetEnchant, int targetLevel) {
-        ItemMeta itemMeta = targetItem.getItemMeta();
-        if (null == itemMeta) {
-            return false;
-        }
-        // 附魔书时，需要基于 EnchantmentStorageMeta 进行操作
-        if (targetItem.getType() == Material.ENCHANTED_BOOK) {
-            EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) itemMeta;
-            if (0 == targetLevel) {
-                bookMeta.removeStoredEnchant(targetEnchant);
-            } else {
-                bookMeta.addStoredEnchant(targetEnchant, targetLevel, true);
-            }
-        } else {
-            if (0 == targetLevel) {
-                itemMeta.removeEnchant(targetEnchant);
-            } else {
-                itemMeta.addEnchant(targetEnchant, targetLevel, true);
-            }
-        }
-        targetItem.setItemMeta(itemMeta);
-        // 刷新附魔 Lore
-        EnchantHelper.updateLore(targetItem);
-        return true;
     }
 }

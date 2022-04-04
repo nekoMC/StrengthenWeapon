@@ -3,8 +3,8 @@ package fun.nekomc.sw.command;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import fun.nekomc.sw.exception.SwCommandException;
-import fun.nekomc.sw.utils.ConfigManager;
-import fun.nekomc.sw.utils.Constants;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +30,7 @@ class SwLoreDelCommand extends AbstractMainHandItemCommand {
         // 校验行号、内容
         String line = actualArgs[0];
         if (!CharSequenceUtil.isNumeric(line)) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg("grammar_error"));
+            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
         int lineNumber = Integer.parseInt(line);
 
@@ -43,7 +43,7 @@ class SwLoreDelCommand extends AbstractMainHandItemCommand {
         String[] actualArgs = ignoreDontCareArgs(args);
         int actualArgLength = getArgsActualLength(actualArgs, args);
         if (actualArgLength == 0) {
-            return ListUtil.of(ConfigManager.getConfiguredMsg("line_number"));
+            return ListUtil.of(ConfigManager.getConfiguredMsg(Constants.Msg.LINE_NUMBER));
         }
         return ListUtil.empty();
     }
