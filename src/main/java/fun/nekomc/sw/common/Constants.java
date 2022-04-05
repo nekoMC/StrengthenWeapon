@@ -33,7 +33,7 @@ public class Constants {
     /**
      * 管理权限节点
      */
-    public static final String ADMIN_PERMISSION_POINT = "Admin";
+    public static final String ADMIN_PERMISSION_POINT = "admin";
 
     /**
      * 提示信息的前缀

@@ -61,9 +61,9 @@ class SwPromoteCommand extends AbstractMainHandItemCommand {
             return false;
         }
         ItemUtils.updateAttachData(itemMeta, attachData);
+        targetItem.setItemMeta(itemMeta);
         // 执行强化
         PromotionOperation.doPromoteByCandidatesRandomly(targetItem, rawConfig.getCandidates(), time, false);
-        targetItem.setItemMeta(itemMeta);
         return true;
     }
 

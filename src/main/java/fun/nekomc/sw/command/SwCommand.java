@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 抽象指令类
@@ -140,7 +141,10 @@ public abstract class SwCommand {
             // return null 可以使用 MC 默认的提示（即玩家名）
             return null;
         }
-        return ServiceUtils.convertList(subCmd, SwCommand::getNowCmd);
+        List<SwCommand> permissionCheckedCmdList = subCmd.stream()
+                .filter(cmd -> cmd.playerHasPermission(sender))
+                .collect(Collectors.toList());
+        return ServiceUtils.convertList(permissionCheckedCmdList, SwCommand::getNowCmd);
     }
 
     /**
@@ -193,16 +197,28 @@ public abstract class SwCommand {
         }
         Player player = (Player) sender;
         // 存在权限要求，且不满足这个要求，返回 false
-        if (!StringUtils.isBlank(permissionPoint) &&
-                !player.hasPermission(Constants.PERMISSION_NAMESPACE + permissionPoint)) {
+        if (!playerHasPermission(player)) {
             MsgUtils.sendMsg(player, ConfigManager.getConfiguredMsg(Constants.Msg.NO_AUTH));
             return false;
         }
         return true;
     }
 
-    // ========== private ========== //
+    /**
+     * 玩家是否有该指令的权限
+     *
+     * @param sender 目标玩家
+     * @return 是否有权限
+     */
+    public boolean playerHasPermission(CommandSender sender) {
+        if (null == sender) {
+            return false;
+        }
+        return StringUtils.isBlank(permissionPoint) ||
+                sender.hasPermission(Constants.PERMISSION_NAMESPACE + permissionPoint);
+    }
 
+    // ========== private ========== //
 
     /**
      * 获取能执行当前指令的子命令

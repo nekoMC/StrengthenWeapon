@@ -91,6 +91,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         String[] removedLast = ArrayUtil.remove(args, args.length - 1);
         Optional<SwCommand> cmdNodeDispatchTo = commandTree.getCmdNode(ArrayUtil.removeBlank(removedLast));
         return cmdNodeDispatchTo.map(swCommand -> {
+            if (!swCommand.playerHasPermission(sender)) {
+                return null;
+            }
             try {
                 return swCommand.hint(sender, args);
             } catch (SwCommandException e) {
