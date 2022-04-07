@@ -1,6 +1,6 @@
 name: StrengthenWeapon
 main: fun.nekomc.sw.StrengthenWeapon
-version: '0.1'
+version: 'alpha.3'
 api-version: '1.18'
 author: ourange
 

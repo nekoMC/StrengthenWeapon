@@ -176,7 +176,9 @@ public class ItemUtils {
     public Player tryAsPlayer(Entity entity) {
         if (entity instanceof Projectile) {
             Projectile projectile = (Projectile) entity;
-            return (Player) projectile.getShooter();
+            if (projectile.getShooter() instanceof Player) {
+                return (Player) projectile.getShooter();
+            }
         }
         if (entity instanceof Player) {
             return (Player) entity;
@@ -199,7 +201,7 @@ public class ItemUtils {
      * @return 操作是否成功
      */
     public boolean updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
-                                                         Attribute attribute, String modifyValue, boolean check) {
+                                                 Attribute attribute, String modifyValue, boolean check) {
         if (null == originMeta) {
             return false;
         }
