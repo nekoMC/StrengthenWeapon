@@ -196,12 +196,12 @@ public class ItemUtils {
      * @param attribute   目标属性
      * @param modifyValue 变更的属性值，如 0.2 2 2.2
      * @param check       是否只允许修改物品已有的属性（值）
-     * @return 变更后的元数据对象
+     * @return 操作是否成功
      */
-    public static ItemMeta updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
+    public boolean updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
                                                          Attribute attribute, String modifyValue, boolean check) {
         if (null == originMeta) {
-            return null;
+            return false;
         }
         // Meta 中的原属性
         Multimap<Attribute, AttributeModifier> attributeModifiers = originMeta.getAttributeModifiers();
@@ -215,7 +215,7 @@ public class ItemUtils {
                 .collect(Collectors.toList());
         if (check && originAttributeModifiers.size() == modifiers.size()) {
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
-            return originMeta;
+            return false;
         }
         // 不为 0 时，解析并设置新属性值
         if (!Constants.STR_ZERO.equals(modifyValue)) {
@@ -232,7 +232,7 @@ public class ItemUtils {
         }
         attributeModifiers.replaceValues(attribute, modifiers);
         originMeta.setAttributeModifiers(attributeModifiers);
-        return originMeta;
+        return true;
     }
 
     /**

@@ -99,11 +99,10 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         if (!blankConfigOpt.isPresent() || !attachData.isPresent() || !rawConfigDtoOpt.isPresent()) {
             return item;
         }
-        // 发送玩家消息
         SwRawConfigDto rawConfig = rawConfigDtoOpt.get();
         SwItemAttachData swItemAttachData = attachData.get();
         SwBlankConfigDto.StrengthRule refineRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
-        // 洗练失败时，返回配置的失败物品
+        // 强化失败时，返回配置的失败物品
         if (!isRefineSuccess(swItemAttachData, refineRule, rawConfig.getAddition())) {
             Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(refineRule.getBroke());
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_FAIL));
@@ -152,8 +151,6 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
     }
 
     private ItemStack doPromote(ItemStack blank, SwBlankConfigDto blankConfig, SwRawConfigDto rawConfig, SwItemAttachData oldAttach) {
-        // 发送玩家消息
-        MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_SUCCESS));
         // 提升：重置属性或基于原道具提升
         ItemStack newItem = blank;
         if (!onlyOverwrite) {

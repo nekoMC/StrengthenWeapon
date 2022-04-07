@@ -11,10 +11,9 @@ message:
   cannot_operate: §4无法完成操作
   line_number: 行号
   reloaded: §a配置文件已重新读取
-  promote_change: §a属性[%s]发生变化:[%s]
-  promote_reset: §a属性[%s]重写为:[%s]
-  promote_success: §b操作成功！
-  promote_fail: §4操作失败！
+  promote_change:  §b强化成功！§a属性[%s-%s]发生变化:[%s]
+  promote_reset:  §b强化成功！§a属性[%s-%s]重写为:[%s]
+  promote_fail: §4强化失败！
   check_not_pass: §4强化失败，未发生改变！
   got_sea_gift: §b获得了海之馈赠：%s！
   help_msg: |

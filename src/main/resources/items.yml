@@ -167,7 +167,7 @@ attack_speed_ingot:
   material: COPPER_INGOT
   type: STRENGTHEN_STONE
   displayName: §b青鸾之泪
-  name: speed_ingot
+  name: attack_speed_ingot
   enchantments:
     - SOUL_SPEED:2
   lore:
