@@ -151,12 +151,13 @@ public class PromotionOperation {
             for (PromotionOperation nowPromotion : promotionList) {
                 // 目标权重位于指定区间内
                 if (nowWeight <= target && target < nowWeight + nowPromotion.weight) {
-                    if(!nowPromotion.doPromote(itemStack, check)) {
+                    if (!nowPromotion.doPromote(itemStack, check)) {
                         break;
                     }
                     String template = nowPromotion.isRewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
+                    String slot = null == nowPromotion.getAttrSlot() ? "" : nowPromotion.getAttrSlot().name();
                     MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template),
-                            nowPromotion.getTarget().getKey().getKey(), nowPromotion.getAttrSlot().name(), nowPromotion.getPromotionValue());
+                            nowPromotion.getTarget().getKey().getKey(), slot, nowPromotion.getPromotionValue());
                     break;
                 }
                 nowWeight += nowPromotion.weight;

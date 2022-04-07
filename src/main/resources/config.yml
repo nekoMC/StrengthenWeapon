@@ -1,6 +1,6 @@
 message:
   no_auth: §4您没有权限执行该指令
-  command_error: §4指令解析出错：{}
+  command_error: §4指令解析出错：
   not_player: §4该指令只能被玩家执行
   grammar_error: §4语法错误，使用 sw help 获取帮助
   unknown_item: §4不存在的道具
@@ -11,8 +11,8 @@ message:
   cannot_operate: §4无法完成操作
   line_number: 行号
   reloaded: §a配置文件已重新读取
-  promote_change:  §b强化成功！§a属性[%s-%s]发生变化:[%s]
-  promote_reset:  §b强化成功！§a属性[%s-%s]重写为:[%s]
+  promote_change:  §b强化成功！§a属性[%s.%s]发生变化:[%s]
+  promote_reset:  §b强化成功！§a属性[%s.%s]重写为:[%s]
   promote_fail: §4强化失败！
   check_not_pass: §4强化失败，未发生改变！
   got_sea_gift: §b获得了海之馈赠：%s！

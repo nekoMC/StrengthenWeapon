@@ -38,13 +38,13 @@ class SwPromoteCommand extends AbstractMainHandItemCommand {
         String byItemName = actualArgs[0];
         // 强化次数
         if (!CharSequenceUtil.isNumeric(actualArgs[1])) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR));
+            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR) + actualArgs[1]);
         }
         int time = Integer.parseInt(actualArgs[1]);
         // 强化配置
         Optional<SwItemConfigDto> itemConfig = ConfigManager.getItemConfig(byItemName);
         if (!itemConfig.isPresent() || !(itemConfig.get() instanceof SwRawConfigDto)) {
-            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR));
+            throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR) + byItemName);
         }
         SwRawConfigDto rawConfig = (SwRawConfigDto) itemConfig.get();
         // 更新附加数据
