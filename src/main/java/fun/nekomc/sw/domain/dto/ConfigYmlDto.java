@@ -31,9 +31,19 @@ public class ConfigYmlDto implements Serializable {
     private String strengthTitle;
 
     /**
+     * 洗炼容器的类型
+     */
+    private String strengthType;
+
+    /**
      * 洗炼容器的标题
      */
     private String refineTitle;
+
+    /**
+     * 洗炼容器的类型
+     */
+    private String refineType;
 
     /**
      * 是否允许玩家对插件物品进行自定义附魔

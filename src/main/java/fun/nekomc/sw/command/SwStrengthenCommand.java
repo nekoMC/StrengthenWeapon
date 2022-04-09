@@ -22,7 +22,8 @@ class SwStrengthenCommand extends AbstractGuiCommand {
     @Override
     protected boolean rua(Player player) {
         Inventory inv = StrengthenWeapon.server()
-                .createInventory(player, InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle());
+                .createInventory(player, InventoryType.valueOf(ConfigManager.getConfigYml().getStrengthType()),
+                        ConfigManager.getConfigYml().getStrengthTitle());
         player.openInventory(inv);
         return true;
     }

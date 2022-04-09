@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * 2入1出的 GUI，仅适用于强化相关场景
@@ -38,8 +39,8 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
 
     private final boolean onlyOverwrite;
 
-    protected TwoInputOneOutputGuiListener(InventoryType invType, String title, ItemsTypeEnum blankType, ItemsTypeEnum rawType, boolean onlyOverwrite) {
-        super(invType, title, 2);
+    protected TwoInputOneOutputGuiListener(Supplier<InventoryType> invTypeSupplier, String title, ItemsTypeEnum blankType, ItemsTypeEnum rawType, boolean onlyOverwrite) {
+        super(invTypeSupplier, title, 2);
         // 注册校验规则
         registerCheckRule(BLANK_INDEX, blankType);
         registerCheckRule(RAW_INDEX, rawType);

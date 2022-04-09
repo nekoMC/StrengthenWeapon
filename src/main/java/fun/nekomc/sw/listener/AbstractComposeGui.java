@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * 适用于合成场景的自定义容器实现
@@ -33,9 +34,9 @@ import java.util.*;
 public abstract class AbstractComposeGui implements Listener {
 
     /**
-     * 容器类型
+     * 如何读取配置文件中描述的容器类型
      */
-    private final InventoryType invType;
+    private final Supplier<InventoryType> invTypeSupplier;
 
     /**
      * 容器格子总数，如铁砧的总数为 3
@@ -57,10 +58,10 @@ public abstract class AbstractComposeGui implements Listener {
      */
     protected final int outputCellIndex;
 
-    AbstractComposeGui(InventoryType invType, String invTitle, int outputCellIndex) {
+    AbstractComposeGui(Supplier<InventoryType> invTypeSupplier, String invTitle, int outputCellIndex) {
         this.invTitle = invTitle;
-        this.invType = invType;
-        this.invSize = invType.getDefaultSize();
+        this.invTypeSupplier = invTypeSupplier;
+        this.invSize = invTypeSupplier.get().getDefaultSize();
         this.outputCellIndex = outputCellIndex;
         slotTypeRule = new HashMap<>(outputCellIndex);
     }
@@ -181,7 +182,7 @@ public abstract class AbstractComposeGui implements Listener {
         }
         InventoryView inventoryView = inventoryEvent.getView();
         boolean playerClickedTargetInventory = inventoryView.getPlayer() instanceof Player &&
-                inventoryView.getType() == invType && invTitle.equalsIgnoreCase(inventoryView.getTitle());
+                inventoryView.getType() == invTypeSupplier.get() && invTitle.equalsIgnoreCase(inventoryView.getTitle());
         return !playerClickedTargetInventory;
     }
 

@@ -70,7 +70,11 @@ enchants:
     addition: 20
     hideLore: false
 
-strengthTitle: §c§l精炼台
+# 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
+# 比如，使用 FURNACE 时，必须将原料配置为燃料类，否则基岩版玩家无法使用 GUI，Java 版无需关心
+refineType: FURNACE
 refineTitle: §6§l洗炼炉
+strengthType: FURNACE
+strengthTitle: §c§l精炼台
 # 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
 enablePlayerEnchant: false

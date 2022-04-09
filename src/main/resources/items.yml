@@ -30,8 +30,8 @@ speed_bow:
     beginRate: 100 # 0洗时的成功率
     rateLvlDown: 15 # 每洗炼一次，成功率下降多少
     compatible: # 可以使用的洗练材料（名称）缺省时不限制
-      - speed_feather
-      - ward_arrow
+      - speed_btn
+      - bow_sapling
     preview: # 洗练时的预览信息
       type: DEFAULT
       displayName: §b点击以进行洗炼
@@ -63,13 +63,13 @@ speed_bow:
 # = 洗炼原料 = #
 # ========== #
 
-speed_feather:
-  material: FEATHER
+speed_btn:
+  material: BIRCH_BUTTON
   type: REFINE_STONE
-  displayName: §d青鸾尾羽
-  name: speed_feather
+  displayName: §d神羽之种
+  name: speed_btn
   lore:
-    - §5上古神鸟的一段尾羽，仍保留
+    - §5上古神鸟的魔力结核，仍保留
     - §5着微弱的神力，拿在手上便可
     - §5感受到神力。
     - §5稀有度：§d史诗-洗炼原料
@@ -99,16 +99,15 @@ speed_feather:
   # 稀有度，值越大越容易通过自然途径（钓鱼）获取，为 0 或缺省时无法自然获取
   rarity: 60
 
-ward_arrow:
-  material: GLOWSTONE_DUST
+bow_sapling:
+  material: BIRCH_SAPLING
   type: REFINE_STONE
-  displayName: §d异界星尘
-  name: ward_arrow
+  displayName: §d神木的枝叶
+  name: bow_sapling
   lore:
-    - §5来历不明的发光粉尘，虽然能感受到
-    - §5它的光芒，但它的光泽和魔力并不属
-    - §5于这个世界。在特殊的情况下，能对
-    - §5弓产生意外的影响。
+    - §5神鸟栖息地巨大神木的枝叶。
+    - §5相传具有神力的弓均以神木制
+    - §5成。
     - §5稀有度：§d臻品-洗炼原料
     - §5可能使以下属性发生改变1-2次：
     - §a移速 力量 箭雨
@@ -143,16 +142,17 @@ ward_arrow:
 # = 精炼原料 = #
 # ========== #
 
-speed_ingot:
-  material: COPPER_INGOT
+mov_speed_coal:
+  material: COAL
   type: STRENGTHEN_STONE
-  displayName: §b青鸾魔晶
-  name: speed_ingot
+  displayName: §b神木化石
+  name: mov_speed_coal
   enchantments:
     - SOUL_SPEED:1
   lore:
-    - §5散落于远古大地的神鸟魔力，经过
-    - §5漫长复杂的沉淀形成的魔力结晶
+    - §5大地深处埋藏的远古神木，漫长的
+    - §5时光中，汇聚大地精华。使能发掘
+    - §5出其真实力量的人得以大地上畅行
     - §5稀有度：§d史诗-精炼原料
     - §5可能使以下属性增强：
     - §a主手移速 副手移速
@@ -163,16 +163,17 @@ speed_ingot:
   addition: 0
   rarity: 40
 
-attack_speed_ingot:
-  material: COPPER_INGOT
+atk_speed_char:
+  material: CHARCOAL
   type: STRENGTHEN_STONE
-  displayName: §b青鸾之泪
-  name: attack_speed_ingot
+  displayName: §b神木炭
+  name: atk_speed_char
   enchantments:
     - SOUL_SPEED:2
   lore:
-    - §5神鸟栖息时留下的魔力凝珠，被
-    - §5加工切割后用于武器的强化。
+    - §5即使是神木，也无法避免被制成木炭
+    - §5但神木中的魔力在烧制过程中并未消
+    - §5失，而是发生了转变。
     - §5稀有度：§d史诗-精炼原料
     - §5可能使以下属性增强：
     - §a主手攻速 副手攻速
@@ -183,18 +184,21 @@ attack_speed_ingot:
   addition: 0
   rarity: 50
 
-bow_scroll:
-  material: PAPER
+bow_shelf:
+  material: BOOKSHELF
   type: STRENGTHEN_STONE
-  displayName: §b缚魔卷轴（弓）
-  name: bow_scroll
+  displayName: §b缚魔大典-弓篇
+  name: bow_shelf
   enchantments:
     - ARROW_RAIN:1
     - POWER:1
   lore:
-    - §5封印了突破神力的卷轴，可以使已有
+    - §5稀有的禁术魔导书典藏，封印了
+    - §5突破神力，用它精炼可以使已有
     - §5的魔咒得到进一步增强。
     - §5稀有度：§6臻品-精炼原料
+    - §5可能使以下属性增强：
+    - §a箭雨 力量
   candidates:
     - ENCH_UP:ARROW_RAIN:+1:10
     - ENCH_UP:POWER:+1:20
@@ -207,7 +211,7 @@ bow_scroll:
 # ========== #
 
 refine_scrap:
-  material: RAW_IRON
+  material: NETHERITE_SCRAP
   type: DEFAULT
   displayName: §3洗炼废料
   name: refine_scrap
@@ -220,12 +224,12 @@ refine_scrap:
     - §5稀有度：§3稀有
 
 str_scrap:
-  material: COAL
+  material: NETHERITE_SCRAP
   type: DEFAULT
   displayName: §3精炼废料
   name: str_scrap
   enchantments:
-    - FORTUNE:1
+    - FORTUNE:2
   lore:
     - §5即使熟练的工匠，也无法保证
     - §5万无一失，失败在所难免，但

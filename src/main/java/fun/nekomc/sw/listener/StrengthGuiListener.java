@@ -13,10 +13,11 @@ import org.bukkit.event.inventory.InventoryType;
  *
  * @author ourange
  */
-public class StrengthAnvilGuiListener extends TwoInputOneOutputGuiListener implements Listener {
+public class StrengthGuiListener extends TwoInputOneOutputGuiListener implements Listener {
 
-    public StrengthAnvilGuiListener() {
-        super(InventoryType.ANVIL, ConfigManager.getConfigYml().getStrengthTitle(), ItemsTypeEnum.BLANK, ItemsTypeEnum.STRENGTHEN_STONE, true);
+    public StrengthGuiListener() {
+        super(() -> InventoryType.valueOf(ConfigManager.getConfigYml().getStrengthType()),
+                ConfigManager.getConfigYml().getStrengthTitle(), ItemsTypeEnum.BLANK, ItemsTypeEnum.STRENGTHEN_STONE, true);
     }
 
     @Override
