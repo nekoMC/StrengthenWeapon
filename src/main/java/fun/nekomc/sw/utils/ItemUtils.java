@@ -24,6 +24,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
@@ -61,6 +62,7 @@ public class ItemUtils {
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
         meta.setDisplayName(itemConfig.getDisplayName());
         meta.setUnbreakable(itemConfig.isUnbreakable());
+        ((Damageable) meta).setDamage(itemConfig.getDamage());
         // Meta - 附魔、属性修改
         meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
         itemConfig.getEnchantMap().forEach((enchant, lvl) -> meta.addEnchant(enchant, lvl, true));

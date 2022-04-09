@@ -245,11 +245,12 @@ fishing_rod1:
   type: DEFAULT
   displayName: §d海王的晾衣杆
   name: fishing_rod1
+  damage: 54
   enchantments:
     - GIFT_OF_THE_SEA:2
     - LUCK_OF_THE_SEA:5
     - LURE:3
   lore:
-    - §5下海！下海！鬼知道海里有什么。
-    - §5海王护佑，下一杆一定！
+    - §5下海！下海！鬼知道海里有什么！！
+    - §5只有十发，海王护佑，下一杆一定！
     - §5稀有度：§d史诗
