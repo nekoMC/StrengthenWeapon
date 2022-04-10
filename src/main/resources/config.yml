@@ -33,42 +33,21 @@ message:
 # 自定义附魔
 enchants:
   # 注释掉整个配置即可禁用一个附魔
+  # 用在弓上时，每提升一级可以额外射出 addition 支箭
   ARROW_RAIN:
     key: ARROW_RAIN
-    targetMaterials:
-      - BOW
     displayName: §b箭雨
-    maxLevel: 3
-    conflicts:
-      - INFINITY
-    description: 每提升一级可以额外射出一支箭
-    treasure: true
     addition: 1
-    hideLore: false
+  # 拥有此附魔的鱼竿有概率钓到配置的道具
   GIFT_OF_THE_SEA:
     key: GIFT_OF_THE_SEA
-    targetMaterials:
-      - FISHING_ROD
-    displayName: §b海之馈赠
-    maxLevel: 5
-    conflicts:
-      - INFINITY
-    description: 拥有此附魔的鱼竿有概率钓到配置的道具
-    treasure: true
+    displayName: §6海之馈赠
     addition: 10
-    hideLore: false
+  # 近战攻击时有概率吸血
   SUCK_BLOOD:
     key: SUCK_BLOOD
-    targetMaterials:
-      - SWORD
-    displayName: §4嗜血
-    maxLevel: 5
-    conflicts:
-      - INFINITY
-    description: 近战攻击时有概率吸血
-    treasure: true
+    displayName: §6嗜血
     addition: 20
-    hideLore: false
 
 # 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
 # 比如，使用 FURNACE 时，必须将原料配置为燃料类，否则基岩版玩家无法使用 GUI，Java 版无需关心
@@ -78,3 +57,5 @@ strengthType: FURNACE
 strengthTitle: §c§l精炼台
 # 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
 enablePlayerEnchant: false
+# 启用自定义附魔修复，如果因为 ProtocolSupport 等插件导致自定义附魔丢失可以开启此配置项
+usingLoreGetter: true

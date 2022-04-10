@@ -17,7 +17,6 @@ import fun.nekomc.sw.common.ConfigManager;
 
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;

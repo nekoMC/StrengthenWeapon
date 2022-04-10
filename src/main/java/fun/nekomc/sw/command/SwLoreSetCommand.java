@@ -38,6 +38,7 @@ class SwLoreSetCommand extends AbstractMainHandItemCommand {
         if (lineNumber <= 0) {
             throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
+        newLore = newLore.replace("[]", " ");
         return setItemLoreAt(targetItem, lineNumber, newLore);
     }
 

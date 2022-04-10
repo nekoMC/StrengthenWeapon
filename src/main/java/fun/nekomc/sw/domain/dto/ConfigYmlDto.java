@@ -56,6 +56,11 @@ public class ConfigYmlDto implements Serializable {
     private Map<String, EnchantmentConfigDto> enchants;
 
     /**
+     * 始终使用 Lore 恢复自定义附魔信息
+     */
+    private boolean usingLoreGetter;
+
+    /**
      * 获取 message 中指定的消息内容
      *
      * @param key 键

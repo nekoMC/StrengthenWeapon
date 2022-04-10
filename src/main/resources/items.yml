@@ -102,13 +102,13 @@ speed_btn:
 bow_sapling:
   material: BIRCH_SAPLING
   type: REFINE_STONE
-  displayName: §d神木的枝叶
+  displayName: §6神木的枝叶
   name: bow_sapling
   lore:
     - §5神鸟栖息地巨大神木的枝叶。
     - §5相传具有神力的弓均以神木制
     - §5成。
-    - §5稀有度：§d臻品-洗炼原料
+    - §5稀有度：§6臻品-洗炼原料
     - §5可能使以下属性发生改变1-2次：
     - §a移速 力量 箭雨
     - §4击退抗性 最大生命
@@ -145,7 +145,7 @@ bow_sapling:
 mov_speed_coal:
   material: COAL
   type: STRENGTHEN_STONE
-  displayName: §b神木化石
+  displayName: §d神木化石
   name: mov_speed_coal
   enchantments:
     - SOUL_SPEED:1
@@ -166,7 +166,7 @@ mov_speed_coal:
 atk_speed_char:
   material: CHARCOAL
   type: STRENGTHEN_STONE
-  displayName: §b神木炭
+  displayName: §d神木炭
   name: atk_speed_char
   enchantments:
     - SOUL_SPEED:2
@@ -187,7 +187,7 @@ atk_speed_char:
 bow_shelf:
   material: BOOKSHELF
   type: STRENGTHEN_STONE
-  displayName: §b缚魔大典-弓篇
+  displayName: §6缚魔大典-弓篇
   name: bow_shelf
   enchantments:
     - ARROW_RAIN:1

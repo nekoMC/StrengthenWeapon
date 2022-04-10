@@ -6,7 +6,7 @@
 
     <groupId>fun.nekomc</groupId>
     <artifactId>StrengthWeapon</artifactId>
-    <version>alpha.3</version>
+    <version>beta.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
