@@ -25,6 +25,7 @@ message:
     §c§l--- §aSW 管理指令 §c§l---
     §b§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
     §b§l/sw enchant <附魔ID> <附魔等级> §e对主手上的物品进行附魔
+    §b§l/sw attribute <槽位> <属性ID> <属性值变化> §e对主手上物品的属性增强进行修改
     §b§l/sw lore set <行号> <Lore内容> §e修改主手上物品的 Lore
     §b§l/sw lore del <行号> §e删除主手上物品指定行的 Lore
     §b§l/sw promote <原料名> §e使用指定的原料对主手上的物品进行强化
