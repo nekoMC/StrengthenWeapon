@@ -2,10 +2,7 @@ package fun.nekomc.sw;
 
 import cn.hutool.core.collection.CollUtil;
 import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
-import fun.nekomc.sw.enchant.AbstractSwEnchantment;
-import fun.nekomc.sw.enchant.ArrowRainEnchantment;
-import fun.nekomc.sw.enchant.GiftOfTheSeaEnchantment;
-import fun.nekomc.sw.enchant.SuckBloodEnchantment;
+import fun.nekomc.sw.enchant.*;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.WatcherTriggers;
 import fun.nekomc.sw.exception.SwException;
@@ -76,6 +73,7 @@ public class StrengthenWeapon extends JavaPlugin {
                 ArrowRainEnchantment.class,
                 GiftOfTheSeaEnchantment.class,
                 SuckBloodEnchantment.class,
+                SplashEnchantment.class,
         };
         loadCustomEnchantments(classes);
         // 指令解析器
@@ -129,8 +127,8 @@ public class StrengthenWeapon extends JavaPlugin {
             try {
                 String enchantKey = (String) enchantClass.getField("ENCHANT_KEY").get(enchantClass);
                 if (!configEnchants.contains(enchantKey)) {
-                    MsgUtils.consoleMsg("Unsupported enchant key: {}", enchantKey);
-                    return;
+                    MsgUtils.consoleMsg("Disabled enchant: %s", enchantKey);
+                    continue;
                 }
 
                 AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();

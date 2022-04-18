@@ -47,7 +47,12 @@ enchants:
   # 近战攻击时有概率吸血
   SUCK_BLOOD:
     key: SUCK_BLOOD
-    displayName: §6嗜血
+    displayName: §4嗜血
+    addition: 20
+  # 手持含该附魔的物品右键时，会投掷出喷溅药水瓶
+  SPLASH:
+    key: SPLASH
+    displayName: §4魔杖
     addition: 20
 
 # 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
