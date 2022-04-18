@@ -426,8 +426,8 @@ public class WatcherTriggers implements Listener {
     }
 
     @EventHandler
-    public void on1(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR) {
+    public void onRightClick(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         // 握着啥

@@ -134,7 +134,7 @@ public class StrengthenWeapon extends JavaPlugin {
                 AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();
                 EnchantHelper.register(enchantment);
             } catch (ReflectiveOperationException e) {
-                MsgUtils.consoleMsg("Malformed Enchantment Class: {}", enchantClass);
+                MsgUtils.consoleMsg("Malformed Enchantment Class: %s", enchantClass);
             }
         }
         Enchantment.stopAcceptingRegistrations();

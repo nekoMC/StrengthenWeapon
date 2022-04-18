@@ -98,15 +98,28 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
         return enchantmentConfigDto;
     }
 
+    /**
+     * 获取根据 start、addition 配置得到的属性值，通常用作概率的计算
+     *
+     * @param level 附魔等级
+     */
+    protected int getEnchantLvlAttribute(int level) {
+        EnchantmentConfigDto config = getConfig();
+        int start = null == config.getStart() ? config.getAddition() : config.getStart();
+        return start + (level - 1) * config.getAddition();
+    }
+
     // ========== FFF，已弃用还得实现 ========== //
 
     @NotNull
     @Override
+    @SuppressWarnings("all")
     public String getName() {
         return getKey().getKey();
     }
 
     @Override
+    @SuppressWarnings("all")
     public boolean isCursed() {
         return false;
     }
