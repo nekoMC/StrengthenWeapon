@@ -4,9 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.*;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -82,10 +86,29 @@ public class SplashEnchantment extends AbstractSwEnchantment {
                 return;
             }
         }
+        // 取消掉原事件，避免可防止物品的误放置
+        event.setCancelled(true);
+
         if (!passCoolDown(player, level)) {
             return;
         }
-        log.warn("过了 CD");
+        // 通过了 CD，生成投掷的药水
+        player.getWorld().spawn(player.getLocation().add(0, player.getHeight() / 2, 0), ThrownPotion.class, thrownPotion -> {
+            ItemStack itemStack = new ItemStack(Material.SPLASH_POTION);
+            PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+            if (null == meta) {
+                return;
+            }
+            meta.setBasePotionData(new PotionData(PotionType.UNCRAFTABLE, false, false));
+            // TODO: 药水效果支持
+            meta.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 50, 3), true);
+            meta.addCustomEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 300, 3), true);
+            itemStack.setItemMeta(meta);
+
+            thrownPotion.setItem(itemStack);
+            Vector direction = player.getLocation().getDirection();
+            thrownPotion.setVelocity(direction);
+        });
     }
 
     private boolean passCoolDown(Player player, final int level) {
