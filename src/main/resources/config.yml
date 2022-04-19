@@ -23,7 +23,8 @@ message:
     §a§l/sw help §e显示本帮助信息
   admin_help_msg: |
     §c§l--- §aSW 管理指令 §c§l---
-    §b§l/sw give <玩家> <道具名> <数量> §e给予指定玩家道具
+    §b§l/sw give <玩家> <道具名> [<数量>] §e给予指定玩家道具
+    §b§l/sw drop <玩家> <x> <y> <z> <道具名> [<数量>] §e在玩家所在世界的指定位置生成掉落物
     §b§l/sw enchant <附魔ID> <附魔等级> §e对主手上的物品进行附魔
     §b§l/sw attribute <槽位> <属性ID> <属性值变化> §e对主手上物品的属性增强进行修改
     §b§l/sw lore set <行号> <Lore内容> §e修改主手上物品的 Lore

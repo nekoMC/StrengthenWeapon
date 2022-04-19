@@ -35,6 +35,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 new SwRefineCommand(),
                 new SwReloadCommand(),
                 new SwGiveCommand(),
+                new SwDropCommand(),
                 new SwEnchantCommand(),
                 new SwAttributeCommand(),
                 new SwPromoteCommand(),
