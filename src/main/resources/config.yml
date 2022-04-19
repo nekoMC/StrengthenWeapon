@@ -39,17 +39,33 @@ enchants:
   ARROW_RAIN:
     key: ARROW_RAIN
     displayName: §b箭雨
-    addition: 1
+    addition: 1 # 每级多射出的箭数
   # 拥有此附魔的鱼竿有概率钓到配置的道具
   GIFT_OF_THE_SEA:
     key: GIFT_OF_THE_SEA
     displayName: §6海之馈赠
-    addition: 10
+    addition: 10 # 每级提升的概率
   # 近战攻击时有概率吸血
   SUCK_BLOOD:
     key: SUCK_BLOOD
-    displayName: §6嗜血
-    addition: 20
+    displayName: §4嗜血
+    addition: 20 # 吸血量 = 等级 * addition / 100
+  # 手持含该附魔的物品右键时，会投掷出喷溅药水瓶
+  SPLASH:
+    key: SPLASH
+    displayName: §4药剂师
+    addition: -100 # 每级 CD 时间缩短的 ms 数
+    start: 1000 # 附魔等级为 1 时的属性值，如果不配置默认为 addition 的值
+  # 药剂效果：延缓
+  SLOW_POTION:
+    key: SLOW_POTION
+    displayName: §b魔术配方-缓慢
+    addition: 10 # 每级增加的效果时长，单位 tick
+  # 药剂效果：延缓
+  BLIND_POTION:
+    key: BLIND_POTION
+    displayName: §b魔术配方-失明
+    addition: 10 # 每级增加的效果时长，单位 tick
 
 # 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
 # 比如，使用 FURNACE 时，必须将原料配置为燃料类，否则基岩版玩家无法使用 GUI，Java 版无需关心

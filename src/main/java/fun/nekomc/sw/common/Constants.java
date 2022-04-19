@@ -43,6 +43,11 @@ public class Constants {
     /***/
     public static final String STR_ZERO = "0";
 
+    /**
+     * 使用 splash 附魔丢出的药水，lore 中写入的标记
+     */
+    public static final String SPLASH_LORE_FLAG = "ENCH_SPLASH_FLAG";
+
     @UtilityClass
     public static class Msg {
         public static final String CONFIG_ERROR = "config_error";
