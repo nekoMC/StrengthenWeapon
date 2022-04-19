@@ -57,4 +57,9 @@ public class EnchantmentConfigDto implements Serializable {
      * 是否在 Lore 中隐藏
      */
     private boolean hideLore;
+
+    /**
+     * 附魔等级为 1 时的属性值
+     */
+    private Integer start;
 }

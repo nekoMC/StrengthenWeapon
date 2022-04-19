@@ -27,7 +27,7 @@ public class SuckBloodEnchantment extends AbstractSwEnchantment {
     public void onMeleeAttack(@NotNull LivingEntity attacker, @NotNull LivingEntity victim, int level, @NotNull EntityDamageByEntityEvent event) {
         AttributeInstance attribute = attacker.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         // 计算需要加的血量
-        int bloodToAdd = (level * getConfig().getAddition()) / 100;
+        int bloodToAdd = getEnchantLvlAttribute(level) / 100;
         if (bloodToAdd <= 0 || null == attribute) {
             return;
         }

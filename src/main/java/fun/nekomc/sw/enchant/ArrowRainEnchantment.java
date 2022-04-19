@@ -1,6 +1,7 @@
 package fun.nekomc.sw.enchant;
 
 import cn.hutool.core.util.RandomUtil;
+import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
@@ -37,7 +38,7 @@ public class ArrowRainEnchantment extends AbstractSwEnchantment {
         Arrow arrow = (Arrow) projectile;
         double range = 2.0;
         // 计算
-        int addArrowCount = level * getConfig().getAddition();
+        int addArrowCount = getEnchantLvlAttribute(level);
         for (int i = 0; i < addArrowCount; i++) {
             // 计算额外箭的生成位置
             Location location = shooter.getEyeLocation().clone();
