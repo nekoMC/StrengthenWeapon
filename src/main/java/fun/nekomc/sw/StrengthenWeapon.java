@@ -74,6 +74,8 @@ public class StrengthenWeapon extends JavaPlugin {
                 GiftOfTheSeaEnchantment.class,
                 SuckBloodEnchantment.class,
                 SplashEnchantment.class,
+                SlowPotionEnchantment.class,
+                BlindPotionEnchantment.class,
         };
         loadCustomEnchantments(classes);
         // 指令解析器

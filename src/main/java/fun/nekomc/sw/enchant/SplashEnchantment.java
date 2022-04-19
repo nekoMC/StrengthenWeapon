@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.potion.*;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +97,7 @@ public class SplashEnchantment extends AbstractSwEnchantment {
             return;
         }
         // 通过了 CD，生成投掷的药水
-        player.getWorld().spawn(player.getLocation().add(0, player.getHeight() / 2, 0), ThrownPotion.class, thrownPotion -> {
+        player.getWorld().spawn(player.getLocation().add(0, player.getHeight() * 0.618, 0), ThrownPotion.class, thrownPotion -> {
             ItemStack itemStack = new ItemStack(Material.SPLASH_POTION);
             PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
             if (null == meta) {
@@ -106,13 +105,12 @@ public class SplashEnchantment extends AbstractSwEnchantment {
             }
             meta.setBasePotionData(new PotionData(PotionType.UNCRAFTABLE, false, false));
             meta.setLore(Lists.newArrayList(Constants.SPLASH_LORE_FLAG));
-            Map<AbstractSwEnchantment, Integer> enchantsOnItem = EnchantHelper.getEnchantsOnItem(itemStack);
+            Map<AbstractSwEnchantment, Integer> enchantsOnItem = EnchantHelper.getEnchantsOnItem(holdInHand);
             enchantsOnItem.forEach((enchant, lvl) -> {
-                
+                if (enchant instanceof AbstractPotionEnchantment) {
+                    ((AbstractPotionEnchantment) enchant).decoratePotionMeta(player, meta, this, level, lvl);
+                }
             });
-            // TODO: 药水效果支持
-            meta.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 50, 3), true);
-            meta.addCustomEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 300, 3), true);
             itemStack.setItemMeta(meta);
 
             thrownPotion.setItem(itemStack);
