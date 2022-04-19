@@ -2,6 +2,7 @@ package fun.nekomc.sw.enchant;
 
 import com.google.common.collect.Lists;
 import fun.nekomc.sw.common.Constants;
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -105,6 +106,10 @@ public class SplashEnchantment extends AbstractSwEnchantment {
             }
             meta.setBasePotionData(new PotionData(PotionType.UNCRAFTABLE, false, false));
             meta.setLore(Lists.newArrayList(Constants.SPLASH_LORE_FLAG));
+            Map<AbstractSwEnchantment, Integer> enchantsOnItem = EnchantHelper.getEnchantsOnItem(itemStack);
+            enchantsOnItem.forEach((enchant, lvl) -> {
+                
+            });
             // TODO: 药水效果支持
             meta.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 50, 3), true);
             meta.addCustomEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 300, 3), true);
