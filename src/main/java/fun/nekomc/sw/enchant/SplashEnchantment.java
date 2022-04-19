@@ -1,14 +1,18 @@
 package fun.nekomc.sw.enchant;
 
+import com.google.common.collect.Lists;
+import fun.nekomc.sw.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.potion.*;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -79,12 +83,12 @@ public class SplashEnchantment extends AbstractSwEnchantment {
 
     @Override
     public void onMainHandRightClick(@NotNull Player player, @NotNull ItemStack holdInHand, int level, @NotNull PlayerInteractEvent event) {
-        if (event.getClickedBlock() != null) {
-            if (event.getClickedBlock().getState() instanceof Container
-                    || event.getClickedBlock().getState() instanceof BlockInventoryHolder
-                    || BLACKLIST_CLICKED_BLOCKS.contains(event.getClickedBlock().getType())) {
-                return;
-            }
+        Block clickedBlock = event.getClickedBlock();
+        boolean clickUnCareBlock = (clickedBlock != null) && (clickedBlock.getState() instanceof Container
+                || clickedBlock.getState() instanceof BlockInventoryHolder
+                || BLACKLIST_CLICKED_BLOCKS.contains(clickedBlock.getType()));
+        if (clickUnCareBlock) {
+            return;
         }
         // 取消掉原事件，避免可防止物品的误放置
         event.setCancelled(true);
@@ -100,6 +104,7 @@ public class SplashEnchantment extends AbstractSwEnchantment {
                 return;
             }
             meta.setBasePotionData(new PotionData(PotionType.UNCRAFTABLE, false, false));
+            meta.setLore(Lists.newArrayList(Constants.SPLASH_LORE_FLAG));
             // TODO: 药水效果支持
             meta.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 50, 3), true);
             meta.addCustomEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 300, 3), true);
