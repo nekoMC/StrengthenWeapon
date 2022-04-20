@@ -2,6 +2,7 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.text.CharSequenceUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import fun.nekomc.sw.StrengthenWeapon;
@@ -232,7 +233,12 @@ public class ItemUtils {
                     modifierName, modifierDoubleValue, operation, slot);
             // 设置属性
             modifiers.add(targetModifier);
-            log.info("{} updated [{}]'s Attribute: {}", PlayerHolder.getSender().getName(), originMeta.getDisplayName(), modifierName);
+
+            String itemName = originMeta.getDisplayName();
+            if (CharSequenceUtil.isEmpty(itemName)) {
+                itemName = originMeta.getLocalizedName();
+            }
+            log.info("{} updated [{}]'s Attribute: {}", PlayerHolder.getSender().getName(), itemName, modifierName);
         }
         attributeModifiers.replaceValues(attribute, modifiers);
         originMeta.setAttributeModifiers(attributeModifiers);
@@ -270,8 +276,13 @@ public class ItemUtils {
         targetItem.setItemMeta(itemMeta);
         // 刷新附魔 Lore
         EnchantHelper.updateLore(targetItem);
+
+        String itemName = itemMeta.getDisplayName();
+        if (CharSequenceUtil.isEmpty(itemName)) {
+            itemName = itemMeta.getLocalizedName();
+        }
         log.info("{} updated [{}]'s Enchantment: {}",
-                PlayerHolder.getSender().getName(), itemMeta.getDisplayName(), targetEnchant.getKey().getKey());
+                PlayerHolder.getSender().getName(), itemName, targetEnchant.getKey().getKey());
         return true;
     }
 
@@ -292,6 +303,27 @@ public class ItemUtils {
             return Optional.empty();
         }
         return Optional.of((D) itemConfig.get());
+    }
+
+    /**
+     * 获取触发药水的物品（一定为具有魔法相关附魔的物品，否则返回空）
+     *
+     * @param potion 被投掷出的药水
+     * @return 触发药水投掷的物品
+     */
+    public static Optional<ItemStack> getPotionTriggerItem(ThrownPotion potion) {
+        List<MetadataValue> values = potion.getMetadata("thrown-from");
+
+        if (values.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Object gotFromMeta = values.get(0).value();
+        if (!(gotFromMeta instanceof ItemStack)) {
+            return Optional.empty();
+        }
+
+        return Optional.of((ItemStack) gotFromMeta);
     }
 
     // ========== private ========== //

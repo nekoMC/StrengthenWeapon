@@ -5,6 +5,8 @@ import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.enchant.*;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.WatcherTriggers;
+import fun.nekomc.sw.enchant.magia.PotionEnchantment;
+import fun.nekomc.sw.enchant.magia.SplashEnchantment;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
@@ -73,9 +75,31 @@ public class StrengthenWeapon extends JavaPlugin {
                 ArrowRainEnchantment.class,
                 GiftOfTheSeaEnchantment.class,
                 SuckBloodEnchantment.class,
+                // Magia 支持
                 SplashEnchantment.class,
-                SlowPotionEnchantment.class,
-                BlindPotionEnchantment.class,
+                PotionEnchantment.Slow.class,
+                PotionEnchantment.Blind.class,
+                PotionEnchantment.Harm.class,
+                PotionEnchantment.Absorption.class,
+                PotionEnchantment.ConduitPower.class,
+                PotionEnchantment.Confusion.class,
+                PotionEnchantment.Resistance.class,
+                PotionEnchantment.FireResistance.class,
+                PotionEnchantment.Glowing.class,
+                PotionEnchantment.Heal.class,
+                PotionEnchantment.Hunger.class,
+                PotionEnchantment.IncreaseDamage.class,
+                PotionEnchantment.Invisibility.class,
+                PotionEnchantment.Jump.class,
+                PotionEnchantment.Float.class,
+                PotionEnchantment.NightVision.class,
+                PotionEnchantment.Poison.class,
+                PotionEnchantment.Regeneration.class,
+                PotionEnchantment.Saturation.class,
+                PotionEnchantment.Speed.class,
+                PotionEnchantment.WaterBreathing.class,
+                PotionEnchantment.WeaknessBreathing.class,
+                PotionEnchantment.Wither.class,
         };
         loadCustomEnchantments(classes);
         // 指令解析器
