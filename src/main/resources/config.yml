@@ -33,7 +33,11 @@ message:
 
 # 自定义附魔
 enchants:
+  # -------------------------------------
   # 注释掉整个配置即可禁用一个附魔
+  # 启用、禁用某个附魔时，需要重启才能生效
+  # 不建议中途修改附魔名，因为原附魔名会遗留在道具的 lore 中
+  # -------------------------------------
   # 用在弓上时，每提升一级可以额外射出 addition 支箭
   ARROW_RAIN:
     key: ARROW_RAIN
@@ -55,21 +59,127 @@ enchants:
     displayName: §4药剂师
     addition: -100 # 每级 CD 时间缩短的 ms 数
     start: 1000 # 附魔等级为 1 时的属性值，如果不配置默认为 addition 的值
+  # ---------------------
+  # 药水的辅助附魔 - 减益
+  # ---------------------
   # 药剂效果：延缓
   SLOW_POTION:
     key: SLOW_POTION
     displayName: §b魔药秘方-缓慢
-    addition: 10 # 每级增加的效果时长，单位 tick
+    addition: 20 # 每级增加的效果时长，单位 tick，药水类均一样
   # 药剂效果：瞎
   BLIND_POTION:
     key: BLIND_POTION
     displayName: §b魔药秘方-失明
-    addition: 10 # 每级增加的效果时长，单位 tick
-  # 妖姬效果：瞬间伤害
+    addition: 20
+  # 药剂效果：瞬间伤害
   HARM_POTION:
     key: HARM_POTION
     displayName: §b魔药秘方-伤害
-    addition: 10 # 每级增加的效果时长，单位 tick
+    addition: 10
+  # 药剂效果：恶心
+  CONFUSION_POTION:
+    key: CONFUSION_POTION
+    displayName: §b魔药秘方-黑暗料理
+    addition: 20
+  # 药剂效果：发光
+  GLOWING_POTION:
+    key: CONFUSION_POTION
+    displayName: §b魔药秘方-标记
+    addition: 20
+  # 药剂效果：饥饿
+  HUNGER_POTION:
+    key: HUNGER_POTION
+    displayName: §b魔药秘方-饥饿
+    addition: 20
+  # 药剂效果：漂浮
+  FLOAT_POTION:
+    key: FLOAT_POTION
+    displayName: §b魔药秘方-起飞
+    addition: 20
+  # 药剂效果：中毒
+  POISON_POTION:
+    key: POISON_POTION
+    displayName: §b魔药秘方-猛毒
+    addition: 20
+  # 药剂效果：中毒
+  WEAKNESS_POTION:
+    key: WEAKNESS_POTION
+    displayName: §b魔药秘方-虚弱
+    addition: 20
+  # 药剂效果：凋零
+  WITHER_POTION:
+    key: WITHER_POTION
+    displayName: §b魔药秘方-凋零
+    addition: 20
+  # ---------------------
+  # 药水的辅助附魔 - 增益
+  # ---------------------
+  # 药剂效果：伤害吸收
+  ABSORPTION_POTION:
+    key: ABSORPTION_POTION
+    displayName: §b魔药秘方-伤害吸收
+    addition: 20
+  # 药剂效果：涌潮能量
+  CONDUIT_POTION:
+    key: CONDUIT_POTION
+    displayName: §b魔药秘方-潮涌
+    addition: 20
+  # 药剂效果：伤害减免
+  RESISTANCE_POTION:
+    key: RESISTANCE_POTION
+    displayName: §b魔药秘方-抗性
+    addition: 20
+  # 药剂效果：伤害减免
+  FIRE_RESISTANCE_POTION:
+    key: FIRE_RESISTANCE_POTION
+    displayName: §b魔药秘方-抗火
+    addition: 20
+  # 药剂效果：瞬间治疗
+  HEAL_POTION:
+    key: HEAL_POTION
+    displayName: §b魔药秘方-治愈
+    addition: 10
+  # 药剂效果：伤害增加
+  INCREASE_DMG_POTION:
+    key: INCREASE_DMG_POTION
+    displayName: §b魔药秘方-斗气
+    addition: 20
+  # 药剂效果：隐身
+  INVISIBILITY_POTION:
+    key: INVISIBILITY_POTION
+    displayName: §b魔药秘方-隐匿
+    addition: 20
+  # 药剂效果：跳跃提升
+  JUMP_POTION:
+    key: JUMP_POTION
+    displayName: §b魔药秘方-弹跳
+    addition: 20
+  # 药剂效果：跳跃提升
+  NIGHT_VISION_POTION:
+    key: NIGHT_VISION_POTION
+    displayName: §b魔药秘方-夜视
+    addition: 20
+  # 药剂效果：生命恢复
+  REGENERATION_POTION:
+    key: REGENERATION_POTION
+    displayName: §b魔药秘方-再生
+    addition: 20
+  # 药剂效果：饱和
+  SATURATION_POTION:
+    key: SATURATION_POTION
+    displayName: §b魔药秘方-饱和
+    addition: 20
+  # 药剂效果：速度提升
+  SPEED_POTION:
+    key: SPEED_POTION
+    displayName: §b魔药秘方-极速
+    addition: 20
+  # 药剂效果：水下呼吸
+  WATER_BREATHING_POTION:
+    key: WATER_BREATHING_POTION
+    displayName: §b魔药秘方-水肺
+    addition: 20
 
 # 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
 # 比如，使用 FURNACE 时，必须将原料配置为燃料类，否则基岩版玩家无法使用 GUI，Java 版无需关心

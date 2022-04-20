@@ -94,6 +94,12 @@ public class StrengthenWeapon extends JavaPlugin {
                 PotionEnchantment.Float.class,
                 PotionEnchantment.NightVision.class,
                 PotionEnchantment.Poison.class,
+                PotionEnchantment.Regeneration.class,
+                PotionEnchantment.Saturation.class,
+                PotionEnchantment.Speed.class,
+                PotionEnchantment.WaterBreathing.class,
+                PotionEnchantment.WeaknessBreathing.class,
+                PotionEnchantment.Wither.class,
         };
         loadCustomEnchantments(classes);
         // 指令解析器

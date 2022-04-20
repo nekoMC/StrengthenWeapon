@@ -123,6 +123,26 @@ public abstract class PotionEnchantment extends AbstractSwEnchantment {
         }
     }
 
+    /**
+     * 药水效果：虚弱
+     */
+    public static class WeaknessBreathing extends PotionEnchantment {
+        public static final String ENCHANT_KEY = "WEAKNESS_POTION";
+        public WeaknessBreathing() {
+            super(ENCHANT_KEY, PotionEffectType.WEAKNESS);
+        }
+    }
+
+    /**
+     * 药水效果：凋零
+     */
+    public static class Wither extends PotionEnchantment {
+        public static final String ENCHANT_KEY = "WITHER_POTION";
+        public Wither() {
+            super(ENCHANT_KEY, PotionEffectType.WITHER);
+        }
+    }
+
     // ========== 药水效果：增益 ========== //
 
     /**
@@ -212,6 +232,46 @@ public abstract class PotionEnchantment extends AbstractSwEnchantment {
         public static final String ENCHANT_KEY = "NIGHT_VISION_POTION";
         public NightVision() {
             super(ENCHANT_KEY, PotionEffectType.NIGHT_VISION);
+        }
+    }
+
+    /**
+     * 药水效果：生命恢复
+     */
+    public static class Regeneration extends PotionEnchantment {
+        public static final String ENCHANT_KEY = "REGENERATION_POTION";
+        public Regeneration() {
+            super(ENCHANT_KEY, PotionEffectType.REGENERATION);
+        }
+    }
+
+    /**
+     * 药水效果：饱和
+     */
+    public static class Saturation extends PotionEnchantment {
+        public static final String ENCHANT_KEY = "SATURATION_POTION";
+        public Saturation() {
+            super(ENCHANT_KEY, PotionEffectType.SATURATION);
+        }
+    }
+
+    /**
+     * 药水效果：速度提升
+     */
+    public static class Speed extends PotionEnchantment {
+        public static final String ENCHANT_KEY = "SPEED_POTION";
+        public Speed() {
+            super(ENCHANT_KEY, PotionEffectType.SPEED);
+        }
+    }
+
+    /**
+     * 药水效果：水下呼吸
+     */
+    public static class WaterBreathing extends PotionEnchantment {
+        public static final String ENCHANT_KEY = "WATER_BREATHING_POTION";
+        public WaterBreathing() {
+            super(ENCHANT_KEY, PotionEffectType.WATER_BREATHING);
         }
     }
 

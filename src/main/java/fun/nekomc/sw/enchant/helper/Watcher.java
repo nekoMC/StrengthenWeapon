@@ -5,11 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -258,6 +254,23 @@ public interface Watcher {
                                       @NotNull ItemStack holdInHand,
                                       final int level,
                                       @NotNull PlayerInteractEvent event) {
+        // Empty default as enchantments only override required watchers.
+    }
+
+    /**
+     * 当玩家手持指定附魔的道具，触发药水投掷时
+     *
+     * @param shooter     触发投掷的实体（玩家）
+     * @param triggerItem 触发药水投掷的物品
+     * @param potion      投掷出的药水
+     * @param level       指定附魔的等级
+     * @param event       The event that called this watcher.
+     */
+    default void onPotionSplash(@NotNull LivingEntity shooter,
+                                @NotNull ItemStack triggerItem,
+                                @NotNull ThrownPotion potion,
+                                final int level,
+                                @NotNull PotionSplashEvent event) {
         // Empty default as enchantments only override required watchers.
     }
 

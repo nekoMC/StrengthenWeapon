@@ -18,11 +18,12 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 拷贝自：https://github.com/Auxilor/EcoEnchants
@@ -442,5 +443,25 @@ public class WatcherTriggers implements Listener {
         Map<AbstractSwEnchantment, Integer> enchants = EnchantHelper.getEnchantsOnItem(holdInHand);
 
         enchants.forEach((enchant, level) -> enchant.onMainHandRightClick(player, holdInHand, level, event));
+    }
+
+    @EventHandler
+    public void onPotionSplash(PotionSplashEvent potionSplashEvent) {
+        ThrownPotion potion = potionSplashEvent.getEntity();
+
+        Optional<ItemStack> triggerOptional = ItemUtils.getPotionTriggerItem(potion);
+        if (!triggerOptional.isPresent()) {
+            return;
+        }
+
+        ProjectileSource shooter = potion.getShooter();
+        if (!(shooter instanceof LivingEntity)) {
+            return;
+        }
+
+        ItemStack triggerItem = triggerOptional.get();
+
+        Map<AbstractSwEnchantment, Integer> enchants = EnchantHelper.getEnchantsOnItem(triggerItem);
+        enchants.forEach((enchant, level) -> enchant.onPotionSplash((LivingEntity) shooter, triggerItem, potion, level, potionSplashEvent));
     }
 }
