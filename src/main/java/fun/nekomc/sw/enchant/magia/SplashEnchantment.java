@@ -1,7 +1,8 @@
-package fun.nekomc.sw.enchant;
+package fun.nekomc.sw.enchant.magia;
 
 import com.google.common.collect.Lists;
 import fun.nekomc.sw.common.Constants;
+import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
@@ -107,8 +108,8 @@ public class SplashEnchantment extends AbstractSwEnchantment {
             meta.setLore(Lists.newArrayList(Constants.SPLASH_LORE_FLAG));
             Map<AbstractSwEnchantment, Integer> enchantsOnItem = EnchantHelper.getEnchantsOnItem(holdInHand);
             enchantsOnItem.forEach((enchant, lvl) -> {
-                if (enchant instanceof AbstractPotionEnchantment) {
-                    ((AbstractPotionEnchantment) enchant).decoratePotionMeta(player, meta, this, level, lvl);
+                if (enchant instanceof PotionEnchantment) {
+                    ((PotionEnchantment) enchant).decoratePotionMeta(player, meta, this, level, lvl);
                 }
             });
             itemStack.setItemMeta(meta);

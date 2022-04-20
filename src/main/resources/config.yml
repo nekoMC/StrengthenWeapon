@@ -58,12 +58,17 @@ enchants:
   # 药剂效果：延缓
   SLOW_POTION:
     key: SLOW_POTION
-    displayName: §b魔术配方-缓慢
+    displayName: §b魔药秘方-缓慢
     addition: 10 # 每级增加的效果时长，单位 tick
-  # 药剂效果：延缓
+  # 药剂效果：瞎
   BLIND_POTION:
     key: BLIND_POTION
-    displayName: §b魔术配方-失明
+    displayName: §b魔药秘方-失明
+    addition: 10 # 每级增加的效果时长，单位 tick
+  # 妖姬效果：瞬间伤害
+  HARM_POTION:
+    key: HARM_POTION
+    displayName: §b魔药秘方-伤害
     addition: 10 # 每级增加的效果时长，单位 tick
 
 # 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
