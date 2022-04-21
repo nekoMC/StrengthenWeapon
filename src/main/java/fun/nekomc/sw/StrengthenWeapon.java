@@ -16,6 +16,7 @@ import fun.nekomc.sw.common.ConfigManager;
 
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ import java.util.Set;
 /**
  * @author ourange
  */
+@Slf4j
 public class StrengthenWeapon extends JavaPlugin {
 
     private static StrengthenWeapon instance = null;
@@ -75,6 +77,8 @@ public class StrengthenWeapon extends JavaPlugin {
                 ArrowRainEnchantment.class,
                 GiftOfTheSeaEnchantment.class,
                 SuckBloodEnchantment.class,
+                GetHitHealEnchantment.class,
+                SecKillEnchantment.class,
                 // Magia 支持
                 SplashEnchantment.class,
                 PotionEnchantment.Slow.class,
@@ -153,19 +157,19 @@ public class StrengthenWeapon extends JavaPlugin {
             try {
                 String enchantKey = (String) enchantClass.getField("ENCHANT_KEY").get(enchantClass);
                 if (!configEnchants.contains(enchantKey)) {
-                    MsgUtils.consoleMsg("Disabled enchant: %s", enchantKey);
+                    log.warn("Disabled enchant: {}", enchantKey);
                     continue;
                 }
 
                 AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();
                 EnchantHelper.register(enchantment);
             } catch (ReflectiveOperationException e) {
-                MsgUtils.consoleMsg("Malformed Enchantment Class: %s", enchantClass);
+                log.error("Malformed Enchantment Class: {}, msg: {}", enchantClass, e.getMessage());
             }
         }
         Enchantment.stopAcceptingRegistrations();
         // 注册自定义附魔触发器
         pluginManager.registerEvents(WatcherTriggers.getInstance(), this);
-        MsgUtils.consoleMsg("Enchantments registered.");
+        log.info("Enchantments registered.");
     }
 }

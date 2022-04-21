@@ -52,8 +52,21 @@ enchants:
   # 近战攻击时有概率吸血
   SUCK_BLOOD:
     key: SUCK_BLOOD
-    displayName: §4嗜血
+    displayName: §4嗜血猎人
     addition: 20 # 吸血量 = 等级 * addition / 100
+  # 受击时恢复
+  GET_HIT_HEAL:
+    key: GET_HIT_HEAL
+    displayName: §4固若金汤
+    addition: 20 # 恢复量 = 等级 * addition / 100
+  # 概率秒杀
+  SECKILL:
+    key: SECKILL
+    displayName: §4制裁
+    addition: 1 # 每提升一级，增加 1% 概率
+    start: 2 # 2% 秒杀
+    ext:
+      safe: 500 # HP 高于多少的怪物不会受影响
   # 手持含该附魔的物品右键时，会投掷出喷溅药水瓶
   SPLASH:
     key: SPLASH

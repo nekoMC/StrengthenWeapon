@@ -1,6 +1,7 @@
 package fun.nekomc.sw.enchant.magia;
 
 import com.google.common.collect.Lists;
+import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.*;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -115,6 +117,7 @@ public class SplashEnchantment extends AbstractSwEnchantment {
         });
         itemStack.setItemMeta(meta);
 
+        thrownPotion.setMetadata("thrown-from", new FixedMetadataValue(StrengthenWeapon.getInstance(), holdInHand));
         thrownPotion.setItem(itemStack);
         Vector direction = player.getLocation().getDirection();
         thrownPotion.setVelocity(direction);

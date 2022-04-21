@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * created: 2022/3/14 00:50
@@ -62,4 +63,9 @@ public class EnchantmentConfigDto implements Serializable {
      * 附魔等级为 1 时的属性值
      */
     private Integer start;
+
+    /**
+     * 拓展配置属性
+     */
+    private Map<String, String> ext;
 }
