@@ -2,7 +2,6 @@ package fun.nekomc.sw.enchant;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.utils.NumberUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -38,12 +37,13 @@ public class SecKillEnchantment extends AbstractSwEnchantment {
         if (CollUtil.isEmpty(affectedEntities)) {
             return;
         }
-        // 是否可以激活秒杀
-        if (!NumberUtils.passedChance(this, level)) {
-            return;
-        }
         // 遍历药水范围内实体，执行秒杀
-        affectedEntities.forEach(victim -> doSecKill(shooter, victim));
+        affectedEntities.forEach(victim -> {
+            // 是否可以激活秒杀
+            if (NumberUtils.passedChance(this, level)) {
+                doSecKill(shooter, victim);
+            }
+        });
     }
 
     @Override
@@ -77,7 +77,7 @@ public class SecKillEnchantment extends AbstractSwEnchantment {
      * 执行秒杀
      */
     private void doSecKill(LivingEntity attacker, LivingEntity victim) {
-        // 得到本次将造成多少伤害，即 safe 配置的值
+        // 得到 safe 配置的值，超出则无效
         int maxHpLimit = 0;
         Map<String, String> ext = getConfig().getExt();
         String safe = ext.get("safe");

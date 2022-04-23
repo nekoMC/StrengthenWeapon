@@ -1,8 +1,6 @@
 package fun.nekomc.sw.enchant.magia;
 
-import com.google.common.collect.Lists;
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
@@ -18,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.*;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 

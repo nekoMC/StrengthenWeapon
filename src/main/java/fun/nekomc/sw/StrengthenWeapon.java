@@ -15,7 +15,6 @@ import fun.nekomc.sw.listener.StrengthGuiListener;
 import fun.nekomc.sw.common.ConfigManager;
 
 import fun.nekomc.sw.common.Constants;
-import fun.nekomc.sw.utils.MsgUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;

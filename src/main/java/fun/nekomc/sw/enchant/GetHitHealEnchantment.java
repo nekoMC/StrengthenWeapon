@@ -1,10 +1,7 @@
 package fun.nekomc.sw.enchant;
 
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
