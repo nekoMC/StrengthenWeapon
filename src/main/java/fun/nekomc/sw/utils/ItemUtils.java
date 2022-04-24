@@ -2,6 +2,8 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ArrayUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import fun.nekomc.sw.StrengthenWeapon;
@@ -50,6 +52,17 @@ public class ItemUtils {
      * @return 道具，配置存在问题时返回 Optional.empty
      */
     public static Optional<ItemStack> buildItemByConfig(SwItemConfigDto itemConfig) {
+        return buildItemByConfig(itemConfig, null);
+    }
+
+    /**
+     * 通过 ItemConfigDto 构建道具
+     *
+     * @param itemConfig SwItemConfigDto 对象，通常通过配置文件中读取获得
+     * @param extArgs    使用 ${param} 形式占位符时需要传递的拓展参数
+     * @return 道具，配置存在问题时返回 Optional.empty
+     */
+    public static Optional<ItemStack> buildItemByConfig(SwItemConfigDto itemConfig, Map<String, Object> extArgs) {
         Assert.notNull(itemConfig, "itemConfig cannot be null");
         // Material
         Material material = Material.getMaterial(itemConfig.getMaterial());
@@ -73,12 +86,17 @@ public class ItemUtils {
         persistentDataContainer.set(getWarpedKey(itemConfig.getName()),
                 SwItemAttachData.EMPTY_ATTACH_DATA, itemDefaultAttachData);
         // 包装 lore 信息
-        List<String> replacedLore = replaceLore(itemConfig.getLore(), itemDefaultAttachData);
+        List<String> replacedLore = replaceLore(itemConfig.getLore(), itemDefaultAttachData, extArgs);
         meta.setLore(replacedLore);
         itemStack.setItemMeta(meta);
         // 刷新附魔 Lore
         EnchantHelper.updateLore(itemStack);
         return Optional.of(itemStack);
+    }
+
+
+    public static void updateAttachData(ItemMeta itemMeta, SwItemAttachData attachData) {
+        updateAttachData(itemMeta, attachData, null);
     }
 
     /**
@@ -87,7 +105,7 @@ public class ItemUtils {
      * @param itemMeta   道具 ItemMeta，必须包含合法的 SwItemAttachData 数据
      * @param attachData 更新后的 SwItemAttachData
      */
-    public static void updateAttachData(ItemMeta itemMeta, SwItemAttachData attachData) {
+    public static void updateAttachData(ItemMeta itemMeta, SwItemAttachData attachData, Map<String, Object> extArgs) {
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
         String nameFromDataContainer = getNameFromDataContainer(persistentDataContainer);
         if (StringUtils.isBlank(nameFromDataContainer)) {
@@ -101,7 +119,7 @@ public class ItemUtils {
             return;
         }
         // 更新 lore 信息
-        List<String> replacedLore = replaceLore(itemConfigOptional.get().getLore(), attachData);
+        List<String> replacedLore = replaceLore(itemConfigOptional.get().getLore(), attachData, extArgs);
         itemMeta.setLore(replacedLore);
     }
 
@@ -313,8 +331,11 @@ public class ItemUtils {
     /**
      * 使用物品内标签的内容替换 Lore
      */
-    private static List<String> replaceLore(List<String> originLore, SwItemAttachData attachData) {
+    private static List<String> replaceLore(List<String> originLore, SwItemAttachData attachData, Map<String, Object> extArgs) {
         Map<String, Object> attachDataMap = BeanUtil.beanToMap(attachData, true, true);
+        if (ArrayUtil.isNotEmpty(extArgs)) {
+            attachDataMap.putAll(extArgs);
+        }
         List<String> toReplace = originLore;
         for (Map.Entry<String, Object> kvEntry : attachDataMap.entrySet()) {
             String key = kvEntry.getKey();

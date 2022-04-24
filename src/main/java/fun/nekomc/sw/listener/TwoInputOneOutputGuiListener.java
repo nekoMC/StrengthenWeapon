@@ -1,6 +1,7 @@
 package fun.nekomc.sw.listener;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.RandomUtil;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -84,7 +86,20 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         if (null == strengthRule || null == strengthRule.getPreview()) {
             throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
         }
-        Optional<ItemStack> previewItemOpt = ItemUtils.buildItemByConfig(strengthRule.getPreview());
+
+        // 获取成功率
+        int chance = 0;
+        ItemStack raw = wrapped.inventory.getItem(RAW_INDEX);
+        Optional<SwItemAttachData> attachData = ItemUtils.getAttachData(blank);
+        Optional<SwRawConfigDto> rawConfigDtoOpt = ItemUtils.getConfigDtoFromItem(raw, SwRawConfigDto.class);
+        if (attachData.isPresent() && rawConfigDtoOpt.isPresent()) {
+            SwRawConfigDto rawConfig = rawConfigDtoOpt.get();
+            SwItemAttachData swItemAttachData = attachData.get();
+            SwBlankConfigDto.StrengthRule promoteRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
+            chance = successChance(swItemAttachData, promoteRule, rawConfig.getAddition());
+        }
+        Map<String, Object> extMap = MapUtil.of("chance", chance);
+        Optional<ItemStack> previewItemOpt = ItemUtils.buildItemByConfig(strengthRule.getPreview(), extMap);
         return previewItemOpt.orElse(blank);
     }
 
@@ -102,10 +117,10 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         // 发送玩家消息
         SwRawConfigDto rawConfig = rawConfigDtoOpt.get();
         SwItemAttachData swItemAttachData = attachData.get();
-        SwBlankConfigDto.StrengthRule refineRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
+        SwBlankConfigDto.StrengthRule promoteRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
         // 洗练失败时，返回配置的失败物品
-        if (!isRefineSuccess(swItemAttachData, refineRule, rawConfig.getAddition())) {
-            Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(refineRule.getBroke());
+        if (!isPromoteSuccess(swItemAttachData, promoteRule, rawConfig.getAddition())) {
+            Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(promoteRule.getBroke());
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_FAIL));
             if (!brokeItem.isPresent()) {
                 return item;
@@ -136,19 +151,26 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
     // ========== private ========== //
 
     /**
-     * 当前洗练是否成功
+     * 当前操作是否成功
      */
-    private boolean isRefineSuccess(SwItemAttachData swItemAttachData, SwBlankConfigDto.StrengthRule rule, int addition) {
+    private boolean isPromoteSuccess(SwItemAttachData swItemAttachData, SwBlankConfigDto.StrengthRule rule, int addition) {
         // 洗练是否成功
         boolean operateSuccess;
         int newLvl = swItemAttachData.getRefLvl() + 1;
         if (newLvl > rule.getLimit()) {
             operateSuccess = false;
         } else {
-            int chance = rule.getBeginRate() - getLvlFromAttach(swItemAttachData) * rule.getRateLvlDown() + addition;
+            int chance = successChance(swItemAttachData, rule, addition);
             operateSuccess = RandomUtil.randomInt(0, 100) <= chance;
         }
         return operateSuccess;
+    }
+
+    /**
+     * 当前操作的成功率
+     */
+    private int successChance(SwItemAttachData swItemAttachData, SwBlankConfigDto.StrengthRule rule, int addition) {
+        return rule.getBeginRate() - getLvlFromAttach(swItemAttachData) * rule.getRateLvlDown() + addition;
     }
 
     private ItemStack doPromote(ItemStack blank, SwBlankConfigDto blankConfig, SwRawConfigDto rawConfig, SwItemAttachData oldAttach) {
@@ -167,7 +189,7 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         int time = null == useRateConfig ? 1 : useRateConfig.getTime();
         List<String> candidates = rawConfig.getCandidates();
         PromotionOperation.doPromoteByCandidatesRandomly(newItem, candidates, time, onlyOverwrite);
-        // 洗练：修改等级
+        // 提升：修改等级
         ItemMeta newItemMeta = newItem.getItemMeta();
         if (null == newItemMeta) {
             throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));

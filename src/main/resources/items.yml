@@ -40,6 +40,7 @@ speed_bow:
         - §a最多可以进行五次洗炼。
         - §4洗炼成功率会逐级降低！
         - §4洗炼失败时，可能损失原物品！
+        - §4本次洗炼成功率：${chance}%
       material: CHEST
     broke: refine_scrap # 洗练失败时的产物
   # 精炼规则
@@ -56,6 +57,7 @@ speed_bow:
         - §4精炼成功率会逐级降低！
         - §4精炼只能强化已有属性，注意选择材料！
         - §4精炼失败时，可能损失原物品！
+        - §4本次精炼成功率：${chance}%
       material: ENDER_CHEST
     broke: str_scrap # 精炼失败时的产物
 
