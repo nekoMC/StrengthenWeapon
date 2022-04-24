@@ -9,7 +9,9 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 自定义道具的附魔、祛魔事件保护（禁止玩家自定义进行附魔与祛魔）
@@ -57,11 +59,29 @@ public class ItemSecurityListener implements Listener {
         ItemStack currentItem = event.getCurrentItem();
         if (clickResult && ItemUtils.isSwItem(currentItem)) {
             event.setCancelled(true);
+        }
+        // 修复附魔
+        if (ConfigManager.getConfigYml().isUsingLoreGetter()) {
+            EnchantHelper.fixByLore(currentItem);
+        }
+    }
+
+    /**
+     * 道具属性的修复监听器
+     * On player hold item.
+     * <p>
+     * Listener for lore conversion.
+     *
+     * @param event The event to listen for.
+     */
+    @EventHandler
+    public void loreConverter(@NotNull final PlayerItemHeldEvent event) {
+        if (!ConfigManager.getConfigYml().isUsingLoreGetter()) {
             return;
         }
-        if (null == currentItem) {
-            return;
-        }
-        EnchantHelper.updateLore(currentItem);
+
+        ItemStack itemStack = event.getPlayer().getInventory().getItem(event.getNewSlot());
+
+        EnchantHelper.fixByLore(itemStack);
     }
 }

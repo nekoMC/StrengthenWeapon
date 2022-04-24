@@ -14,6 +14,7 @@ import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
+import fun.nekomc.sw.utils.ServiceUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Keyed;
@@ -26,7 +27,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,7 +104,7 @@ public class PromotionOperation {
         }
         // 属性重写
         boolean rewrite = PromotionTypeEnum.isRewrite(promotionType);
-        // 解析参数：强化等级，如 -4;
+        // 解析参数：强化等级，如 -4
         String promoteValue = rules[2];
         // 解析参数：强化目标，如 ARMOR
         Keyed targetToPromote = null;
@@ -123,13 +123,13 @@ public class PromotionOperation {
      *
      * @param itemStack 要强化的道具
      */
-    public void doPromote(@NotNull ItemStack itemStack, boolean check) {
+    public boolean doPromote(@NotNull ItemStack itemStack, boolean check) {
         Assert.notNull(itemStack, "itemStack cannot be null");
         // 针对 Attribute 的强化
         if (null != attrSlot && PromotionTypeEnum.isAttribute(promotion)) {
-            doPromoteAttribute(itemStack, check);
+            return doPromoteAttribute(itemStack, check);
         } else {
-            doPromoteEnchantment(itemStack, check);
+            return doPromoteEnchantment(itemStack, check);
         }
     }
 
@@ -138,36 +138,44 @@ public class PromotionOperation {
         if (CollUtil.isEmpty(candidates)) {
             return;
         }
+        // 转化、计算总权重
+        List<PromotionOperation> promotionList = ServiceUtils.convertList(candidates, PromotionOperation::buildByConfigStr);
         int totalWeight = 0;
-        List<PromotionOperation> promotionList = new LinkedList<>();
-        for (String candidate : candidates) {
-            PromotionOperation promotionOperation = PromotionOperation.buildByConfigStr(candidate);
-            promotionList.add(promotionOperation);
+        for (PromotionOperation promotionOperation : promotionList) {
             totalWeight += promotionOperation.getWeight();
         }
         while (repeat-- > 0) {
-            int nowWeight = 0;
-            int target = RandomUtil.randomInt(0, totalWeight);
-            for (PromotionOperation nowPromotion : promotionList) {
-                // 目标权重位于指定区间内
-                if (nowWeight <= target && target < nowWeight + nowPromotion.weight) {
-                    nowPromotion.doPromote(itemStack, check);
-                    String template = nowPromotion.isRewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
-                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template),
-                            nowPromotion.getTarget().getKey().getKey(), nowPromotion.getPromotionValue());
-                    break;
-                }
-                nowWeight += nowPromotion.weight;
-            }
+            doPromoteOnce(totalWeight, promotionList, itemStack, check);
         }
     }
 
     // ========== private ========== //
 
     /**
+     * 根据 PromotionOperation 规则列表执行一次增强
+     */
+    private static void doPromoteOnce(int totalWeight, List<PromotionOperation> promotionList, ItemStack itemStack, boolean check) {
+        int nowWeight = 0;
+        int targetRandom = RandomUtil.randomInt(0, totalWeight);
+        for (PromotionOperation nowPromotion : promotionList) {
+            // 目标权重位于指定区间内
+            if (nowWeight <= targetRandom && targetRandom < nowWeight + nowPromotion.weight) {
+                if (nowPromotion.doPromote(itemStack, check)) {
+                    String template = nowPromotion.isRewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
+                    String slot = null == nowPromotion.getAttrSlot() ? "" : nowPromotion.getAttrSlot().name();
+                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template),
+                            nowPromotion.getTarget().getKey().getKey(), slot, nowPromotion.getPromotionValue());
+                }
+                return;
+            }
+            nowWeight += nowPromotion.weight;
+        }
+    }
+
+    /**
      * 对 Attribute 进行增强，本方法中不会进行校验，确保调用时已校验完毕
      */
-    private void doPromoteAttribute(ItemStack itemStack, boolean check) {
+    private boolean doPromoteAttribute(ItemStack itemStack, boolean check) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (null == itemMeta) {
             throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
@@ -188,26 +196,30 @@ public class PromotionOperation {
                 toPromote = NumberUtil.decimalFormat("#.##", newPromote);
             }
         }
-        ItemMeta updatedMeta = ItemUtils.updateAttributeModifierInMeta(itemMeta, attrSlot, attributeToPromote, toPromote, check);
-        itemStack.setItemMeta(updatedMeta);
+        boolean isUpdated = ItemUtils.updateAttributeModifierInMeta(itemMeta, attrSlot, attributeToPromote, toPromote, check);
+        if (isUpdated) {
+            itemStack.setItemMeta(itemMeta);
+        }
+        return isUpdated;
     }
 
     /**
      * 对 Enchantment 进行增强，本方法中不会进行校验，确保调用时已校验完毕
      */
-    private void doPromoteEnchantment(ItemStack itemStack, boolean check) {
+    private boolean doPromoteEnchantment(ItemStack itemStack, boolean check) {
         Enchantment targetEnchant = (Enchantment) this.target;
         int targetLevel = Integer.parseInt(promotionValue);
         // 如果不是重写，则基于原等级变更附魔等级
         int enchantOldLevel = EnchantHelper.getEnchantLevelOnItem(itemStack, targetEnchant);
         if (check && 0 == enchantOldLevel) {
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
-            return;
+            return false;
         }
         if (!rewrite) {
             targetLevel += enchantOldLevel;
         }
         ItemUtils.updateItemEnchant(itemStack, targetEnchant, targetLevel);
+        return true;
     }
 
     /**

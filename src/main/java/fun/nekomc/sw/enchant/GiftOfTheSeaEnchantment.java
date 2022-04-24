@@ -3,6 +3,7 @@ package fun.nekomc.sw.enchant;
 import cn.hutool.core.util.RandomUtil;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
+import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
@@ -38,7 +39,7 @@ public class GiftOfTheSeaEnchantment extends AbstractSwEnchantment {
     public void onFishing(@NotNull Player player, @NotNull ItemStack fishingRod, @NotNull Item caught,
                           int level, @NotNull PlayerFishEvent event) {
         // 计算概率
-        int chanceToGetGift = level * getConfig().getAddition();
+        int chanceToGetGift = getEnchantLvlAttribute(level);
         int actualRandom = RandomUtil.randomInt(0, 100);
         if (actualRandom >= chanceToGetGift) {
             return;

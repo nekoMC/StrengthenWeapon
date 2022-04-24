@@ -2,6 +2,7 @@ package fun.nekomc.sw.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.google.common.collect.LinkedListMultimap;
@@ -26,6 +27,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
@@ -74,6 +76,7 @@ public class ItemUtils {
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
         meta.setDisplayName(itemConfig.getDisplayName());
         meta.setUnbreakable(itemConfig.isUnbreakable());
+        ((Damageable) meta).setDamage(itemConfig.getDamage());
         // Meta - 附魔、属性修改
         meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
         itemConfig.getEnchantMap().forEach((enchant, lvl) -> meta.addEnchant(enchant, lvl, true));
@@ -194,7 +197,9 @@ public class ItemUtils {
     public Player tryAsPlayer(Entity entity) {
         if (entity instanceof Projectile) {
             Projectile projectile = (Projectile) entity;
-            return (Player) projectile.getShooter();
+            if (projectile.getShooter() instanceof Player) {
+                return (Player) projectile.getShooter();
+            }
         }
         if (entity instanceof Player) {
             return (Player) entity;
@@ -214,12 +219,12 @@ public class ItemUtils {
      * @param attribute   目标属性
      * @param modifyValue 变更的属性值，如 0.2 2 2.2
      * @param check       是否只允许修改物品已有的属性（值）
-     * @return 变更后的元数据对象
+     * @return 操作是否成功
      */
-    public static ItemMeta updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
-                                                         Attribute attribute, String modifyValue, boolean check) {
+    public boolean updateAttributeModifierInMeta(ItemMeta originMeta, EquipmentSlot slot,
+                                                 Attribute attribute, String modifyValue, boolean check) {
         if (null == originMeta) {
-            return null;
+            return false;
         }
         // Meta 中的原属性
         Multimap<Attribute, AttributeModifier> attributeModifiers = originMeta.getAttributeModifiers();
@@ -233,7 +238,7 @@ public class ItemUtils {
                 .collect(Collectors.toList());
         if (check && originAttributeModifiers.size() == modifiers.size()) {
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
-            return originMeta;
+            return false;
         }
         // 不为 0 时，解析并设置新属性值
         if (!Constants.STR_ZERO.equals(modifyValue)) {
@@ -246,11 +251,16 @@ public class ItemUtils {
                     modifierName, modifierDoubleValue, operation, slot);
             // 设置属性
             modifiers.add(targetModifier);
-            log.info("{} updated [{}]'s Attribute: {}", PlayerHolder.getSender().getName(), originMeta.getDisplayName(), modifierName);
+
+            String itemName = originMeta.getDisplayName();
+            if (CharSequenceUtil.isEmpty(itemName)) {
+                itemName = originMeta.getLocalizedName();
+            }
+            log.info("{} updated [{}]'s Attribute: {}", PlayerHolder.getSender().getName(), itemName, modifierName);
         }
         attributeModifiers.replaceValues(attribute, modifiers);
         originMeta.setAttributeModifiers(attributeModifiers);
-        return originMeta;
+        return true;
     }
 
     /**
@@ -284,8 +294,13 @@ public class ItemUtils {
         targetItem.setItemMeta(itemMeta);
         // 刷新附魔 Lore
         EnchantHelper.updateLore(targetItem);
+
+        String itemName = itemMeta.getDisplayName();
+        if (CharSequenceUtil.isEmpty(itemName)) {
+            itemName = itemMeta.getLocalizedName();
+        }
         log.info("{} updated [{}]'s Enchantment: {}",
-                PlayerHolder.getSender().getName(), itemMeta.getDisplayName(), targetEnchant.getKey().getKey());
+                PlayerHolder.getSender().getName(), itemName, targetEnchant.getKey().getKey());
         return true;
     }
 
@@ -306,6 +321,27 @@ public class ItemUtils {
             return Optional.empty();
         }
         return Optional.of((D) itemConfig.get());
+    }
+
+    /**
+     * 获取触发药水的物品（一定为具有魔法相关附魔的物品，否则返回空）
+     *
+     * @param potion 被投掷出的药水
+     * @return 触发药水投掷的物品
+     */
+    public static Optional<ItemStack> getPotionTriggerItem(ThrownPotion potion) {
+        List<MetadataValue> values = potion.getMetadata("thrown-from");
+
+        if (values.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Object gotFromMeta = values.get(0).value();
+        if (!(gotFromMeta instanceof ItemStack)) {
+            return Optional.empty();
+        }
+
+        return Optional.of((ItemStack) gotFromMeta);
     }
 
     // ========== private ========== //

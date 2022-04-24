@@ -2,21 +2,20 @@ package fun.nekomc.sw;
 
 import cn.hutool.core.collection.CollUtil;
 import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
-import fun.nekomc.sw.enchant.AbstractSwEnchantment;
-import fun.nekomc.sw.enchant.ArrowRainEnchantment;
-import fun.nekomc.sw.enchant.GiftOfTheSeaEnchantment;
-import fun.nekomc.sw.enchant.SuckBloodEnchantment;
+import fun.nekomc.sw.enchant.*;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.WatcherTriggers;
+import fun.nekomc.sw.enchant.magia.PotionEnchantment;
+import fun.nekomc.sw.enchant.magia.SplashEnchantment;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
-import fun.nekomc.sw.listener.RefineTableGuiListener;
-import fun.nekomc.sw.listener.StrengthAnvilGuiListener;
+import fun.nekomc.sw.listener.RefineGuiListener;
+import fun.nekomc.sw.listener.StrengthGuiListener;
 import fun.nekomc.sw.common.ConfigManager;
 
 import fun.nekomc.sw.common.Constants;
-import fun.nekomc.sw.utils.MsgUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
@@ -31,6 +30,7 @@ import java.util.Set;
 /**
  * @author ourange
  */
+@Slf4j
 public class StrengthenWeapon extends JavaPlugin {
 
     private static StrengthenWeapon instance = null;
@@ -76,6 +76,33 @@ public class StrengthenWeapon extends JavaPlugin {
                 ArrowRainEnchantment.class,
                 GiftOfTheSeaEnchantment.class,
                 SuckBloodEnchantment.class,
+                GetHitHealEnchantment.class,
+                SecKillEnchantment.class,
+                // Magia 支持
+                SplashEnchantment.class,
+                PotionEnchantment.Slow.class,
+                PotionEnchantment.Blind.class,
+                PotionEnchantment.Harm.class,
+                PotionEnchantment.Absorption.class,
+                PotionEnchantment.ConduitPower.class,
+                PotionEnchantment.Confusion.class,
+                PotionEnchantment.Resistance.class,
+                PotionEnchantment.FireResistance.class,
+                PotionEnchantment.Glowing.class,
+                PotionEnchantment.Heal.class,
+                PotionEnchantment.Hunger.class,
+                PotionEnchantment.IncreaseDamage.class,
+                PotionEnchantment.Invisibility.class,
+                PotionEnchantment.Jump.class,
+                PotionEnchantment.Float.class,
+                PotionEnchantment.NightVision.class,
+                PotionEnchantment.Poison.class,
+                PotionEnchantment.Regeneration.class,
+                PotionEnchantment.Saturation.class,
+                PotionEnchantment.Speed.class,
+                PotionEnchantment.WaterBreathing.class,
+                PotionEnchantment.WeaknessBreathing.class,
+                PotionEnchantment.Wither.class,
         };
         loadCustomEnchantments(classes);
         // 指令解析器
@@ -108,8 +135,8 @@ public class StrengthenWeapon extends JavaPlugin {
     private void loadListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
         // 容器
-        pluginManager.registerEvents(new StrengthAnvilGuiListener(), this);
-        pluginManager.registerEvents(new RefineTableGuiListener(), this);
+        pluginManager.registerEvents(new StrengthGuiListener(), this);
+        pluginManager.registerEvents(new RefineGuiListener(), this);
         // 防自定义附魔
         pluginManager.registerEvents(new ItemSecurityListener(), this);
     }
@@ -129,19 +156,19 @@ public class StrengthenWeapon extends JavaPlugin {
             try {
                 String enchantKey = (String) enchantClass.getField("ENCHANT_KEY").get(enchantClass);
                 if (!configEnchants.contains(enchantKey)) {
-                    MsgUtils.consoleMsg("Unsupported enchant key: {}", enchantKey);
-                    return;
+                    log.warn("Disabled enchant: {}", enchantKey);
+                    continue;
                 }
 
                 AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();
                 EnchantHelper.register(enchantment);
             } catch (ReflectiveOperationException e) {
-                MsgUtils.consoleMsg("Malformed Enchantment Class: {}", enchantClass);
+                log.error("Malformed Enchantment Class: {}, msg: {}", enchantClass, e.getMessage());
             }
         }
         Enchantment.stopAcceptingRegistrations();
         // 注册自定义附魔触发器
         pluginManager.registerEvents(WatcherTriggers.getInstance(), this);
-        MsgUtils.consoleMsg("Enchantments registered.");
+        log.info("Enchantments registered.");
     }
 }

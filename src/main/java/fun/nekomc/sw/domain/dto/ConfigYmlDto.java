@@ -31,9 +31,19 @@ public class ConfigYmlDto implements Serializable {
     private String strengthTitle;
 
     /**
+     * 洗炼容器的类型
+     */
+    private String strengthType;
+
+    /**
      * 洗炼容器的标题
      */
     private String refineTitle;
+
+    /**
+     * 洗炼容器的类型
+     */
+    private String refineType;
 
     /**
      * 是否允许玩家对插件物品进行自定义附魔
@@ -44,6 +54,11 @@ public class ConfigYmlDto implements Serializable {
      * 自定义附魔配置
      */
     private Map<String, EnchantmentConfigDto> enchants;
+
+    /**
+     * 始终使用 Lore 恢复自定义附魔信息
+     */
+    private boolean usingLoreGetter;
 
     /**
      * 获取 message 中指定的消息内容

@@ -1,5 +1,6 @@
 package fun.nekomc.sw.enchant;
 
+import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
@@ -25,17 +26,8 @@ public class SuckBloodEnchantment extends AbstractSwEnchantment {
 
     @Override
     public void onMeleeAttack(@NotNull LivingEntity attacker, @NotNull LivingEntity victim, int level, @NotNull EntityDamageByEntityEvent event) {
-        AttributeInstance attribute = attacker.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         // 计算需要加的血量
-        int bloodToAdd = (level * getConfig().getAddition()) / 100;
-        if (bloodToAdd <= 0 || null == attribute) {
-            return;
-        }
-        double maxHealth = attribute.getValue();
-        double newHp = attacker.getHealth() + bloodToAdd;
-        // 确保血量在正确区间内
-        newHp = Math.max(newHp, 0.0);
-        newHp = Math.min(newHp, maxHealth);
-        attacker.setHealth(newHp);
+        int bloodToAdd = getEnchantLvlAttribute(level) / 100;
+        EnchantHelper.healTargetBy(attacker, bloodToAdd);
     }
 }

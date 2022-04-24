@@ -9,16 +9,20 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 拷贝自：https://github.com/Auxilor/EcoEnchants
@@ -419,5 +423,44 @@ public class WatcherTriggers implements Listener {
         // 鱼竿都有啥附魔
         Map<AbstractSwEnchantment, Integer> enchants = EnchantHelper.getEnchantsOnItem(fishingRod);
         enchants.forEach((enchant, level) -> enchant.onFishing(player, fishingRod, caughtItem, level, event));
+    }
+
+    @EventHandler
+    public void onRightClick(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        // 握着啥
+        ItemStack holdInHand = event.getItem();
+        // 触发事件的玩家
+        Player player = event.getPlayer();
+
+        if (null == holdInHand || holdInHand.getType() == Material.AIR) {
+            return;
+        }
+
+        Map<AbstractSwEnchantment, Integer> enchants = EnchantHelper.getEnchantsOnItem(holdInHand);
+
+        enchants.forEach((enchant, level) -> enchant.onMainHandRightClick(player, holdInHand, level, event));
+    }
+
+    @EventHandler
+    public void onPotionSplash(PotionSplashEvent potionSplashEvent) {
+        ThrownPotion potion = potionSplashEvent.getEntity();
+
+        Optional<ItemStack> triggerOptional = ItemUtils.getPotionTriggerItem(potion);
+        if (!triggerOptional.isPresent()) {
+            return;
+        }
+
+        ProjectileSource shooter = potion.getShooter();
+        if (!(shooter instanceof LivingEntity)) {
+            return;
+        }
+
+        ItemStack triggerItem = triggerOptional.get();
+
+        Map<AbstractSwEnchantment, Integer> enchants = EnchantHelper.getEnchantsOnItem(triggerItem);
+        enchants.forEach((enchant, level) -> enchant.onPotionSplash((LivingEntity) shooter, triggerItem, potion, level, potionSplashEvent));
     }
 }

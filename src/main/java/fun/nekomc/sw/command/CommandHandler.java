@@ -35,6 +35,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 new SwRefineCommand(),
                 new SwReloadCommand(),
                 new SwGiveCommand(),
+                new SwDropCommand(),
                 new SwEnchantCommand(),
                 new SwAttributeCommand(),
                 new SwPromoteCommand(),
@@ -73,7 +74,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 } catch (SwCommandException e) {
                     e.feedback();
                 } catch (Exception e) {
-                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR), e.getMessage());
+                    MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR) + e.getMessage());
                 }
                 return false;
             }).orElse(false);

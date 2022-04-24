@@ -1,5 +1,6 @@
 package fun.nekomc.sw.enchant.helper;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.CharSequenceUtil;
@@ -11,8 +12,11 @@ import fun.nekomc.sw.utils.NumberUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
@@ -26,7 +30,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -491,6 +498,7 @@ public class EnchantHelper {
 
     /**
      * 更新物品的附魔显示（通过 Lore 显示，只针对 SwEnchantment 附魔有效）
+     * 道具属性的修复监听器，参考：EcoEnchants - com.willfp.ecoenchants.enchantments.util.ItemConversions
      *
      * @param itemStack 指定物品
      */
@@ -508,7 +516,7 @@ public class EnchantHelper {
         List<String> resultLore = new ArrayList<>();
         // 需要移除的附魔名称集合
         Set<String> enchantNameToDelete = REGISTERED_ENCHANTS.stream()
-                .map(swEnchant -> swEnchant.getConfig().getDisplayName())
+                .map(swEnchant -> ChatColor.stripColor(swEnchant.getConfig().getDisplayName()))
                 .collect(Collectors.toSet());
         // 获取物品上的 SwEnchantment
         LinkedHashMap<AbstractSwEnchantment, Integer> enchantments = new LinkedHashMap<>(getEnchantsOnItem(itemStack));
@@ -527,19 +535,102 @@ public class EnchantHelper {
         });
         // 过滤掉原附魔上重复的附魔
         itemLore = itemLore.stream().filter(row -> {
-            String[] splitLore = row.split(" ");
-            // 不符合 {name} {lvl} 的格式，保留
-            if (splitLore.length != 2 ||
-                    (!CharSequenceUtil.isNumeric(splitLore[1]) && !NumberUtils.isValidNumeral(splitLore[1]))) {
+            int lastBlank = row.lastIndexOf(" ");
+            if (-1 == lastBlank) {
                 return true;
             }
+            String enchantName = ChatColor.stripColor(row.substring(0, lastBlank));
             // 过滤掉附魔名与当前附魔重复的
-            return !enchantNameToDelete.contains(splitLore[0]);
+            return !enchantNameToDelete.contains(enchantName);
         }).collect(Collectors.toList());
 
         resultLore.addAll(itemLore);
         meta.setLore(resultLore);
         itemStack.setItemMeta(meta);
+    }
+
+    /**
+     * 通过 Lore 恢复自定义附魔数据，参考 EcoEnchant
+     *
+     * @param itemStack 要操作的物品
+     */
+    public void fixByLore(@Nullable final ItemStack itemStack) {
+        if (itemStack == null) {
+            return;
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        Map<Enchantment, Integer> toAdd = new HashMap<>(4);
+
+        List<String> lore = meta.getLore();
+
+        if (lore == null) {
+            return;
+        }
+
+        for (String line : new ArrayList<>(lore)) {
+            restoreEnchantmentFromLoreLine(line, (enchant, lvl) -> {
+                if (enchant.isPresent()) {
+                    lore.remove(line);
+                    toAdd.put(enchant.get(), lvl);
+                }
+            });
+        }
+
+        if (meta instanceof EnchantmentStorageMeta) {
+            lore.clear();
+            toAdd.forEach((enchantment, integer) -> ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantment, integer, true));
+        } else {
+            toAdd.forEach((enchantment, integer) -> meta.addEnchant(enchantment, integer, true));
+        }
+        itemStack.setItemMeta(meta);
+        EnchantHelper.updateLore(itemStack);
+    }
+
+    /**
+     * 从一行 Lore 信息中恢复附魔，并调用 handler
+     */
+    private static void restoreEnchantmentFromLoreLine(String line, ObjIntConsumer<Optional<AbstractSwEnchantment>> handler) {
+        line = ChatColor.stripColor(line);
+
+        Optional<AbstractSwEnchantment> enchant;
+        int level;
+        List<String> lineSplit = new ArrayList<>(Arrays.asList(line.split(" ")));
+        if (CollUtil.isEmpty(lineSplit)) {
+            handler.accept(Optional.empty(), 0);
+            return;
+        }
+        if (lineSplit.size() == 1) {
+            enchant = EnchantHelper.getByLoreName(lineSplit.get(0));
+            level = 1;
+        } else {
+            // 兼容附魔名中含空格的情况
+            Optional<AbstractSwEnchantment> attemptFullLine = EnchantHelper.getByLoreName(line);
+
+            if (attemptFullLine.isPresent()) {
+                enchant = attemptFullLine;
+                level = 1;
+            } else {
+                String levelString = lineSplit.get(lineSplit.size() - 1);
+                lineSplit.remove(levelString);
+                levelString = levelString.trim();
+
+                try {
+                    level = NumberUtils.fromNumeral(levelString);
+                } catch (IllegalArgumentException e) {
+                    handler.accept(Optional.empty(), 0);
+                    return;
+                }
+
+                String enchantName = String.join(" ", lineSplit);
+                enchant = EnchantHelper.getByLoreName(enchantName);
+            }
+        }
+        handler.accept(enchant, level);
     }
 
     /**
@@ -556,5 +647,41 @@ public class EnchantHelper {
         return target.isPresent()
                 ? target
                 : Optional.ofNullable(Enchantment.getByKey(NamespacedKey.minecraft(enchantName)));
+    }
+
+    /**
+     * 通过附魔的显示名称获得指定的附魔对象，只针对自定义附魔有效
+     *
+     * @param loreName 附魔的显示名称
+     * @return Optional 包装的 AbstractSwEnchantment 对象
+     */
+    public static Optional<AbstractSwEnchantment> getByLoreName(String loreName) {
+        for (AbstractSwEnchantment registeredEnchant : REGISTERED_ENCHANTS) {
+            String stripedDisplay = ChatColor.stripColor(registeredEnchant.getConfig().getDisplayName());
+            if (Objects.equals(stripedDisplay, loreName)) {
+                return Optional.of(registeredEnchant);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 恢复指定实体的血量
+     *
+     * @param target 要恢复血量的实体
+     * @param hp     要恢复的血量
+     */
+    public void healTargetBy(LivingEntity target, int hp) {
+        AttributeInstance attribute = target.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        // 计算需要加的血量
+        if (hp <= 0 || null == attribute) {
+            return;
+        }
+        double maxHealth = attribute.getValue();
+        double newHp = target.getHealth() + hp;
+        // 确保血量在正确区间内
+        newHp = Math.max(newHp, 0.0);
+        newHp = Math.min(newHp, maxHealth);
+        target.setHealth(newHp);
     }
 }

@@ -76,6 +76,11 @@ public class SwItemConfigDto implements Serializable {
     private int rarity;
 
     /**
+     * 道具的耐久损耗
+     */
+    private int damage;
+
+    /**
      * 将 slotAndAttributeMap 属性解析为 Bukkit 能识别的 Map
      *
      * @return Multimap<Attribute, AttributeModifier> 对象

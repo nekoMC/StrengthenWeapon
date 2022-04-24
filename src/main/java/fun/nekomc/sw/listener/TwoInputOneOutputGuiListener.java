@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * 2入1出的 GUI，仅适用于强化相关场景
@@ -40,8 +41,8 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
 
     private final boolean onlyOverwrite;
 
-    protected TwoInputOneOutputGuiListener(InventoryType invType, String title, ItemsTypeEnum blankType, ItemsTypeEnum rawType, boolean onlyOverwrite) {
-        super(invType, title, 2);
+    protected TwoInputOneOutputGuiListener(Supplier<InventoryType> invTypeSupplier, String title, ItemsTypeEnum blankType, ItemsTypeEnum rawType, boolean onlyOverwrite) {
+        super(invTypeSupplier, title, 2);
         // 注册校验规则
         registerCheckRule(BLANK_INDEX, blankType);
         registerCheckRule(RAW_INDEX, rawType);
@@ -114,11 +115,10 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         if (!blankConfigOpt.isPresent() || !attachData.isPresent() || !rawConfigDtoOpt.isPresent()) {
             return item;
         }
-        // 发送玩家消息
         SwRawConfigDto rawConfig = rawConfigDtoOpt.get();
         SwItemAttachData swItemAttachData = attachData.get();
         SwBlankConfigDto.StrengthRule promoteRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
-        // 洗练失败时，返回配置的失败物品
+        // 操作失败时，返回配置的失败物品
         if (!isPromoteSuccess(swItemAttachData, promoteRule, rawConfig.getAddition())) {
             Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(promoteRule.getBroke());
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_FAIL));
@@ -174,8 +174,6 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
     }
 
     private ItemStack doPromote(ItemStack blank, SwBlankConfigDto blankConfig, SwRawConfigDto rawConfig, SwItemAttachData oldAttach) {
-        // 发送玩家消息
-        MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_SUCCESS));
         // 提升：重置属性或基于原道具提升
         ItemStack newItem = blank;
         if (!onlyOverwrite) {
