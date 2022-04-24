@@ -119,7 +119,8 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         SwItemAttachData swItemAttachData = attachData.get();
         SwBlankConfigDto.StrengthRule promoteRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
         // 操作失败时，返回配置的失败物品
-        if (!isPromoteSuccess(swItemAttachData, promoteRule, rawConfig.getAddition())) {
+        boolean promoteSuccess = RandomUtil.randomInt(0, 100) < successChance(swItemAttachData, promoteRule, rawConfig.getAddition());
+        if (!promoteSuccess) {
             Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(promoteRule.getBroke());
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_FAIL));
             if (!brokeItem.isPresent()) {
@@ -151,26 +152,15 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
     // ========== private ========== //
 
     /**
-     * 当前操作是否成功
-     */
-    private boolean isPromoteSuccess(SwItemAttachData swItemAttachData, SwBlankConfigDto.StrengthRule rule, int addition) {
-        // 洗练是否成功
-        boolean operateSuccess;
-        int newLvl = swItemAttachData.getRefLvl() + 1;
-        if (newLvl > rule.getLimit()) {
-            operateSuccess = false;
-        } else {
-            int chance = successChance(swItemAttachData, rule, addition);
-            operateSuccess = RandomUtil.randomInt(0, 100) <= chance;
-        }
-        return operateSuccess;
-    }
-
-    /**
      * 当前操作的成功率
      */
     private int successChance(SwItemAttachData swItemAttachData, SwBlankConfigDto.StrengthRule rule, int addition) {
-        return rule.getBeginRate() - getLvlFromAttach(swItemAttachData) * rule.getRateLvlDown() + addition;
+        int oldLevel =  getLvlFromAttach(swItemAttachData);
+        int newLvl = oldLevel + 1;
+        if (newLvl > rule.getLimit()) {
+            return 0;
+        }
+        return rule.getBeginRate() - oldLevel * rule.getRateLvlDown() + addition;
     }
 
     private ItemStack doPromote(ItemStack blank, SwBlankConfigDto blankConfig, SwRawConfigDto rawConfig, SwItemAttachData oldAttach) {
