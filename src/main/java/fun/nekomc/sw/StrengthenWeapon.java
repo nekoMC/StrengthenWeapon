@@ -23,6 +23,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -37,7 +38,11 @@ public class StrengthenWeapon extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        this.saveDefaultConfig();
+        File configYmlFile = new File(this.getDataFolder(), Constants.CONFIG_FILE_NAME);
+        if (!configYmlFile.exists()) {
+            saveResource(Constants.CONFIG_FILE_NAME, false);
+            saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
+        }
         // Sonar 不推荐在成员方法中直接修改静态变量
         setInstance(this);
     }

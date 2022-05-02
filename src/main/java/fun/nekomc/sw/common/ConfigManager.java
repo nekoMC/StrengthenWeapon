@@ -3,6 +3,7 @@ package fun.nekomc.sw.common;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.ConfigYmlDto;
@@ -49,27 +50,31 @@ public class ConfigManager {
         Assert.notBlank(rootPath, "配置文件根路径不能为空！");
         MsgUtils.consoleMsg("§c§l正在读取配置文件...");
         // 读取（生成） config.yml
-        configYmlDto = loadConfigFile(rootPath, Constants.CONFIG_FILE_NAME, ConfigYmlDto.class);
-        // 读取（生成） items.yml
-        Map<String, Map<String, ?>> configYmlRawMap = loadConfigFile(rootPath, Constants.ITEMS_CONFIG_FILE_NAME, Map.class);
-        // 将 Map 的值转 SwItemConfigDto 对象
-        Map<String, SwItemConfigDto> newConfigMap = ServiceUtils.convertMapValue(configYmlRawMap, rawMap -> {
-            try {
-                // 根据配置项的 type 决定将该项解析成哪个实例
-                String itemType = Objects.requireNonNull(rawMap.get("type")).toString();
-                ItemsTypeEnum itemsTypeEnum = Objects.requireNonNull(ItemsTypeEnum.valueOf(itemType), "无法识别的 type");
-                Constructor<? extends SwItemConfigDto> configDtoConstructor =
-                        (Constructor<? extends SwItemConfigDto>) itemsTypeEnum.getTypeConfigClass().getConstructor();
-                SwItemConfigDto configDtoToFill = configDtoConstructor.newInstance();
-                return BeanUtil.fillBeanWithMap(rawMap, configDtoToFill, true, true);
-            } catch (Exception e) {
-                MsgUtils.consoleMsg("配置文件解析粗错：%s", e.getMessage());
-                return null;
+        configYmlDto = loadConfigFile(rootPath);
+        // 读取（生成） items/*.yml
+        swItemConfigMap = new HashMap<>(16);
+        List<File> itemsConfigFiles = FileUtil.loopFiles(new File(rootPath, Constants.ITEMS_CONFIG_FOLDER_NAME),
+                file -> file.getName().endsWith(Constants.SUFFIX_YML_FILENAME));
+        for (File itemsConfigFile : itemsConfigFiles) {
+            // 将 Map 的值转 SwItemConfigDto 对象
+            Map<String, SwItemConfigDto> newConfigMap = ServiceUtils.convertMapValue(loadConfigFileAsMap(itemsConfigFile), rawMap -> {
+                try {
+                    // 根据配置项的 type 决定将该项解析成哪个实例
+                    String itemType = Objects.requireNonNull(rawMap.get("type")).toString();
+                    ItemsTypeEnum itemsTypeEnum = Objects.requireNonNull(ItemsTypeEnum.valueOf(itemType), "无法识别的 type");
+                    Constructor<? extends SwItemConfigDto> configDtoConstructor =
+                            (Constructor<? extends SwItemConfigDto>) itemsTypeEnum.getTypeConfigClass().getConstructor();
+                    SwItemConfigDto configDtoToFill = configDtoConstructor.newInstance();
+                    return BeanUtil.fillBeanWithMap(rawMap, configDtoToFill, true, true);
+                } catch (Exception e) {
+                    MsgUtils.consoleMsg("配置文件解析粗错：%s", e.getMessage());
+                    return null;
+                }
+            });
+            // 如果解析结束后，存在为 null 的配置，说明配置文件有问题，不进行更新
+            if (!newConfigMap.containsValue(null)) {
+                swItemConfigMap.putAll(newConfigMap);
             }
-        });
-        // 如果解析结束后，存在为 null 的配置，说明配置文件有问题，不进行更新
-        if (!newConfigMap.containsValue(null)) {
-            swItemConfigMap = newConfigMap;
         }
     }
 
@@ -123,21 +128,29 @@ public class ConfigManager {
     // ========== private ========== //
 
     /**
-     * 读取 config.yml 文件为 Map
+     * 读取 config.yml 文件
      */
-    private static <T> T loadConfigFile(String rootPath, String targetFileName, Class<T> targetClass) {
+    private static ConfigYmlDto loadConfigFile(String rootPath) {
         // 加载配置文件
-        File configYmlFile = new File(rootPath, targetFileName);
-        // 配置文件不存在时，保存默认配置文件，保存后，可以被 File 对象立即感知到
-        if (!configYmlFile.exists()) {
-            MsgUtils.consoleMsg("§c§l配置文件[%s]不存在，正在生成配置文件....", targetFileName);
-            StrengthenWeapon.getInstance().saveResource(Constants.ITEMS_CONFIG_FILE_NAME, false);
-        }
+        File configYmlFile = new File(rootPath, Constants.CONFIG_FILE_NAME);
         try (FileInputStream input = new FileInputStream(configYmlFile)) {
-            return yamlLoader.loadAs(input, targetClass);
+            return yamlLoader.loadAs(input, ConfigYmlDto.class);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }
+    }
+
+    /**
+     * 读取 yml 配置文件，不校验文件是否存在，不生成文件
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Map<String, ?>> loadConfigFileAsMap(File configYmlFile) {
+        try (FileInputStream input = new FileInputStream(configYmlFile)) {
+            return yamlLoader.loadAs(input, Map.class);
+        } catch (IOException e) {
+            throw new ConfigurationException(e);
+        }
+
     }
 
     /**
