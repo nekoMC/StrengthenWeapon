@@ -100,7 +100,11 @@ public class PromotionOperation {
         PromotionTypeEnum promotionType = PromotionTypeEnum.valueOf(promoteTypeAndSlot[0]);
         EquipmentSlot slot = null;
         if (PromotionTypeEnum.isAttribute(promotionType)) {
-            slot = EquipmentSlot.valueOf(promoteTypeAndSlot[1]);
+            if (promoteTypeAndSlot.length > 1) {
+                slot = EquipmentSlot.valueOf(promoteTypeAndSlot[1]);
+            } else {
+                slot = RandomUtil.randomEle(EquipmentSlot.values());
+            }
         }
         // 属性重写
         boolean rewrite = PromotionTypeEnum.isRewrite(promotionType);
