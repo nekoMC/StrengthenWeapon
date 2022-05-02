@@ -111,11 +111,9 @@ public class PromotionOperation {
         // 解析参数：强化等级，如 -4
         String promoteValue = rules[2];
         // 解析参数：强化目标，如 ARMOR
-        Keyed targetToPromote = null;
         Optional<Keyed> targetOpt = checkPromoteValue(promoteValue, promotionType, rules[1]);
-        if (targetOpt.isPresent()) {
-            targetToPromote = targetOpt.get();
-        }
+        Keyed targetToPromote = targetOpt.orElseThrow(() ->
+                new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR)));
         // 解析参数：概率权重，如 80
         int weight = Integer.parseInt(rules[3]);
         // 构建
@@ -256,8 +254,10 @@ public class PromotionOperation {
                 default:
                     return Optional.empty();
             }
-        } catch (IllegalArgumentException e) {
-            throw new ConfigurationException(e);
+        } catch (IllegalArgumentException | ConfigurationException e) {
+            MsgUtils.consoleMsg(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_CANNOT_RESOLVE),
+                    e.getMessage() + "：" + promotionType.name() + ":" + promotionTarget + ":" + promoteValue);
+            throw e;
         }
     }
 }

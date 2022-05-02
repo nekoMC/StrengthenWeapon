@@ -46,6 +46,7 @@ public class Constants {
     @UtilityClass
     public static class Msg {
         public static final String CONFIG_ERROR = "config_error";
+        public static final String CONFIG_CANNOT_RESOLVE = "config_cannot_resolve";
         public static final String GRAMMAR_ERROR = "grammar_error";
         public static final String NO_AUTH = "no_auth";
         public static final String NOT_PLAYER = "not_player";
