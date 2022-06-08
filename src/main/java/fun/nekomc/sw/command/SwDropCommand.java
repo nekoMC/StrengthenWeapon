@@ -10,11 +10,12 @@ import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * sw drop player x y z item 指令实现
@@ -40,10 +41,17 @@ class SwDropCommand extends SwCommand {
         }
         try {
             String triggerName = actualArgs[0];
-            Player targetPlayer = StrengthenWeapon.server().getPlayer(triggerName);
-            if (null == targetPlayer) {
-                throw new SwCommandException(sender, "unknown_player");
+            Entity targetEntity;
+            if (triggerName.split("-").length != 5) {
+                targetEntity = StrengthenWeapon.server().getPlayer(triggerName);
+            } else {
+                UUID entityUuid = UUID.fromString(triggerName);
+                targetEntity = StrengthenWeapon.server().getEntity(entityUuid);
             }
+            if (null == targetEntity) {
+                throw new SwCommandException(sender, Constants.Msg.UNKNOWN_ENTITY);
+            }
+            World targetWorld = targetEntity.getWorld();
             double x = Double.parseDouble(actualArgs[1]);
             double y = Double.parseDouble(actualArgs[2]);
             double z = Double.parseDouble(actualArgs[3]);
@@ -59,8 +67,7 @@ class SwDropCommand extends SwCommand {
             int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(actualArgs[5]);
             ItemStack itemStack = itemStackOpt.get();
             itemStack.setAmount(amount);
-            World targetPlayerWorld = targetPlayer.getWorld();
-            targetPlayerWorld.dropItem(new Location(targetPlayerWorld, x, y, z), itemStack);
+            targetWorld.dropItem(new Location(targetWorld, x, y, z), itemStack);
         } catch (NumberFormatException e) {
             throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }

@@ -67,5 +67,7 @@ public class Constants {
         public static final String PROMOTE_FAIL = "promote_fail";
         public static final String CHECK_NOT_PASS = "check_not_pass";
         public static final String GOT_SEA_GIFT = "got_sea_gift";
+        public static final String UNKNOWN_PLAYER = "unknown_player";
+        public static final String UNKNOWN_ENTITY = "unknown_entity";
     }
 }

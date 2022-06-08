@@ -7,6 +7,7 @@ message:
   config_error: §4无法解析配置，请检查配置文件
   config_cannot_resolve: §4无法解析配置：%s
   unknown_player: §4玩家不存在
+  unknown_entity: §4实体不存在
   unknown_attribute: §4不存在的属性
   cannot_operate: §4无法完成操作
   line_number: 行号

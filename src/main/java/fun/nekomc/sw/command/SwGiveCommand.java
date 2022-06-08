@@ -63,7 +63,7 @@ class SwGiveCommand extends SwCommand {
         itemStack.setAmount(amount);
         Player targetPlayer = StrengthenWeapon.server().getPlayer(playerName);
         if (null == targetPlayer) {
-            throw new SwCommandException(sender, "unknown_player");
+            throw new SwCommandException(sender, Constants.Msg.UNKNOWN_PLAYER);
         }
         PlayerBagUtils.givePlayerItem(targetPlayer, itemStack);
         return true;
