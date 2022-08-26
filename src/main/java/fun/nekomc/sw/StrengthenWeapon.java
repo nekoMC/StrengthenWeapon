@@ -24,6 +24,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -38,13 +39,16 @@ public class StrengthenWeapon extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        initConfigFile();
+        setInstance(this);
+    }
+
+    private void initConfigFile() {
         File configYmlFile = new File(this.getDataFolder(), Constants.CONFIG_FILE_NAME);
         if (!configYmlFile.exists()) {
             saveResource(Constants.CONFIG_FILE_NAME, false);
             saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
         }
-        // Sonar 不推荐在成员方法中直接修改静态变量
-        setInstance(this);
     }
 
     private static void setInstance(StrengthenWeapon instance) {
@@ -125,6 +129,49 @@ public class StrengthenWeapon extends JavaPlugin {
     // ========== private ==========
 
     /**
+     * 初始化自定义附魔
+     */
+    private void loadCustomEnchantments(Class<? extends AbstractSwEnchantment>[] enchantClasses) {
+        Set<String> customEnchantKeySet = getCustomEnchantKeySet();
+        registerConfigCustomEnchantments(customEnchantKeySet, enchantClasses);
+        Enchantment.stopAcceptingRegistrations();
+        // 注册自定义附魔触发器
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(WatcherTriggers.getInstance(), this);
+        log.info("Enchantments registered.");
+    }
+
+    private Set<String> getCustomEnchantKeySet() {
+        Map<String, EnchantmentConfigDto> customEnchants = ConfigManager.getConfigYml().getEnchants();
+        if (CollUtil.isEmpty(customEnchants)) {
+            return CollUtil.empty(Set.class);
+        }
+        return customEnchants.keySet();
+    }
+
+    private void registerConfigCustomEnchantments(Set<String> customEnchantKeySet, Class<? extends AbstractSwEnchantment>[] enchantClasses) {
+        // 在这里声明全部自定义附魔的键
+        for (Class<? extends AbstractSwEnchantment> enchantClass : enchantClasses) {
+            try {
+                String enchantKey = parseEnchantKeyFromEnchantClass(enchantClass);
+                if (customEnchantKeySet.contains(enchantKey)) {
+                    AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();
+                    EnchantHelper.register(enchantment);
+                    continue;
+                }
+                log.warn("Disabled enchant: {}", enchantKey);
+            } catch (ReflectiveOperationException e) {
+                log.error("Malformed Enchantment Class: {}, msg: {}", enchantClass, e.getMessage());
+            }
+        }
+    }
+
+    private String parseEnchantKeyFromEnchantClass(Class<? extends AbstractSwEnchantment> enchantClass) throws ReflectiveOperationException {
+        Field enchantKeyField = enchantClass.getField(AbstractSwEnchantment.ENCHANT_KEY);
+        return (String) enchantKeyField.get(enchantClass);
+    }
+
+    /**
      * 绑定指令解析器、设置指令 tab 联想
      */
     private void loadCommandHandler() {
@@ -144,36 +191,5 @@ public class StrengthenWeapon extends JavaPlugin {
         pluginManager.registerEvents(new RefineGuiListener(), this);
         // 防自定义附魔
         pluginManager.registerEvents(new ItemSecurityListener(), this);
-    }
-
-    /**
-     * 初始化自定义附魔
-     */
-    private void loadCustomEnchantments(Class<? extends AbstractSwEnchantment>[] enchantClasses) {
-        Map<String, EnchantmentConfigDto> customEnchants = ConfigManager.getConfigYml().getEnchants();
-        if (CollUtil.isEmpty(customEnchants)) {
-            return;
-        }
-        PluginManager pluginManager = getServer().getPluginManager();
-        Set<String> configEnchants = customEnchants.keySet();
-        // 在这里声明全部自定义附魔的键
-        for (Class<? extends AbstractSwEnchantment> enchantClass : enchantClasses) {
-            try {
-                String enchantKey = (String) enchantClass.getField("ENCHANT_KEY").get(enchantClass);
-                if (!configEnchants.contains(enchantKey)) {
-                    log.warn("Disabled enchant: {}", enchantKey);
-                    continue;
-                }
-
-                AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();
-                EnchantHelper.register(enchantment);
-            } catch (ReflectiveOperationException e) {
-                log.error("Malformed Enchantment Class: {}, msg: {}", enchantClass, e.getMessage());
-            }
-        }
-        Enchantment.stopAcceptingRegistrations();
-        // 注册自定义附魔触发器
-        pluginManager.registerEvents(WatcherTriggers.getInstance(), this);
-        log.info("Enchantments registered.");
     }
 }

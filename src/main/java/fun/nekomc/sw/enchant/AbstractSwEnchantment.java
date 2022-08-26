@@ -21,13 +21,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * 自定义附魔，参考：https://github.com/Auxilor/EcoEnchants
+ * 自定义附魔，<a href="https://github.com/Auxilor/EcoEnchants">参考</a>
  * created: 2022/3/13 20:32
  *
  * @author Chiru
  * @see <a href="https://github.com/Auxilor/EcoEnchants">参考 EcoEnchants</a>
  */
 public abstract class AbstractSwEnchantment extends Enchantment implements Listener, Watcher {
+
+    /**
+     * 用于区分实现类，需要在实现类中定义此字段
+     */
+    public static final String ENCHANT_KEY = "ENCHANT_KEY";
 
     @Getter
     private final String configKey;
