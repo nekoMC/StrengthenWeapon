@@ -1,16 +1,14 @@
 package fun.nekomc.sw;
 
+import cn.hutool.core.io.FileUtil;
 import fun.nekomc.sw.common.Constants;
-import jdk.jfr.internal.test.WhiteBox;
-import org.bukkit.plugin.java.JavaPlugin;
+import fun.nekomc.sw.exception.SwException;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.powermock.reflect.Whitebox;
+import org.mockito.invocation.InvocationOnMock;
 
 import java.io.File;
-import java.lang.reflect.Field;
-
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * create at 2022/8/25 17:31
@@ -19,38 +17,62 @@ import static org.mockito.Mockito.*;
  */
 public class StrengthenWeaponTest {
 
-    public static final String TEST_TMP_FILE_FOLDER = "./test_tmp/";
-
-    private final File testWorkspace = new File(TEST_TMP_FILE_FOLDER);
-    private final File configYmlFile = new File(testWorkspace, Constants.CONFIG_FILE_NAME);
-
     @Test
-    public void testGenerateConfigFileOnLoad() {
+    public void testOnLoad() {
+        clearWorkspace();
+
+        assertThrows(SwException.class, StrengthenWeapon::getInstance, "onLoad 前，单例不加载");
+
         shouldAutoGenerateConfigYmlOnLoad();
         shouldNotChangeConfigYmlIfExistsOnLoad();
-    }
 
-    private void shouldAutoGenerateConfigYmlOnLoad() {
-        StrengthenWeapon plugin = new StrengthenWeapon();
-        setPluginWorkspaceToTestTmpFolder(plugin);
-        plugin.onLoad();
-    }
+        assertNotNull(StrengthenWeapon.getInstance(), "onLoad 后，单例加载");
 
-    private void shouldNotChangeConfigYmlIfExistsOnLoad() {
-        StrengthenWeapon plugin = new StrengthenWeapon();
-        setPluginWorkspaceToTestTmpFolder(plugin);
+        clearWorkspace();
     }
 
     private void clearWorkspace() {
-        if (testWorkspace.exists()) {
-            boolean deleteFail = !testWorkspace.delete();
-            if (deleteFail) {
-                // TODO FAIL
-            }
-        }
+        String workPath = new File("./").getAbsolutePath() + "/";
+        FileUtil.del(workPath + Constants.CONFIG_FILE_NAME);
+        FileUtil.del(workPath + Constants.DEFAULT_ITEM_FILE_NAME);
+        FileUtil.del(workPath + "items/");
     }
 
-    private void setPluginWorkspaceToTestTmpFolder(JavaPlugin plugin) {
-        Whitebox.setInternalState(plugin, "dataFolder", testWorkspace);
+    private void shouldAutoGenerateConfigYmlOnLoad() {
+        StrengthenWeapon plugin = mockPluginCallOnLoadMethod();
+        plugin.onLoad();
+        verify(plugin, times(1)).saveResource(Constants.CONFIG_FILE_NAME, false);
+        verify(plugin, times(1)).saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
+    }
+
+    private void shouldNotChangeConfigYmlIfExistsOnLoad() {
+        StrengthenWeapon plugin = mockPluginCallOnLoadMethod();
+        plugin.onLoad();
+        // 配置文件存在时，不需要修改。
+        verify(plugin, times(0)).saveResource(Constants.CONFIG_FILE_NAME, false);
+        verify(plugin, times(0)).saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
+    }
+
+    private StrengthenWeapon mockPluginCallOnLoadMethod() {
+        StrengthenWeapon plugin = mock(StrengthenWeapon.class);
+
+        doAnswer(this::mockSaveResourceMethod).when(plugin).saveResource(Constants.CONFIG_FILE_NAME, false);
+        doCallRealMethod().when(plugin).onLoad();
+        return plugin;
+    }
+
+    private Object mockSaveResourceMethod(InvocationOnMock invocationOnMock) {
+        Object pathArg = invocationOnMock.getArgument(0);
+        Object replaceFlagArg = invocationOnMock.getArgument(1);
+
+        String filepath = pathArg.toString();
+        boolean replaceFlag = (boolean) replaceFlagArg;
+
+        File targetFile = new File(filepath);
+        boolean shouldCreate = replaceFlag || !targetFile.exists();
+        if (shouldCreate) {
+            FileUtil.touch(targetFile);
+        }
+        return null;
     }
 }

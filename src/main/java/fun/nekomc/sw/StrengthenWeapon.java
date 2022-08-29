@@ -76,12 +76,25 @@ public class StrengthenWeapon extends JavaPlugin {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onEnable() {
-        // 配置管理器
         ConfigManager.loadConfig(this.getDataFolder().getPath());
-        // 自定义附魔
-        Class<? extends AbstractSwEnchantment>[] classes = new Class[]{
+
+        loadCustomEnchantments();
+        loadCommandHandler();
+        loadListeners();
+    }
+
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        ConfigManager.loadConfig(this.getDataFolder().getPath());
+    }
+
+    // ========== private ==========
+
+    @SuppressWarnings("unchecked")
+    private void loadCustomEnchantments() {
+        Class<? extends AbstractSwEnchantment>[] enchantClasses = new Class[]{
                 ArrowRainEnchantment.class,
                 GiftOfTheSeaEnchantment.class,
                 SuckBloodEnchantment.class,
@@ -113,25 +126,7 @@ public class StrengthenWeapon extends JavaPlugin {
                 PotionEnchantment.WeaknessBreathing.class,
                 PotionEnchantment.Wither.class,
         };
-        loadCustomEnchantments(classes);
-        // 指令解析器
-        loadCommandHandler();
-        // 其他事件监听器
-        loadListeners();
-    }
 
-    @Override
-    public void reloadConfig() {
-        super.reloadConfig();
-        ConfigManager.loadConfig(this.getDataFolder().getPath());
-    }
-
-    // ========== private ==========
-
-    /**
-     * 初始化自定义附魔
-     */
-    private void loadCustomEnchantments(Class<? extends AbstractSwEnchantment>[] enchantClasses) {
         Set<String> customEnchantKeySet = getCustomEnchantKeySet();
         registerConfigCustomEnchantments(customEnchantKeySet, enchantClasses);
         Enchantment.stopAcceptingRegistrations();

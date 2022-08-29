@@ -8,3 +8,5 @@
 /**/lib/
 # 排除测试用 Spigot 目录
 /spigot/
+# 排除测试临时目录
+/test_tmp/
