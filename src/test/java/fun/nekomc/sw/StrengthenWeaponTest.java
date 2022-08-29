@@ -2,11 +2,13 @@ package fun.nekomc.sw;
 
 import cn.hutool.core.io.FileUtil;
 import fun.nekomc.sw.common.Constants;
-import fun.nekomc.sw.exception.SwException;
+import fun.nekomc.sw.exception.LifeCycleException;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 
 import java.io.File;
+
+import static fun.nekomc.sw.common.ConfigManager.ITEMS_CONFIG_FOLDER_NAME;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +23,7 @@ public class StrengthenWeaponTest {
     public void testOnLoad() {
         clearWorkspace();
 
-        assertThrows(SwException.class, StrengthenWeapon::getInstance, "onLoad 前，单例不加载");
+        assertThrows(LifeCycleException.class, StrengthenWeapon::getInstance, "onLoad 前，单例不加载");
 
         shouldAutoGenerateConfigYmlOnLoad();
         shouldNotChangeConfigYmlIfExistsOnLoad();
@@ -35,7 +37,7 @@ public class StrengthenWeaponTest {
         String workPath = new File("./").getAbsolutePath() + "/";
         FileUtil.del(workPath + Constants.CONFIG_FILE_NAME);
         FileUtil.del(workPath + Constants.DEFAULT_ITEM_FILE_NAME);
-        FileUtil.del(workPath + "items/");
+        FileUtil.del(workPath + ITEMS_CONFIG_FOLDER_NAME);
     }
 
     private void shouldAutoGenerateConfigYmlOnLoad() {

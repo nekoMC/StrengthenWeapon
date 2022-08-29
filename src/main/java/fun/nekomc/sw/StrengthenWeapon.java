@@ -7,6 +7,7 @@ import fun.nekomc.sw.enchant.helper.EnchantHelper;
 import fun.nekomc.sw.enchant.helper.WatcherTriggers;
 import fun.nekomc.sw.enchant.magia.PotionEnchantment;
 import fun.nekomc.sw.enchant.magia.SplashEnchantment;
+import fun.nekomc.sw.exception.LifeCycleException;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
 import fun.nekomc.sw.listener.ItemSecurityListener;
@@ -63,7 +64,7 @@ public class StrengthenWeapon extends JavaPlugin {
      */
     public static StrengthenWeapon getInstance() {
         if (null == instance) {
-            throw new SwException("插件正在加载中");
+            throw new LifeCycleException("插件正在加载中");
         }
         return instance;
     }

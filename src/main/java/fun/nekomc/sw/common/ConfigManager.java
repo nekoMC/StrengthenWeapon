@@ -9,7 +9,7 @@ import fun.nekomc.sw.domain.dto.ConfigYmlDto;
 import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.exception.ConfigurationException;
-import fun.nekomc.sw.exception.SwException;
+import fun.nekomc.sw.exception.LifeCycleException;
 import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
 import lombok.experimental.UtilityClass;
@@ -34,13 +34,13 @@ import java.util.*;
 public class ConfigManager {
 
     /**
+     * 物品配置文件路径，相对于 config.yml 的路径
+     */
+    public static final String ITEMS_CONFIG_FOLDER_NAME = "items";
+    /**
      * 配置文件中，需要在物品中配置本属性，以指定配置物品的类别
      */
     private static final String ITEM_TYPE_CONFIG_KEY = "type";
-    /**
-     * 物品配置文件路径，相对于 config.yml 的路径
-     */
-    private static final String ITEMS_CONFIG_FOLDER_NAME = "items";
     /**
      * 识别的配置文件后缀名
      */
@@ -186,7 +186,7 @@ public class ConfigManager {
      */
     public static ConfigYmlDto getConfigYml() {
         if (null == configYmlDto) {
-            throw new SwException("插件正在加载中");
+            throw new LifeCycleException("配置文件为空，或插件正在加载中");
         }
         return configYmlDto;
     }
