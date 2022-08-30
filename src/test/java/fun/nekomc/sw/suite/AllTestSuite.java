@@ -8,7 +8,7 @@ import org.junit.platform.suite.api.*;
  *
  * @author Chiru
  */
-@Suite()
+@Suite
 @SuiteDisplayName("全部用例")
 @SelectClasses({StrengthenWeaponTest.class})
 @SelectPackages({"fun.nekomc.sw.common"})

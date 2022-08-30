@@ -63,7 +63,8 @@ public class ConfigManagerTest {
     public void testEmptyConfig() {
         ConfigManager.loadConfig("test_case/empty");
 
-        assertTrue(ConfigManager.getItemConfigList().isEmpty(), "不存在物品配置时");
+        assertTrue(ConfigManager.getItemConfigList().isEmpty(), "不存在物品配置时，配置列表为空");
+        assertTrue(ConfigManager.getItemNameList().isEmpty(), "不存在物品配置时，名称列表为空");
         assertThrows(LifeCycleException.class, ConfigManager::getConfigYml, "配置文件为空，报错");
     }
 
