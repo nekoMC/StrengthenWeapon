@@ -1,7 +1,6 @@
 package fun.nekomc.sw.utils;
 
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,17 +31,6 @@ public class PlayerHolder {
             return StrengthenWeapon.server().getConsoleSender();
         }
         return commandSender;
-    }
-
-    /**
-     * 从 Holder 中取 Player，取不到就报错
-     */
-    public static Player ensurePlayer() {
-        CommandSender commandSender = SENDER_HOLDER.get();
-        if (!(commandSender instanceof Player)) {
-            throw new SwException("no player was set");
-        }
-        return (Player) commandSender;
     }
 
     /**

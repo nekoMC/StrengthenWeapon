@@ -1,6 +1,7 @@
 package fun.nekomc.sw.enchant;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.RandomUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
@@ -112,6 +113,17 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
         EnchantmentConfigDto config = getConfig();
         int start = null == config.getStart() ? config.getAddition() : config.getStart();
         return start + (level - 1) * config.getAddition();
+    }
+
+    /**
+     * If the enchantment has successfully passed its specified chance.
+     *
+     * @param level       The level to base the chance off of.
+     * @return If the enchantment should then be executed.
+     */
+    protected boolean passChance(int level) {
+        double chance = getConfig().getAddition() * level / 100.0;
+        return RandomUtil.randomDouble(0, 1.0) < chance;
     }
 
     // ========== FFF，已弃用还得实现 ========== //

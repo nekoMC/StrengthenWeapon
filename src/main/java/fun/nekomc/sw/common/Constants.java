@@ -11,10 +11,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Constants {
 
-    public static final String CONFIG_FILE_NAME = "config.yml";
-    public static final String DEFAULT_ITEM_FILE_NAME = "items/demo.yml";
-
-
     /**
      * 权限节点命名空间
      */

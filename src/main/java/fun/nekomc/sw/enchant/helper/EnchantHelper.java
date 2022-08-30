@@ -3,12 +3,11 @@ package fun.nekomc.sw.enchant.helper;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.enchant.AbstractSwEnchantment;
 import fun.nekomc.sw.utils.DurabilityUtils;
 import fun.nekomc.sw.utils.ItemUtils;
-import fun.nekomc.sw.utils.NumberUtils;
+import fun.nekomc.sw.utils.RomanNumberUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 import java.util.stream.Collectors;
@@ -527,7 +524,7 @@ public class EnchantHelper {
             }
             // 生成附魔要显示的 Lore
             String enchantName = enchantment.getConfig().getDisplayName();
-            String enchantLvl = NumberUtils.toNumeral(level);
+            String enchantLvl = RomanNumberUtils.toNumeral(level);
             Map<String, String> valueMap = new HashMap<>(2);
             valueMap.put("name", enchantName);
             valueMap.put("lvl", enchantLvl);
@@ -620,7 +617,7 @@ public class EnchantHelper {
                 levelString = levelString.trim();
 
                 try {
-                    level = NumberUtils.fromNumeral(levelString);
+                    level = RomanNumberUtils.fromNumeral(levelString);
                 } catch (IllegalArgumentException e) {
                     handler.accept(Optional.empty(), 0);
                     return;

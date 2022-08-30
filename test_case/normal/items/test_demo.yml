@@ -1,0 +1,81 @@
+speed_bow:
+  type: BLANK
+  displayName: §4残月
+  name: speed_bow
+  lore:
+    - §5斯凯勒大帝曾使用过的弓，非常罕见。
+    - §5练度：§4${ref_lvl}§a洗 §7- §4${str_lvl}§a精
+  material: BOW
+  unbreakable: true
+  attributes:
+    HAND:
+      GENERIC_MOVEMENT_SPEED: 0.1
+      GENERIC_ARMOR: -3
+  enchantments:
+    - UNBREAKING:8
+    - MENDING:1
+  # 洗炼规则
+  refine:
+    limit: 5 # 最多可以洗炼的次数
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 15 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
+      - speed_btn
+      - bow_sapling
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: pre_01
+      lore:
+        - §a最多可以进行五次洗炼。
+        - §4本次洗炼成功率：${chance}%
+      material: CHEST
+    broke: refine_scrap # 洗练失败时的产物
+  # 精炼规则
+  strength:
+    limit: 10 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 7 # 每洗炼一次，成功率下降多少
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: pre_02
+      lore:
+        - §a最多可以进行10次精炼。
+        - §4本次精炼成功率：${chance}%
+      material: ENDER_CHEST
+    broke: str_scrap # 精炼失败时的产物
+
+speed_btn:
+  material: BIRCH_BUTTON
+  type: REFINE_STONE
+  displayName: §d神羽之种
+  name: speed_btn
+  lore:
+    - §5上古神鸟的魔力结核，仍保留
+    - §5着微弱的神力，拿在手上便可
+  attributes:
+    HAND:
+      GENERIC_MOVEMENT_SPEED: 0.2
+      GENERIC_KNOCKBACK_RESISTANCE: -3
+  enchantments:
+    - FORTUNE:1
+  candidates:
+    - ATTR:GENERIC_ATTACK_SPEED:0.05:100
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:20
+  # 成功率加成
+  addition: 0
+  # 稀有度，值越大越容易通过自然途径（钓鱼）获取，为 0 或缺省时无法自然获取
+  rarity: 60
+
+fishing_rod1:
+  material: FISHING_ROD
+  type: DEFAULT
+  displayName: §d海王的晾衣杆
+  name: fishing_rod1
+  damage: 54
+  enchantments:
+    - GIFT_OF_THE_SEA:2
+  lore:
+    - §5下海！下海！鬼知道海里有什么！！
+    - §5只有十发，海王护佑，下一杆一定！

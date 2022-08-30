@@ -1,6 +1,7 @@
 package fun.nekomc.sw;
 
 import cn.hutool.core.io.FileUtil;
+import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.exception.LifeCycleException;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StrengthenWeaponTest {
 
     @Test
-    public void testOnLoad() {
+    void testOnLoad() {
         clearWorkspace();
 
         assertThrows(LifeCycleException.class, StrengthenWeapon::getInstance, "onLoad 前，单例不加载");
@@ -35,30 +36,30 @@ public class StrengthenWeaponTest {
 
     private void clearWorkspace() {
         String workPath = new File("./").getAbsolutePath() + "/";
-        FileUtil.del(workPath + Constants.CONFIG_FILE_NAME);
-        FileUtil.del(workPath + Constants.DEFAULT_ITEM_FILE_NAME);
+        FileUtil.del(workPath + ConfigManager.CONFIG_FILE_NAME);
+        FileUtil.del(workPath + ConfigManager.DEFAULT_ITEM_FILE_NAME);
         FileUtil.del(workPath + ITEMS_CONFIG_FOLDER_NAME);
     }
 
     private void shouldAutoGenerateConfigYmlOnLoad() {
         StrengthenWeapon plugin = mockPluginCallOnLoadMethod();
         plugin.onLoad();
-        verify(plugin, times(1)).saveResource(Constants.CONFIG_FILE_NAME, false);
-        verify(plugin, times(1)).saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
+        verify(plugin, times(1)).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
+        verify(plugin, times(1)).saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
     }
 
     private void shouldNotChangeConfigYmlIfExistsOnLoad() {
         StrengthenWeapon plugin = mockPluginCallOnLoadMethod();
         plugin.onLoad();
         // 配置文件存在时，不需要修改。
-        verify(plugin, times(0)).saveResource(Constants.CONFIG_FILE_NAME, false);
-        verify(plugin, times(0)).saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
+        verify(plugin, times(0)).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
+        verify(plugin, times(0)).saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
     }
 
     private StrengthenWeapon mockPluginCallOnLoadMethod() {
         StrengthenWeapon plugin = mock(StrengthenWeapon.class);
 
-        doAnswer(this::mockSaveResourceMethod).when(plugin).saveResource(Constants.CONFIG_FILE_NAME, false);
+        doAnswer(this::mockSaveResourceMethod).when(plugin).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
         doCallRealMethod().when(plugin).onLoad();
         return plugin;
     }

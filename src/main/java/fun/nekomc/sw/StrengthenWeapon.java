@@ -45,10 +45,10 @@ public class StrengthenWeapon extends JavaPlugin {
     }
 
     private void initConfigFile() {
-        File configYmlFile = new File(this.getDataFolder(), Constants.CONFIG_FILE_NAME);
+        File configYmlFile = new File(this.getDataFolder(), ConfigManager.CONFIG_FILE_NAME);
         if (!configYmlFile.exists()) {
-            saveResource(Constants.CONFIG_FILE_NAME, false);
-            saveResource(Constants.DEFAULT_ITEM_FILE_NAME, false);
+            saveResource(ConfigManager.CONFIG_FILE_NAME, false);
+            saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
         }
     }
 

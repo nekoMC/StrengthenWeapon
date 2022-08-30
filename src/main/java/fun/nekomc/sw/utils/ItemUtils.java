@@ -3,7 +3,6 @@ package fun.nekomc.sw.utils;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -66,19 +65,15 @@ public class ItemUtils {
      */
     public static Optional<ItemStack> buildItemByConfig(SwItemConfigDto itemConfig, Map<String, Object> extArgs) {
         Assert.notNull(itemConfig, "itemConfig cannot be null");
-        // Material
-        Material material = Material.getMaterial(itemConfig.getMaterial());
-        if (null == material) {
-            return Optional.empty();
-        }
-        ItemStack itemStack = new ItemStack(material);
+
+        ItemStack itemStack = buildMaterialItemByConfig(itemConfig);
         // Meta
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
         meta.setDisplayName(itemConfig.getDisplayName());
         meta.setUnbreakable(itemConfig.isUnbreakable());
         ((Damageable) meta).setDamage(itemConfig.getDamage());
         // Meta - 附魔、属性修改
-        meta.setAttributeModifiers(itemConfig.getAttributeModifiers());
+        meta.setAttributeModifiers(itemConfig.parseAttributeModifiers());
         itemConfig.getEnchantMap().forEach((enchant, lvl) -> meta.addEnchant(enchant, lvl, true));
         // Meta - 附加信息，为白板写入带有初始强化等级的附加信息
         ItemsTypeEnum itemType = ItemsTypeEnum.valueOf(itemConfig.getType());
@@ -95,6 +90,16 @@ public class ItemUtils {
         // 刷新附魔 Lore
         EnchantHelper.updateLore(itemStack);
         return Optional.of(itemStack);
+    }
+
+    @NotNull
+    private static ItemStack buildMaterialItemByConfig(SwItemConfigDto itemConfig) {
+        // Material
+        Material material = Material.getMaterial(itemConfig.getMaterial());
+        if (null == material) {
+            throw new ConfigurationException("无法识别的 Material：" + itemConfig.getMaterial());
+        }
+        return new ItemStack(material);
     }
 
 
@@ -194,6 +199,9 @@ public class ItemUtils {
         return (ItemStack) values.get(0).value();
     }
 
+    /**
+     * 尝试获取与当前实体关联的玩家对象，获取不到时返回 null
+     */
     public Player tryAsPlayer(Entity entity) {
         if (entity instanceof Projectile) {
             Projectile projectile = (Projectile) entity;

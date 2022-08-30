@@ -38,6 +38,14 @@ public class ConfigManager {
      */
     public static final String ITEMS_CONFIG_FOLDER_NAME = "items";
     /**
+     * 配置文件名
+     */
+    public static final String CONFIG_FILE_NAME = "config.yml";
+    /**
+     * 物品配置实例文件名
+     */
+    public static final String DEFAULT_ITEM_FILE_NAME = "items/demo.yml";
+    /**
      * 配置文件中，需要在物品中配置本属性，以指定配置物品的类别
      */
     private static final String ITEM_TYPE_CONFIG_KEY = "type";
@@ -70,7 +78,7 @@ public class ConfigManager {
     }
 
     private static ConfigYmlDto loadConfigFile(String filePath) {
-        File configYmlFile = new File(filePath, Constants.CONFIG_FILE_NAME);
+        File configYmlFile = new File(filePath, CONFIG_FILE_NAME);
         try (FileInputStream input = new FileInputStream(configYmlFile)) {
             return yamlLoader.loadAs(input, ConfigYmlDto.class);
         } catch (IOException e) {

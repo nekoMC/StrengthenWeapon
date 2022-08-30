@@ -36,7 +36,7 @@ public class ConfigManagerTest {
 
     @Test
     @SneakyThrows
-    public void normalTest() {
+    void normalTest() {
 
         assertThrows(LifeCycleException.class, ConfigManager::getConfigYml, "加载前获取配置报错");
 
@@ -60,7 +60,7 @@ public class ConfigManagerTest {
     }
 
     @Test
-    public void testEmptyConfig() {
+    void testEmptyConfig() {
         ConfigManager.loadConfig("test_case/empty");
 
         assertTrue(ConfigManager.getItemConfigList().isEmpty(), "不存在物品配置时，配置列表为空");
@@ -69,7 +69,7 @@ public class ConfigManagerTest {
     }
 
     @Test
-    public void testConfigPartitionMissingWithError() {
+    void testConfigPartitionMissingWithError() {
         ConfigManager.loadConfig("test_case/part_missing");
 
         Optional<SwItemConfigDto> rodConfigOpt1 = ConfigManager.getItemConfig("rod1");
@@ -83,7 +83,7 @@ public class ConfigManagerTest {
     }
 
     @Test
-    public void testConfigPartitionMissingWithoutError() {
+    void testConfigPartitionMissingWithoutError() {
         ConfigManager.loadConfig("test_case/normal_missing");
 
         Optional<SwItemConfigDto> rodConfigOpt = ConfigManager.getItemConfig("rod3");
