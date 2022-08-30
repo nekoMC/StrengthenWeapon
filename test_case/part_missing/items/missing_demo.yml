@@ -1,0 +1,8 @@
+rod1:
+#  material: FISHING_ROD
+  type: DD
+  displayName: §d错误的晾衣杆
+rod2:
+  #  material: FISHING_ROD
+  type: DEFAULT
+  displayName: §d残损的晾衣杆

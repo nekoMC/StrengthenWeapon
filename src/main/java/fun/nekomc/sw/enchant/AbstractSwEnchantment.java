@@ -1,6 +1,7 @@
 package fun.nekomc.sw.enchant;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.RandomUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.domain.dto.EnchantmentConfigDto;
 import fun.nekomc.sw.enchant.helper.EnchantHelper;
@@ -21,13 +22,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * 自定义附魔，参考：https://github.com/Auxilor/EcoEnchants
+ * 自定义附魔，<a href="https://github.com/Auxilor/EcoEnchants">参考</a>
  * created: 2022/3/13 20:32
  *
  * @author Chiru
  * @see <a href="https://github.com/Auxilor/EcoEnchants">参考 EcoEnchants</a>
  */
 public abstract class AbstractSwEnchantment extends Enchantment implements Listener, Watcher {
+
+    /**
+     * 用于区分实现类，需要在实现类中定义此字段
+     */
+    public static final String ENCHANT_KEY = "ENCHANT_KEY";
 
     @Getter
     private final String configKey;
@@ -107,6 +113,17 @@ public abstract class AbstractSwEnchantment extends Enchantment implements Liste
         EnchantmentConfigDto config = getConfig();
         int start = null == config.getStart() ? config.getAddition() : config.getStart();
         return start + (level - 1) * config.getAddition();
+    }
+
+    /**
+     * If the enchantment has successfully passed its specified chance.
+     *
+     * @param level       The level to base the chance off of.
+     * @return If the enchantment should then be executed.
+     */
+    protected boolean passChance(int level) {
+        double chance = getConfig().getAddition() * level / 100.0;
+        return RandomUtil.randomDouble(0, 1.0) < chance;
     }
 
     // ========== FFF，已弃用还得实现 ========== //

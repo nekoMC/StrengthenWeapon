@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 @UtilityClass
 public class MsgUtils {
 
-    private static final ConsoleCommandSender CONSOLE_SENDER = StrengthenWeapon.server().getConsoleSender();
+    private static ConsoleCommandSender consoleSender;
 
     /**
      * 给玩家发送消息
@@ -35,9 +35,12 @@ public class MsgUtils {
      * @param args 附加参数（用于格式化消息内容）
      */
     public static void consoleMsg(String msg, Object... args) {
+        if (null == consoleSender) {
+            consoleSender = StrengthenWeapon.server().getConsoleSender();
+        }
         String templateToFormat = Constants.MSG_PREFIX + msg;
         String formattedMsg = String.format(templateToFormat, args);
-        CONSOLE_SENDER.sendMessage(formattedMsg);
+        consoleSender.sendMessage(formattedMsg);
     }
 
     /**

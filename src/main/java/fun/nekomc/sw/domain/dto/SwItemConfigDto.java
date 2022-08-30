@@ -85,7 +85,7 @@ public class SwItemConfigDto implements Serializable {
      *
      * @return Multimap<Attribute, AttributeModifier> 对象
      */
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers() {
+    public Multimap<Attribute, AttributeModifier> parseAttributeModifiers() {
         Multimap<Attribute, AttributeModifier> multimapRes = ArrayListMultimap.create();
         if (CollUtil.isEmpty(attributes)) {
             return multimapRes;

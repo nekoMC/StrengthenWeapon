@@ -48,7 +48,7 @@ public class ServiceUtils {
      * @param converter 转换函数
      * @param <SRC>     原始值类型
      * @param <TAR>     目标值类型
-     * @return 转换了值类型的 Map，键类型不会变化
+     * @return 转换了值类型的 List，键类型不会变化
      */
     public static <SRC, TAR> List<TAR> convertList(List<SRC> srcList, Function<SRC, TAR> converter) {
         Assert.notNull(converter, "converter cannot be null");

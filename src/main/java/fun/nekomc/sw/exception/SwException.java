@@ -1,5 +1,6 @@
 package fun.nekomc.sw.exception;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Chiru
  */
 @Slf4j
+@NoArgsConstructor
 public class SwException extends RuntimeException {
 
     public SwException(Throwable cause) {
@@ -18,9 +20,6 @@ public class SwException extends RuntimeException {
     public SwException(String msg) {
         super(msg);
         log.error(msg);
-    }
-
-    SwException() {
     }
 
 }

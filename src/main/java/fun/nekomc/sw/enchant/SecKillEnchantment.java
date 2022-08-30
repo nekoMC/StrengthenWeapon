@@ -2,7 +2,6 @@ package fun.nekomc.sw.enchant;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import fun.nekomc.sw.utils.NumberUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
@@ -40,7 +39,7 @@ public class SecKillEnchantment extends AbstractSwEnchantment {
         // 遍历药水范围内实体，执行秒杀
         affectedEntities.forEach(victim -> {
             // 是否可以激活秒杀
-            if (NumberUtils.passedChance(this, level)) {
+            if (passChance(level)) {
                 doSecKill(shooter, victim);
             }
         });
@@ -49,7 +48,7 @@ public class SecKillEnchantment extends AbstractSwEnchantment {
     @Override
     public void onArrowDamage(@NotNull LivingEntity attacker, @NotNull LivingEntity victim, @NotNull Arrow arrow, int level, @NotNull EntityDamageByEntityEvent event) {
         // 是否可以激活秒杀
-        if (!NumberUtils.passedChance(this, level)) {
+        if (!passChance(level)) {
             return;
         }
         doSecKill(attacker, victim);
@@ -58,7 +57,7 @@ public class SecKillEnchantment extends AbstractSwEnchantment {
     @Override
     public void onTridentDamage(@NotNull LivingEntity attacker, @NotNull LivingEntity victim, @NotNull Trident trident, int level, @NotNull EntityDamageByEntityEvent event) {
         // 是否可以激活秒杀
-        if (!NumberUtils.passedChance(this, level)) {
+        if (!passChance(level)) {
             return;
         }
         doSecKill(attacker, victim);
@@ -67,7 +66,7 @@ public class SecKillEnchantment extends AbstractSwEnchantment {
     @Override
     public void onMeleeAttack(@NotNull LivingEntity attacker, @NotNull LivingEntity victim, int level, @NotNull EntityDamageByEntityEvent event) {
         // 是否可以激活秒杀
-        if (!NumberUtils.passedChance(this, level)) {
+        if (!passChance(level)) {
             return;
         }
         doSecKill(attacker, victim);

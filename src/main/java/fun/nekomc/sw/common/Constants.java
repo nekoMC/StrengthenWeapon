@@ -11,20 +11,10 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Constants {
 
-    public static final String CONFIG_FILE_NAME = "config.yml";
-    public static final String DEFAULT_ITEM_FILE_NAME = "items/demo.yml";
-
-    public static final String ITEMS_CONFIG_FOLDER_NAME = "items";
-
     /**
      * 权限节点命名空间
      */
     public static final String PERMISSION_NAMESPACE = "sw.";
-
-    /**
-     * yml 文件后缀名
-     */
-    public static final String SUFFIX_YML_FILENAME = ".yml";
 
     /**
      * 根指令
