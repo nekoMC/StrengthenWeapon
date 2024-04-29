@@ -3,6 +3,7 @@ package fun.nekomc.sw.domain;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import fun.nekomc.sw.skill.AbstractSwSkill;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -88,5 +89,15 @@ public class SwItemAttachData implements PersistentDataType<String, SwItemAttach
     @Override
     public SwItemAttachData fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
         return JSON_PARSER.fromJson(primitive, SwItemAttachData.class);
+    }
+
+    public void putSkill(AbstractSwSkill skill, int level) {
+        if (skill == null || level == 0) {
+            return;
+        }
+        if (skills == null) {
+            skills = new HashMap<>();
+        }
+        skills.put(skill.getKey(), level);
     }
 }

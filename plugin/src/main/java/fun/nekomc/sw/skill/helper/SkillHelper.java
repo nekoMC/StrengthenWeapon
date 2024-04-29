@@ -452,9 +452,8 @@ public class SkillHelper {
             });
         }
 
-        toAdd.forEach((skill, lvl) -> {
-            // TODO: HERE
-        });
+        toAdd.forEach((skill, lvl) -> applySkillToItem(itemStack, skill, lvl));
+        // 清空原 Lore
         itemStack.setItemMeta(meta);
         SkillHelper.updateLore(itemStack);
     }
@@ -471,6 +470,22 @@ public class SkillHelper {
         }
         int level = skillOpt.get().levelFromLore(line);
         handler.accept(skillOpt, level);
+    }
+
+    /**
+     * 通过 Lore 恢复技能数据
+     *
+     * @param itemStack 要操作的物品
+     */
+    public static void applySkillToItem(@NotNull final ItemStack itemStack,
+                                        @NotNull final AbstractSwSkill skill,
+                                        final int level) {
+        if (itemStack.getType().equals(Material.AIR) || level == 0) {
+            return;
+        }
+        Optional<SwItemAttachData> attachDataOpt = ItemUtils.getAttachData(itemStack);
+        SwItemAttachData attachData = attachDataOpt.orElseGet(SwItemAttachData::new);
+        attachData.putSkill(skill, level);
     }
 
     /**
