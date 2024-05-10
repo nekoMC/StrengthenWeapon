@@ -38,7 +38,7 @@ class SwEnchantCommand extends AbstractMainHandItemCommand {
         // 查找要附魔的附魔对象
         String enchantName = actualArgs[0];
         String level = actualArgs[1];
-
+        //Optional.ofNullable(Enchantment.getByKey(NamespacedKey.minecraft(enchantName))
         Optional<Enchantment> targetEnchantOpt = SkillHelper.getByName(enchantName);
         // 校验附魔、等级有效
         if (!CharSequenceUtil.isNumeric(level) || !targetEnchantOpt.isPresent()) {

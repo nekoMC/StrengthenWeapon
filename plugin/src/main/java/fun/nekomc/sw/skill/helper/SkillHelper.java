@@ -404,21 +404,18 @@ public class SkillHelper {
 
     public Optional<AbstractSwSkill> skillFromLore(String lore) {
         for (AbstractSwSkill skill : SKILL_MAP.values()) {
-            String displayName = skill.getConfig().getDisplayName();
-            String configName = ChatColor.stripColor(displayName);
+            String skillName = skill.getSkillName();
             int firstBlank = lore.indexOf(" ");
             if (-1 == firstBlank) {
                 continue;
             }
             String skillNameFromLore = ChatColor.stripColor(lore.substring(0, firstBlank));
-            if (Objects.equals(skillNameFromLore, configName)) {
+            if (Objects.equals(skillNameFromLore, skillName)) {
                 return Optional.of(skill);
             }
         }
         return Optional.empty();
     }
-
-    // TODO:
 
     /**
      * 通过 Lore 恢复自定义附魔数据，参考 EcoEnchant
@@ -489,32 +486,28 @@ public class SkillHelper {
     }
 
     /**
-     * 通过附魔名获取附魔对象，支持原生附魔和自定义附魔
+     * 通过技能名获取附魔对象，支持原生附魔和自定义附魔
      *
-     * @param enchantName 附魔名
-     * @return 指定的附魔对象
+     * @param skillName 技能名（去除颜色格式）
+     * @return 指定的技能对象
      */
-    public static Optional<Enchantment> getByName(String enchantName) {
-        Optional<Enchantment> target = REGISTERED_ENCHANTS.stream()
-                .filter(enchant -> enchant.getKey().getKey().equals(enchantName))
-                .findFirst()
-                .map(Enchantment.class::cast);
-        return target.isPresent()
-                ? target
-                : Optional.ofNullable(Enchantment.getByKey(NamespacedKey.minecraft(enchantName)));
+    public static Optional<AbstractSwSkill> getByName(String skillName) {
+        return SKILL_MAP.values().stream()
+                .filter(skill -> Objects.equals(skill.getSkillName(), skillName))
+                .findFirst();
     }
 
     /**
-     * 通过附魔的显示名称获得指定的附魔对象，只针对自定义附魔有效
+     * 通过附魔的显示名称获得指定的技能对象
      *
      * @param loreName 附魔的显示名称
-     * @return Optional 包装的 AbstractSwEnchantment 对象
+     * @return Optional 包装的 AbstractSwSkill 对象
      */
-    public static Optional<AbstractSwEnchantment> getByLoreName(String loreName) {
-        for (AbstractSwEnchantment registeredEnchant : REGISTERED_ENCHANTS) {
-            String stripedDisplay = ChatColor.stripColor(registeredEnchant.getConfig().getDisplayName());
+    public static Optional<AbstractSwSkill> getByLoreName(String loreName) {
+        for (AbstractSwSkill skill : SKILL_MAP.values()) {
+            String stripedDisplay = ChatColor.stripColor(skill.getDisplayName());
             if (Objects.equals(stripedDisplay, loreName)) {
-                return Optional.of(registeredEnchant);
+                return Optional.of(skill);
             }
         }
         return Optional.empty();
@@ -522,6 +515,7 @@ public class SkillHelper {
 
     /**
      * 恢复指定实体的血量
+     * TODO：不应该在这里出现
      *
      * @param target 要恢复血量的实体
      * @param hp     要恢复的血量
@@ -539,4 +533,6 @@ public class SkillHelper {
         newHp = Math.min(newHp, maxHealth);
         target.setHealth(newHp);
     }
+
+    // TODO: 逐个技能改造
 }

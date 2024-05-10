@@ -10,6 +10,7 @@ import fun.nekomc.sw.utils.RomanNumberUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.bukkit.ChatColor;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,11 +29,6 @@ public abstract class AbstractSwSkill {
 
     private static final String DEFAULT_LEVEL_FORMAT = "%d";
 
-    // TODO: 通过配置检验当前技能是否启用
-    /**
-     * 显示名
-     */
-    private String name;
     /**
      * 短键
      */
@@ -113,5 +109,13 @@ public abstract class AbstractSwSkill {
         ConfigYmlDto configYml = ConfigManager.getConfigYml();
         Map<String, SkillConfigDto> skills = configYml.getSkills();
         return skills.get(getKey());
+    }
+
+    public String getDisplayName() {
+        return this.getConfig().getDisplayName();
+    }
+
+    public String getSkillName() {
+        return ChatColor.stripColor(this.getDisplayName());
     }
 }
