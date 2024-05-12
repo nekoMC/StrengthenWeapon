@@ -31,10 +31,9 @@ abstract class AbstractMainHandItemCommand extends SwCommand {
         if (actualArgs.length != fixQueryArgCount) {
             throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return false;
         }
-        Player player = (Player) sender;
         // 主手物品为空，跳过
         if (null == player.getEquipment() || Material.AIR == player.getEquipment().getItemInMainHand().getType()) {
             return false;

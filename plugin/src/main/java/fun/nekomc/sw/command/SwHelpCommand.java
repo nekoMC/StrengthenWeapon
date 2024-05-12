@@ -1,9 +1,9 @@
 package fun.nekomc.sw.command;
 
+import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.MsgUtils;
-import jdk.internal.joptsimple.internal.Strings;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 public class SwHelpCommand extends SwCommand {
 
     protected SwHelpCommand() {
-        super("help", false, Strings.EMPTY);
+        super("help", false, StrUtil.EMPTY);
     }
 
     @Override

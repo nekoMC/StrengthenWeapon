@@ -1,22 +1,19 @@
 package fun.nekomc.sw.skill.helper;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
-import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.domain.SwItemAttachData;
-import fun.nekomc.sw.domain.dto.SkillConfigDto;
 import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.utils.DurabilityUtils;
 import fun.nekomc.sw.utils.ItemUtils;
-import fun.nekomc.sw.utils.RomanNumberUtils;
+import fun.nekomc.sw.utils.PlayerHolder;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
@@ -29,10 +26,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 import java.util.stream.Collectors;
 
@@ -45,8 +40,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SkillHelper {
 
-    @Getter
-    private static final LinkedHashMap<String, AbstractSwSkill> SKILL_MAP = new LinkedHashMap<>();
+    public final LinkedHashMap<String, AbstractSwSkill> SKILL_MAP = new LinkedHashMap<>();
+
+    public Optional<AbstractSwSkill> getByKey(String key) {
+        if (StrUtil.isBlank(key)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(SKILL_MAP.get(key));
+    }
 
     /**
      * 获取道具指定技能的等级
@@ -55,7 +56,7 @@ public class SkillHelper {
      * @param itemStack 道具
      * @return 附魔等级，不存在时返回 0
      */
-    public static int getSkillLevelOnItem(ItemStack itemStack, AbstractSwSkill skill) {
+    public int getSkillLevelOnItem(ItemStack itemStack, AbstractSwSkill skill) {
         if (null == skill || null == itemStack) {
             return 0;
         }
@@ -74,7 +75,7 @@ public class SkillHelper {
      * @param itemStack 要操作的物品
      * @return 包含全部 AbstractSwSkill 的 {@link HashMap} 值为 level
      */
-    public static Map<AbstractSwSkill, Integer> getSkillsOnItem(@Nullable final ItemStack itemStack) {
+    public Map<AbstractSwSkill, Integer> getSkillsOnItem(@Nullable final ItemStack itemStack) {
         if (itemStack == null) {
             return MapUtil.empty();
         }
@@ -86,7 +87,14 @@ public class SkillHelper {
             return MapUtil.empty();
         }
         Map<String, Integer> skillLvMap = attachDataOpt.get().getSkills();
-        // TODO: key 反解析为技能
+        Map<AbstractSwSkill, Integer> result = new HashMap<>();
+        skillLvMap.forEach((key, level) -> {
+            AbstractSwSkill skill = SKILL_MAP.get(key);
+            if (null != skill) {
+                result.put(skill, level);
+            }
+        });
+        return result;
     }
 
     /**
@@ -96,8 +104,8 @@ public class SkillHelper {
      * @param skill 关注的技能
      * @return 不存在时返回 0
      */
-    public static int getArrowLevel(@NotNull final Arrow arrow,
-                                    @NotNull final AbstractSwSkill skill) {
+    public int getArrowLevel(@NotNull final Arrow arrow,
+                             @NotNull final AbstractSwSkill skill) {
         ItemStack bow = ItemUtils.getArrowsBow(arrow);
 
         if (bow == null) {
@@ -113,7 +121,7 @@ public class SkillHelper {
      * @param arrow 要查询的 {@link Arrow}
      * @return 获取包含箭上全部的技能及其等级的 {@link HashMap}
      */
-    public static Map<AbstractSwSkill, Integer> getEnchantsOnArrow(@NotNull final Arrow arrow) {
+    public Map<AbstractSwSkill, Integer> getSkillsOnArrow(@NotNull final Arrow arrow) {
         ItemStack bow = ItemUtils.getArrowsBow(arrow);
 
         if (bow == null) {
@@ -130,8 +138,8 @@ public class SkillHelper {
      * @param skill  要查询的技能
      * @return 不存在时返回 0
      */
-    public static int getMainhandLevel(@NotNull final LivingEntity entity,
-                                       @NotNull final AbstractSwSkill skill) {
+    public int getMainhandLevel(@NotNull final LivingEntity entity,
+                                @NotNull final AbstractSwSkill skill) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -147,7 +155,7 @@ public class SkillHelper {
      * @param entity 实体
      * @return 包含全部技能及其等级的 {@link HashMap}
      */
-    public static Map<AbstractSwSkill, Integer> getSkillsOnMainhand(@NotNull final LivingEntity entity) {
+    public Map<AbstractSwSkill, Integer> getSkillsOnMainhand(@NotNull final LivingEntity entity) {
         if (entity.getEquipment() == null) {
             return new HashMap<>();
         }
@@ -164,8 +172,8 @@ public class SkillHelper {
      * @param skill  关注的技能
      * @return 不存在时返回 0
      */
-    public static int getOffhandLevel(@NotNull final LivingEntity entity,
-                                      @NotNull final AbstractSwSkill skill) {
+    public int getOffhandLevel(@NotNull final LivingEntity entity,
+                               @NotNull final AbstractSwSkill skill) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -181,7 +189,7 @@ public class SkillHelper {
      * @param entity 要查询的实体
      * @return 包含全部技能及其等级的 {@link HashMap}
      */
-    public static Map<AbstractSwSkill, Integer> getEnchantsOnOffhand(@NotNull final LivingEntity entity) {
+    public Map<AbstractSwSkill, Integer> getSkillsOnOffhand(@NotNull final LivingEntity entity) {
         if (entity.getEquipment() == null) {
             return new HashMap<>();
         }
@@ -198,8 +206,8 @@ public class SkillHelper {
      * @param skill  关注的技能
      * @return 技能等级和
      */
-    public static int getArmorPoints(@NotNull final LivingEntity entity,
-                                     @NotNull final AbstractSwSkill skill) {
+    public int getArmorPoints(@NotNull final LivingEntity entity,
+                              @NotNull final AbstractSwSkill skill) {
         return getArmorPoints(entity, skill, 0);
     }
 
@@ -213,9 +221,9 @@ public class SkillHelper {
      * @param damage 要给予装备的耐久消耗
      * @return 技能等级和
      */
-    public static int getArmorPoints(@NotNull final LivingEntity entity,
-                                     @NotNull final AbstractSwSkill skill,
-                                     final int damage) {
+    public int getArmorPoints(@NotNull final LivingEntity entity,
+                              @NotNull final AbstractSwSkill skill,
+                              final int damage) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -244,18 +252,18 @@ public class SkillHelper {
      * @param entity 要查询的实体
      * @return 包含全部技能及其等级的 {@link HashMap}
      */
-    public static Map<AbstractSwSkill, Integer> getEnchantsOnArmor(@NotNull final LivingEntity entity) {
+    public Map<AbstractSwSkill, Integer> getSkillsOnArmor(@NotNull final LivingEntity entity) {
         if (entity.getEquipment() == null) {
             return new HashMap<>();
         }
 
-        Map<AbstractSwSkill, Integer> enchantsMap = new HashMap<>();
+        Map<AbstractSwSkill, Integer> skillsMap = new HashMap<>();
 
         for (ItemStack itemStack : entity.getEquipment().getArmorContents()) {
-            enchantsMap.putAll(SkillHelper.getSkillsOnItem(itemStack));
+            skillsMap.putAll(SkillHelper.getSkillsOnItem(itemStack));
         }
 
-        return enchantsMap;
+        return skillsMap;
     }
 
     /**
@@ -265,8 +273,8 @@ public class SkillHelper {
      * @param skill  关注的技能
      * @return 不存在时返回 0
      */
-    public static int getHelmetLevel(@NotNull final LivingEntity entity,
-                                     @NotNull final AbstractSwSkill skill) {
+    public int getHelmetLevel(@NotNull final LivingEntity entity,
+                              @NotNull final AbstractSwSkill skill) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -283,8 +291,8 @@ public class SkillHelper {
      * @param skill  关注的技能
      * @return 不存在时返回 0
      */
-    public static int getChestplateLevel(@NotNull final LivingEntity entity,
-                                         @NotNull final AbstractSwSkill skill) {
+    public int getChestplateLevel(@NotNull final LivingEntity entity,
+                                  @NotNull final AbstractSwSkill skill) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -301,8 +309,8 @@ public class SkillHelper {
      * @param skill  关注的技能
      * @return 不存在时返回 0
      */
-    public static int getLeggingsLevel(@NotNull final LivingEntity entity,
-                                       @NotNull final AbstractSwSkill skill) {
+    public int getLeggingsLevel(@NotNull final LivingEntity entity,
+                                @NotNull final AbstractSwSkill skill) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -319,8 +327,8 @@ public class SkillHelper {
      * @param skill  关注的技能
      * @return 不存在时返回 0
      */
-    public static int getBootsLevel(@NotNull final LivingEntity entity,
-                                    @NotNull final AbstractSwSkill skill) {
+    public int getBootsLevel(@NotNull final LivingEntity entity,
+                             @NotNull final AbstractSwSkill skill) {
         if (entity.getEquipment() == null) {
             return 0;
         }
@@ -335,11 +343,11 @@ public class SkillHelper {
      *
      * @param skill 技能
      */
-    public static void register(@NotNull final AbstractSwSkill skill) {
-        String skillKey = skill.getKey();
+    public void register(@NotNull final AbstractSwSkill skill) {
+        String skillKey = skill.getConfigKey();
         if (SKILL_MAP.containsKey(skillKey)) {
             log.warn("Duplicate key: {}, 更新 [{}] 为 [{}]",
-                    skillKey, SKILL_MAP.get(skillKey).getName(), skill.getName());
+                    skillKey, SKILL_MAP.get(skillKey).getSkillName(), skill.getSkillName());
         }
         SKILL_MAP.put(skillKey, skill);
     }
@@ -349,12 +357,12 @@ public class SkillHelper {
      *
      * @param skill 要注销的技能
      */
-    public static void unregister(@NotNull final AbstractSwSkill skill) {
+    public void unregister(@NotNull final AbstractSwSkill skill) {
         SKILL_MAP.remove(skill.getKey());
     }
 
     /**
-     * 更新物品的附魔显示（通过 Lore 显示，只针对 SwEnchantment 附魔有效）
+     * 更新物品的附魔显示（通过 Lore 显示，只针对 SwSkill 有效）
      * 道具属性的修复监听器，参考：EcoEnchants - com.willfp.ecoenchants.enchantments.util.ItemConversions
      *
      * @param itemStack 指定物品
@@ -458,7 +466,7 @@ public class SkillHelper {
     /**
      * 从一行 Lore 信息中恢复技能，并调用 handler
      */
-    private static void restoreFromLoreLine(String line, ObjIntConsumer<Optional<AbstractSwSkill>> handler) {
+    private void restoreFromLoreLine(String line, ObjIntConsumer<Optional<AbstractSwSkill>> handler) {
 
         Optional<AbstractSwSkill> skillOpt = SkillHelper.skillFromLore(line);
         if (skillOpt.isEmpty()) {
@@ -474,9 +482,9 @@ public class SkillHelper {
      *
      * @param itemStack 要操作的物品
      */
-    public static void applySkillToItem(@NotNull final ItemStack itemStack,
-                                        @NotNull final AbstractSwSkill skill,
-                                        final int level) {
+    public void applySkillToItem(@NotNull final ItemStack itemStack,
+                                 @NotNull final AbstractSwSkill skill,
+                                 final int level) {
         if (itemStack.getType().equals(Material.AIR) || level == 0) {
             return;
         }
@@ -491,7 +499,7 @@ public class SkillHelper {
      * @param skillName 技能名（去除颜色格式）
      * @return 指定的技能对象
      */
-    public static Optional<AbstractSwSkill> getByName(String skillName) {
+    public Optional<AbstractSwSkill> getByName(String skillName) {
         return SKILL_MAP.values().stream()
                 .filter(skill -> Objects.equals(skill.getSkillName(), skillName))
                 .findFirst();
@@ -503,7 +511,7 @@ public class SkillHelper {
      * @param loreName 附魔的显示名称
      * @return Optional 包装的 AbstractSwSkill 对象
      */
-    public static Optional<AbstractSwSkill> getByLoreName(String loreName) {
+    public Optional<AbstractSwSkill> getByLoreName(String loreName) {
         for (AbstractSwSkill skill : SKILL_MAP.values()) {
             String stripedDisplay = ChatColor.stripColor(skill.getDisplayName());
             if (Objects.equals(stripedDisplay, loreName)) {
@@ -514,25 +522,30 @@ public class SkillHelper {
     }
 
     /**
-     * 恢复指定实体的血量
-     * TODO：不应该在这里出现
+     * 更新道具的指定技能及等级
      *
-     * @param target 要恢复血量的实体
-     * @param hp     要恢复的血量
+     * @param targetItem  目标道具
+     * @param targetSkill 要更新的技能
+     * @param targetLevel 更新后的等级，如果为 0 则删除
+     * @return 操作是否成功
      */
-    public void healTargetBy(LivingEntity target, int hp) {
-        AttributeInstance attribute = target.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        // 计算需要加的血量
-        if (hp <= 0 || null == attribute) {
-            return;
+    public static boolean updateItemSkill(ItemStack targetItem, AbstractSwSkill targetSkill, int targetLevel) {
+        ItemMeta itemMeta = targetItem.getItemMeta();
+        if (null == itemMeta) {
+            return false;
         }
-        double maxHealth = attribute.getValue();
-        double newHp = target.getHealth() + hp;
-        // 确保血量在正确区间内
-        newHp = Math.max(newHp, 0.0);
-        newHp = Math.min(newHp, maxHealth);
-        target.setHealth(newHp);
-    }
+        SwItemAttachData attachData = ItemUtils.getAttachData(targetItem).orElse(new SwItemAttachData());
+        attachData.putSkill(targetSkill, targetLevel);
+        ItemUtils.updateAttachData(itemMeta, attachData);
+        // 刷新附魔 Lore
+        SkillHelper.updateLore(targetItem);
 
-    // TODO: 逐个技能改造
+        String itemName = itemMeta.getDisplayName();
+        if (CharSequenceUtil.isEmpty(itemName)) {
+            itemName = itemMeta.getLocalizedName();
+        }
+        log.info("{} updated [{}]'s Enchantment: {}",
+                PlayerHolder.getSender().getName(), itemName, targetSkill.getConfigKey());
+        return true;
+    }
 }

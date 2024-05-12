@@ -47,14 +47,11 @@ class SwLoreSetCommand extends AbstractMainHandItemCommand {
         // 获取指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         int actualArgLength = getArgsActualLength(actualArgs, args);
-        switch (actualArgLength) {
-            case 0:
-                return ListUtil.of(ConfigManager.getConfiguredMsg(Constants.Msg.LINE_NUMBER));
-            case 1:
-                return ListUtil.of("lore");
-            default:
-                return ListUtil.empty();
-        }
+        return switch (actualArgLength) {
+            case 0 -> ListUtil.of(ConfigManager.getConfiguredMsg(Constants.Msg.LINE_NUMBER));
+            case 1 -> ListUtil.of("lore");
+            default -> ListUtil.empty();
+        };
     }
 
     /**

@@ -1,31 +1,27 @@
 package fun.nekomc.sw.skill;
 
 import fun.nekomc.sw.skill.helper.SkillHelper;
+import fun.nekomc.sw.utils.EntityUtils;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 受击恢复附魔实现
+ * 受击恢复实现
  * created: 2022/4/21 23:51
  *
  * @author Chiru
  */
-public class GetHitHealEnchantment extends AbstractSwEnchantment {
+public class GetHitHealSkill extends AbstractSwSkill {
 
-    /**
-     * AbstractSwEnchantment 子类必须声明本属性，以完成自动注册匹配
-     */
-    public static final String ENCHANT_KEY = "GET_HIT_HEAL";
-
-    public GetHitHealEnchantment() {
-        super(ENCHANT_KEY);
+    public GetHitHealSkill() {
+        super("GET_HIT_HEAL");
     }
 
     @Override
     public void onDamageWearingArmor(@NotNull LivingEntity victim, int level, @NotNull EntityDamageEvent event) {
         // 计算需要加的血量
-        int bloodToAdd = getEnchantLvlAttribute(level) / 100;
-        SkillHelper.healTargetBy(victim, bloodToAdd);
+        int bloodToAdd = getSkillLvlAttribute(level) / 100;
+        EntityUtils.healTargetBy(victim, bloodToAdd);
     }
 }

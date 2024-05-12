@@ -92,12 +92,16 @@ public class SwItemAttachData implements PersistentDataType<String, SwItemAttach
     }
 
     public void putSkill(AbstractSwSkill skill, int level) {
-        if (skill == null || level == 0) {
+        if (skill == null) {
             return;
         }
         if (skills == null) {
             skills = new HashMap<>();
         }
-        skills.put(skill.getKey(), level);
+        if (level == 0) {
+            skills.remove(skill.getConfigKey());
+            return;
+        }
+        skills.put(skill.getConfigKey(), level);
     }
 }

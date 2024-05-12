@@ -16,27 +16,22 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * 海之馈赠附魔实现
+ * 海之馈赠实现
  * created: 2022/3/15 23:27
  *
  * @author Chiru
  */
-public class GiftOfTheSeaEnchantment extends AbstractSwEnchantment {
+public class GiftOfTheSeaSkill extends AbstractSwSkill {
 
-    /**
-     * AbstractSwEnchantment 子类必须声明本属性，以完成自动注册匹配
-     */
-    public static final String ENCHANT_KEY = "GIFT_OF_THE_SEA";
-
-    public GiftOfTheSeaEnchantment() {
-        super(ENCHANT_KEY);
+    public GiftOfTheSeaSkill() {
+        super("GIFT_OF_THE_SEA");
     }
 
     @Override
     public void onFishing(@NotNull Player player, @NotNull ItemStack fishingRod, @NotNull Item caught,
                           int level, @NotNull PlayerFishEvent event) {
         // 计算概率
-        int chanceToGetGift = getEnchantLvlAttribute(level);
+        int chanceToGetGift = getSkillLvlAttribute(level);
         int actualRandom = RandomUtil.randomInt(0, 100);
         if (actualRandom >= chanceToGetGift) {
             return;

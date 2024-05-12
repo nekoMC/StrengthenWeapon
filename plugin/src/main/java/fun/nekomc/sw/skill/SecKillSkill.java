@@ -14,20 +14,15 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * 概率性秒杀附魔实现
+ * 概率性秒杀实现
  * created: 2022/4/21 23:58
  *
  * @author Chiru
  */
-public class SecKillEnchantment extends AbstractSwEnchantment {
+public class SecKillSkill extends AbstractSwSkill {
 
-    /**
-     * AbstractSwEnchantment 子类必须声明本属性，以完成自动注册匹配
-     */
-    public static final String ENCHANT_KEY = "SECKILL";
-
-    public SecKillEnchantment() {
-        super(ENCHANT_KEY);
+    public SecKillSkill() {
+        super("SECKILL");
     }
 
     @Override

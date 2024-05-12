@@ -1,7 +1,7 @@
 package fun.nekomc.sw.command;
 
+import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.common.Constants;
-import jdk.internal.joptsimple.internal.Strings;
 
 /**
  * sw 根指令
@@ -12,6 +12,6 @@ import jdk.internal.joptsimple.internal.Strings;
 class RootSwCommand extends SwCommand {
 
     public RootSwCommand() {
-        super(Constants.BASE_COMMAND, true, Strings.EMPTY);
+        super(Constants.BASE_COMMAND, true, StrUtil.EMPTY);
     }
 }

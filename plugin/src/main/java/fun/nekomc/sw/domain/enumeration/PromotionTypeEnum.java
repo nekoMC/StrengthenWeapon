@@ -1,5 +1,6 @@
 package fun.nekomc.sw.domain.enumeration;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -8,6 +9,8 @@ import lombok.Getter;
  *
  * @author Chiru
  */
+@Getter
+@AllArgsConstructor
 public enum PromotionTypeEnum implements BaseEnum<Integer> {
     /**
      * 重写属性
@@ -26,23 +29,31 @@ public enum PromotionTypeEnum implements BaseEnum<Integer> {
      */
     ENCH_UP(3),
     /**
+     * 重写技能
+     */
+    SKILL(4),
+    /**
+     * 提升技能等级
+     */
+    SKILL_UP(5),
+    /**
      * 变更其他参数
      */
-    OPTI(4),
+    OPTI(10),
     ;
 
     @Getter
     private final Integer code;
-
-    PromotionTypeEnum(Integer code) {
-        this.code = code;
-    }
 
     /**
      * 指定的强化类型是否针对 Attribute
      */
     public static boolean isAttribute(PromotionTypeEnum type) {
         return type == ATTR || type == ATTR_UP;
+    }
+
+    public static boolean isEnchant(PromotionTypeEnum type) {
+        return type == ENCH || type == ENCH_UP;
     }
 
     public static boolean isRewrite(PromotionTypeEnum promotionType) {

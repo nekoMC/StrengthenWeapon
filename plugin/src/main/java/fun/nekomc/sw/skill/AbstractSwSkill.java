@@ -1,16 +1,24 @@
 package fun.nekomc.sw.skill;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.domain.dto.ConfigYmlDto;
 import fun.nekomc.sw.domain.dto.SkillConfigDto;
+import fun.nekomc.sw.skill.helper.SkillHelper;
+import fun.nekomc.sw.skill.helper.Watcher;
+import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.RomanNumberUtils;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.ChatColor;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
+import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,18 +29,24 @@ import java.util.regex.Pattern;
  * @since 2024/4/22 19:52
  */
 @Getter
-@Setter
 @Slf4j
-public abstract class AbstractSwSkill {
+public abstract class AbstractSwSkill implements Listener, Watcher, Keyed {
 
     private static final String DEFAULT_LEVEL_CHAR = "☆";
 
     private static final String DEFAULT_LEVEL_FORMAT = "%d";
 
-    /**
-     * 短键
-     */
-    private String key;
+    private final String configKey;
+
+    protected AbstractSwSkill(String configKey) {
+        this.configKey = configKey;
+    }
+
+    @Override
+    @NotNull
+    public NamespacedKey getKey() {
+        return StrengthenWeapon.getWarpedKey(configKey);
+    }
 
     /**
      * 获取等级描述信息，默认返回 level 个☆，也可以覆写成罗马数字等
@@ -117,5 +131,28 @@ public abstract class AbstractSwSkill {
 
     public String getSkillName() {
         return ChatColor.stripColor(this.getDisplayName());
+    }
+
+
+    /**
+     * 获取根据 start、addition 配置得到的属性值，通常用作概率的计算
+     *
+     * @param level 技能等级
+     */
+    protected int getSkillLvlAttribute(int level) {
+        SkillConfigDto config = getConfig();
+        int start = null == config.getStart() ? config.getAddition() : config.getStart();
+        return start + (level - 1) * config.getAddition();
+    }
+
+    /**
+     * 当前技能等级下，是否通过概率校验
+     *
+     * @param level       技能等级
+     * @return 是否要发动技能效果
+     */
+    protected boolean passChance(int level) {
+        double chance = getConfig().getAddition() * level / 100.0;
+        return RandomUtil.randomDouble(0, 1.0) < chance;
     }
 }

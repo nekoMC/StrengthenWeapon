@@ -1,9 +1,8 @@
 package fun.nekomc.sw.skill.helper;
 
 import fun.nekomc.sw.StrengthenWeapon;
-import fun.nekomc.sw.domain.enumeration.LoreFormatEnum;
+import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.utils.ItemUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -67,8 +66,8 @@ public class WatcherTriggers implements Listener {
         }
         LivingEntity attacker = (LivingEntity) arrow.getShooter();
 
-        SkillHelper.getEnchantsOnArrow(arrow)
-                .forEach(((enchant, level) -> enchant.onArrowDamage(attacker, victim, arrow, level, event)));
+        SkillHelper.getSkillsOnArrow(arrow)
+                .forEach(((skill, level) -> skill.onArrowDamage(attacker, victim, arrow, level, event)));
     }
 
     /**
@@ -100,8 +99,8 @@ public class WatcherTriggers implements Listener {
 
         ItemStack item = trident.getItem();
 
-        SkillHelper.getEnchantsOnItem(item)
-                .forEach(((enchant, level) -> enchant.onTridentDamage(attacker, victim, trident, level, event)));
+        SkillHelper.getSkillsOnItem(item)
+                .forEach(((skill, level) -> skill.onTridentDamage(attacker, victim, trident, level, event)));
     }
 
     /**
@@ -125,8 +124,8 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        SkillHelper.getEnchantsOnMainhand(attacker)
-                .forEach((enchant, level) -> enchant.onMeleeAttack(attacker, victim, level, event));
+        SkillHelper.getSkillsOnMainhand(attacker)
+                .forEach((skill, level) -> skill.onMeleeAttack(attacker, victim, level, event));
     }
 
     /**
@@ -143,8 +142,8 @@ public class WatcherTriggers implements Listener {
         LivingEntity shooter = event.getEntity();
         Arrow arrow = (Arrow) event.getProjectile();
 
-        SkillHelper.getEnchantsOnMainhand(shooter)
-                .forEach((enchant, level) -> enchant.onBowShoot(shooter, arrow, level, event));
+        SkillHelper.getSkillsOnMainhand(shooter)
+                .forEach((skill, level) -> skill.onBowShoot(shooter, arrow, level, event));
     }
 
     /**
@@ -182,8 +181,8 @@ public class WatcherTriggers implements Listener {
             item = ((Trident) projectile).getItem();
         }
 
-        SkillHelper.getEnchantsOnItem(item)
-                .forEach((enchant, level) -> enchant.onProjectileLaunch(shooter, projectile, level, event));
+        SkillHelper.getSkillsOnItem(item)
+                .forEach((skill, level) -> skill.onProjectileLaunch(shooter, projectile, level, event));
     }
 
     /**
@@ -202,8 +201,8 @@ public class WatcherTriggers implements Listener {
         }
         LivingEntity victim = (LivingEntity) event.getEntity();
 
-        SkillHelper.getEnchantsOnArmor(victim)
-                .forEach((enchant, level) -> enchant.onFallDamage(victim, level, event));
+        SkillHelper.getSkillsOnArmor(victim)
+                .forEach((skill, level) -> skill.onFallDamage(victim, level, event));
     }
 
     /**
@@ -227,8 +226,8 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        SkillHelper.getEnchantsOnArrow(arrow)
-                .forEach(((enchant, level) -> enchant.onArrowHit(shooter, level, event)));
+        SkillHelper.getSkillsOnArrow(arrow)
+                .forEach(((skill, level) -> skill.onArrowHit(shooter, level, event)));
     }
 
     /**
@@ -254,8 +253,8 @@ public class WatcherTriggers implements Listener {
 
         ItemStack item = trident.getItem();
 
-        SkillHelper.getEnchantsOnItem(item)
-                .forEach((enchant, level) -> enchant.onTridentHit(shooter, level, event));
+        SkillHelper.getSkillsOnItem(item)
+                .forEach((skill, level) -> skill.onTridentHit(shooter, level, event));
     }
 
     /**
@@ -268,8 +267,8 @@ public class WatcherTriggers implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        SkillHelper.getEnchantsOnMainhand(player)
-                .forEach((enchant, level) -> enchant.onBlockBreak(player, block, level, event));
+        SkillHelper.getSkillsOnMainhand(player)
+                .forEach((skill, level) -> skill.onBlockBreak(player, block, level, event));
     }
 
     /**
@@ -284,8 +283,8 @@ public class WatcherTriggers implements Listener {
         }
         LivingEntity victim = (LivingEntity) event.getEntity();
 
-        SkillHelper.getEnchantsOnArmor(victim)
-                .forEach((enchant, level) -> enchant.onDamageWearingArmor(victim, level, event));
+        SkillHelper.getSkillsOnArmor(victim)
+                .forEach((skill, level) -> skill.onDamageWearingArmor(victim, level, event));
     }
 
     /**
@@ -302,8 +301,8 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        SkillHelper.getEnchantsOnMainhand(player)
-                .forEach((enchant, level) -> enchant.onDamageBlock(player, block, level, event));
+        SkillHelper.getSkillsOnMainhand(player)
+                .forEach((skill, level) -> skill.onDamageBlock(player, block, level, event));
     }
 
     /**
@@ -326,8 +325,8 @@ public class WatcherTriggers implements Listener {
         ItemStack item = trident.getItem();
         assert shooter != null;
 
-        SkillHelper.getEnchantsOnItem(item)
-                .forEach((enchant, level) -> enchant.onTridentLaunch(shooter, trident, level, event));
+        SkillHelper.getSkillsOnItem(item)
+                .forEach((skill, level) -> skill.onTridentLaunch(shooter, trident, level, event));
     }
 
     /**
@@ -352,11 +351,11 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        Map<AbstractSwEnchantment, Integer> enchants = blocker.getInventory().getItemInMainHand().getType() == Material.SHIELD
-                ? SkillHelper.getEnchantsOnMainhand(blocker)
-                : SkillHelper.getEnchantsOnOffhand(blocker);
+        Map<AbstractSwSkill, Integer> skills = blocker.getInventory().getItemInMainHand().getType() == Material.SHIELD
+                ? SkillHelper.getSkillsOnMainhand(blocker)
+                : SkillHelper.getSkillsOnOffhand(blocker);
 
-        enchants.forEach((enchant, level) -> enchant.onDeflect(blocker, attacker, level, event));
+        skills.forEach((skill, level) -> skill.onDeflect(blocker, attacker, level, event));
     }
 
     /**
@@ -422,8 +421,8 @@ public class WatcherTriggers implements Listener {
             return;
         }
         // 鱼竿都有啥附魔
-        Map<AbstractSwEnchantment, Integer> enchants = SkillHelper.getEnchantsOnItem(fishingRod);
-        enchants.forEach((enchant, level) -> enchant.onFishing(player, fishingRod, caughtItem, level, event));
+        Map<AbstractSwSkill, Integer> skills = SkillHelper.getSkillsOnItem(fishingRod);
+        skills.forEach((skill, level) -> skill.onFishing(player, fishingRod, caughtItem, level, event));
     }
 
     @EventHandler
@@ -440,9 +439,9 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        Map<AbstractSwEnchantment, Integer> enchants = SkillHelper.getEnchantsOnItem(holdInHand);
+        Map<AbstractSwSkill, Integer> skills = SkillHelper.getSkillsOnItem(holdInHand);
 
-        enchants.forEach((enchant, level) -> enchant.onMainHandRightClick(player, holdInHand, level, event));
+        skills.forEach((skill, level) -> skill.onMainHandRightClick(player, holdInHand, level, event));
     }
 
     @EventHandler
@@ -461,7 +460,7 @@ public class WatcherTriggers implements Listener {
 
         ItemStack triggerItem = triggerOptional.get();
 
-        Map<AbstractSwEnchantment, Integer> enchants = SkillHelper.getEnchantsOnItem(triggerItem);
-        enchants.forEach((enchant, level) -> enchant.onPotionSplash((LivingEntity) shooter, triggerItem, potion, level, potionSplashEvent));
+        Map<AbstractSwSkill, Integer> skills = SkillHelper.getSkillsOnItem(triggerItem);
+        skills.forEach((skill, level) -> skill.onPotionSplash((LivingEntity) shooter, triggerItem, potion, level, potionSplashEvent));
     }
 }

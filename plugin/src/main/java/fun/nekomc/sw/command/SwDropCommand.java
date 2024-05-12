@@ -57,11 +57,11 @@ class SwDropCommand extends SwCommand {
             double z = Double.parseDouble(actualArgs[3]);
             String itemName = actualArgs[4];
             Optional<SwItemConfigDto> itemConfig = ConfigManager.getItemConfig(itemName);
-            if (!itemConfig.isPresent()) {
+            if (itemConfig.isEmpty()) {
                 throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
             }
             Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig.get());
-            if (!itemStackOpt.isPresent()) {
+            if (itemStackOpt.isEmpty()) {
                 throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
             }
             int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(actualArgs[5]);
@@ -80,21 +80,14 @@ class SwDropCommand extends SwCommand {
         String[] actualArgs = ignoreDontCareArgs(args);
         int actualArgLength = getArgsActualLength(actualArgs, args);
         // 输入为 `sw drop` 的情况，返回 null 以使用默认补全（用户名）
-        switch (actualArgLength) {
-            case 0:
-                return null;
-            case 1:
-                return ListUtil.of("x");
-            case 2:
-                return ListUtil.of("y");
-            case 3:
-                return ListUtil.of("z");
-            case 4:
-                return ConfigManager.getItemNameList();
-            case 5:
-                return ListUtil.of("1", "64");
-            default:
-                return ListUtil.empty();
-        }
+        return switch (actualArgLength) {
+            case 0 -> null;
+            case 1 -> ListUtil.of("x");
+            case 2 -> ListUtil.of("y");
+            case 3 -> ListUtil.of("z");
+            case 4 -> ConfigManager.getItemNameList();
+            case 5 -> ListUtil.of("1", "64");
+            default -> ListUtil.empty();
+        };
     }
 }

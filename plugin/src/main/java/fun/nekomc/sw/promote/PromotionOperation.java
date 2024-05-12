@@ -7,6 +7,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Multimap;
 import fun.nekomc.sw.domain.enumeration.PromotionTypeEnum;
+import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.skill.helper.SkillHelper;
 import fun.nekomc.sw.exception.ConfigurationException;
 import fun.nekomc.sw.exception.SwException;
@@ -15,7 +16,6 @@ import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Keyed;
 import org.bukkit.attribute.Attribute;
@@ -34,11 +34,17 @@ import java.util.Optional;
  * 描述道具提升操作的类
  * create at 2022/3/23 12:18
  *
+ * @param promotion      需要提升的操作类型
+ * @param target         要操作的目标对象
+ * @param promotionValue 要提升的数值
+ * @param rewrite        当前操作是要覆盖原（重名）属性，还是基于原属性进行追加
+ * @param weight         对当前操作进行概率计算时的权重
+ * @param attrSlot       属性生效的装备槽，如果为附魔类型，则本字段为 null
  * @author Chiru
  */
 @Getter
-@AllArgsConstructor
-public class PromotionOperation {
+public record PromotionOperation(PromotionTypeEnum promotion, Keyed target, String promotionValue, boolean rewrite,
+                                 int weight, EquipmentSlot attrSlot) {
 
     /**
      * 配置文件描述规则时，一个规则字符串需要分割成多少个部分。
@@ -47,44 +53,11 @@ public class PromotionOperation {
     private static final int CONFIG_FORMAT_DATA_SECTION = 4;
 
     /**
-     * 需要提升的操作类型
-     */
-    private final PromotionTypeEnum promotion;
-
-    /**
-     * 要操作的目标对象，可能是 Enchantment 也可能是 Attribute
-     *
-     * @see org.bukkit.enchantments.Enchantment
-     * @see org.bukkit.attribute.Attribute
-     */
-    private final Keyed target;
-
-    /**
-     * 要提升的数值
-     */
-    private final String promotionValue;
-
-    /**
-     * 当前操作是要覆盖原（重名）属性，还是基于原属性进行追加
-     */
-    private final boolean rewrite;
-
-    /**
-     * 对当前操作进行概率计算时的权重
-     */
-    private final int weight;
-
-    /**
-     * 属性生效的装备槽，如果为附魔类型，则本字段为 null
-     */
-    private final EquipmentSlot attrSlot;
-
-    /**
      * 以配置文件中的格式构建当前对象
      *
      * @param configStr 如 ATTR_UP-HAND:ARMOR:-4:80、ENCH:ARROW_RAIN:2:10
      * @return 描述提升规则的 PromoteOperation 实例
-     * @throws fun.nekomc.sw.exception.ConfigurationException,IllegalArgumentException 传入的字符串无法解析时抛出
+     * @throws ConfigurationException,IllegalArgumentException 传入的字符串无法解析时抛出
      */
     public static PromotionOperation buildByConfigStr(String configStr) {
         // 校验格式
@@ -128,11 +101,12 @@ public class PromotionOperation {
     public boolean doPromote(@NotNull ItemStack itemStack, boolean check) {
         Assert.notNull(itemStack, "itemStack cannot be null");
         // 针对 Attribute 的强化
-        if (null != attrSlot && PromotionTypeEnum.isAttribute(promotion)) {
-            return doPromoteAttribute(itemStack, check);
-        } else {
-            return doPromoteEnchantment(itemStack, check);
-        }
+        return switch (promotion) {
+            case ATTR, ATTR_UP -> doPromoteAttribute(itemStack, check);
+            case ENCH, ENCH_UP -> doPromoteEnchantment(itemStack, check);
+            case SKILL, SKILL_UP -> doPromoteSkill(itemStack, check);
+            default -> false;
+        };
     }
 
     public static void doPromoteByCandidatesRandomly(@NotNull ItemStack itemStack, List<String> candidates, int repeat, boolean check) {
@@ -144,7 +118,7 @@ public class PromotionOperation {
         List<PromotionOperation> promotionList = ServiceUtils.convertList(candidates, PromotionOperation::buildByConfigStr);
         int totalWeight = 0;
         for (PromotionOperation promotionOperation : promotionList) {
-            totalWeight += promotionOperation.getWeight();
+            totalWeight += promotionOperation.weight();
         }
         while (repeat-- > 0) {
             doPromoteOnce(totalWeight, promotionList, itemStack, check);
@@ -163,10 +137,10 @@ public class PromotionOperation {
             // 目标权重位于指定区间内
             if (nowWeight <= targetRandom && targetRandom < nowWeight + nowPromotion.weight) {
                 if (nowPromotion.doPromote(itemStack, check)) {
-                    String template = nowPromotion.isRewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
-                    String slot = null == nowPromotion.getAttrSlot() ? "" : nowPromotion.getAttrSlot().name();
+                    String template = nowPromotion.rewrite() ? Constants.Msg.PROMOTE_RESET : Constants.Msg.PROMOTE_CHANGE;
+                    String slot = null == nowPromotion.attrSlot() ? "" : nowPromotion.attrSlot().name();
                     MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(template),
-                            nowPromotion.getTarget().getKey().getKey(), slot, nowPromotion.getPromotionValue());
+                            nowPromotion.target().getKey().getKey(), slot, nowPromotion.promotionValue());
                 }
                 return;
             }
@@ -181,6 +155,9 @@ public class PromotionOperation {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (null == itemMeta) {
             throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
+        }
+        if (null == attrSlot) {
+            return false;
         }
         Attribute attributeToPromote = (Attribute) this.target;
         String toPromote = promotionValue;
@@ -212,7 +189,7 @@ public class PromotionOperation {
         Enchantment targetEnchant = (Enchantment) this.target;
         int targetLevel = Integer.parseInt(promotionValue);
         // 如果不是重写，则基于原等级变更附魔等级
-        int enchantOldLevel = SkillHelper.getEnchantLevelOnItem(itemStack, targetEnchant);
+        int enchantOldLevel = ItemUtils.getEnchantLevelOnItem(itemStack, targetEnchant);
         if (check && 0 == enchantOldLevel) {
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
             return false;
@@ -246,11 +223,18 @@ public class PromotionOperation {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }
                     // 解析为 Enchantment
-                    Optional<Enchantment> targetEnchantOpt = SkillHelper.getByName(promotionTarget.toLowerCase());
-                    if (!targetEnchantOpt.isPresent()) {
+                    Optional<Enchantment> targetEnchantOpt = ItemUtils.getEnchantByName(promotionTarget.toLowerCase());
+                    if (targetEnchantOpt.isEmpty()) {
                         throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
                     }
                     return Optional.of(targetEnchantOpt.get());
+                case SKILL:
+                case SKILL_UP:
+                    if (noNumeric) {
+                        throw new ConfigurationException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
+                    }
+                    // 解析为技能
+                    return SkillHelper.getByKey(promotionTarget).map(a -> a);
                 default:
                     return Optional.empty();
             }
@@ -259,5 +243,20 @@ public class PromotionOperation {
                     e.getMessage() + "：" + promotionType.name() + ":" + promotionTarget + ":" + promoteValue);
             throw e;
         }
+    }
+
+    private boolean doPromoteSkill(ItemStack itemStack, boolean check) {
+        AbstractSwSkill targetSkill = (AbstractSwSkill) this.target;
+        int targetLevel = Integer.parseInt(promotionValue);
+        // 如果不是重写，则基于原等级变更附魔等级
+        int skillOldLevel = SkillHelper.getSkillLevelOnItem(itemStack, targetSkill);
+        if (check && 0 == skillOldLevel) {
+            MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.CHECK_NOT_PASS));
+            return false;
+        }
+        if (!rewrite) {
+            targetLevel += skillOldLevel;
+        }
+        return SkillHelper.updateItemSkill(itemStack, targetSkill, targetLevel);
     }
 }

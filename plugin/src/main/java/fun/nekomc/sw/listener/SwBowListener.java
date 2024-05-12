@@ -2,6 +2,7 @@ package fun.nekomc.sw.listener;
 
 import fun.nekomc.sw.domain.StrengthenItem;
 import fun.nekomc.sw.domain.SwItemAttachData;
+import fun.nekomc.sw.skill.ArrowRainSkill;
 import fun.nekomc.sw.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractArrow;
@@ -18,7 +19,7 @@ import java.util.Random;
  * 连发弓监听器、功能实现
  *
  * @author ourange
- * @deprecated 改用附魔实现：{@link fun.nekomc.sw.skill.ArrowRainEnchantment}
+ * @deprecated 改用附魔实现：{@link ArrowRainSkill}
  */
 @Deprecated
 public class SwBowListener implements Listener {

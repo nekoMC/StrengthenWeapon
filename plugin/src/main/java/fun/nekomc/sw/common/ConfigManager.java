@@ -14,6 +14,7 @@ import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
@@ -58,7 +59,7 @@ public class ConfigManager {
      * Yaml 加载器，此处需要指定加载器，否则报错
      * <a href="https://stackoverflow.com/questions/26463078/snakeyaml-class-not-found-exception">参考</a>
      */
-    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigManager.class.getClassLoader()));
+    private final Yaml yamlLoader = new Yaml(new CustomClassLoaderConstructor(ConfigManager.class.getClassLoader(), new LoaderOptions()));
     private Map<String, SwItemConfigDto> swItemConfigMap;
     private ConfigYmlDto configYmlDto;
 

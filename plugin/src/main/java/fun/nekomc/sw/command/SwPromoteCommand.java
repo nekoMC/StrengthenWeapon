@@ -43,10 +43,9 @@ class SwPromoteCommand extends AbstractMainHandItemCommand {
         int time = Integer.parseInt(actualArgs[1]);
         // 强化配置
         Optional<SwItemConfigDto> itemConfig = ConfigManager.getItemConfig(byItemName);
-        if (!itemConfig.isPresent() || !(itemConfig.get() instanceof SwRawConfigDto)) {
+        if (itemConfig.isEmpty() || !(itemConfig.get() instanceof SwRawConfigDto rawConfig)) {
             throw new SwCommandException(player, ConfigManager.getConfiguredMsg(Constants.Msg.COMMAND_ERROR) + byItemName);
         }
-        SwRawConfigDto rawConfig = (SwRawConfigDto) itemConfig.get();
         // 更新附加数据
         ItemsTypeEnum rawType = ItemsTypeEnum.valueOf(rawConfig.getType());
         Optional<SwItemAttachData> attachDataOpt = ItemUtils.getAttachData(targetItem);
@@ -72,13 +71,10 @@ class SwPromoteCommand extends AbstractMainHandItemCommand {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         int actualArgLength = getArgsActualLength(actualArgs, args);
-        switch (actualArgLength) {
-            case 0:
-                return ConfigManager.getItemNameList();
-            case 1:
-                return ListUtil.of(Constants.STR_ZERO, "1", "2");
-            default:
-                return ListUtil.empty();
-        }
+        return switch (actualArgLength) {
+            case 0 -> ConfigManager.getItemNameList();
+            case 1 -> ListUtil.of(Constants.STR_ZERO, "1", "2");
+            default -> ListUtil.empty();
+        };
     }
 }

@@ -10,34 +10,28 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 箭雨附魔实现
+ * 箭雨实现
  * created: 2022/3/15 23:27
  *
  * @author Chiru
  */
-public class ArrowRainEnchantment extends AbstractSwEnchantment {
+public class ArrowRainSkill extends AbstractSwSkill {
 
-    /**
-     * AbstractSwEnchantment 子类必须声明本属性，以完成自动注册匹配
-     */
-    public static final String ENCHANT_KEY = "ARROW_RAIN";
-
-    public ArrowRainEnchantment() {
-        super(ENCHANT_KEY);
+    public ArrowRainSkill() {
+        super("ARROW_RAIN");
     }
 
     /**
-     * 实体（玩家）用含有本附魔的弓射出箭时
+     * 实体（玩家）用含有本技能的弓射出箭时
      */
     @Override
     public void onProjectileLaunch(@NotNull LivingEntity shooter, @NotNull Projectile projectile, int level, @NotNull ProjectileLaunchEvent event) {
-        if (!(projectile instanceof Arrow)) {
+        if (!(projectile instanceof Arrow arrow)) {
             return;
         }
-        Arrow arrow = (Arrow) projectile;
         double range = 2.0;
         // 计算
-        int addArrowCount = getEnchantLvlAttribute(level);
+        int addArrowCount = getSkillLvlAttribute(level);
         for (int i = 0; i < addArrowCount; i++) {
             // 计算额外箭的生成位置
             Location location = shooter.getEyeLocation().clone();

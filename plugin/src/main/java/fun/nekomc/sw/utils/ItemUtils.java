@@ -20,6 +20,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -81,7 +82,7 @@ public class ItemUtils {
                 ? SwItemAttachData.LVL0_ATTACH_DATA
                 : SwItemAttachData.EMPTY_ATTACH_DATA;
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
-        persistentDataContainer.set(getWarpedKey(itemConfig.getName()),
+        persistentDataContainer.set(StrengthenWeapon.getWarpedKey(itemConfig.getName()),
                 SwItemAttachData.EMPTY_ATTACH_DATA, itemDefaultAttachData);
         // 包装 lore 信息
         List<String> replacedLore = replaceLore(itemConfig.getLore(), itemDefaultAttachData, extArgs);
@@ -119,7 +120,7 @@ public class ItemUtils {
         if (StrUtil.isBlank(nameFromDataContainer)) {
             throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
         }
-        persistentDataContainer.set(getWarpedKey(nameFromDataContainer), SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
+        persistentDataContainer.set(StrengthenWeapon.getWarpedKey(nameFromDataContainer), SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
         Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(nameFromDataContainer);
         // 配置文件内容缺失时，不进行后续处理
         if (!itemConfigOptional.isPresent()) {
@@ -150,7 +151,7 @@ public class ItemUtils {
         if (StrUtil.isBlank(nameFromDataContainer)) {
             return Optional.empty();
         }
-        NamespacedKey warpedItemName = getWarpedKey(nameFromDataContainer);
+        NamespacedKey warpedItemName = StrengthenWeapon.getWarpedKey(nameFromDataContainer);
         SwItemAttachData attachData = persistentDataContainer.get(warpedItemName, SwItemAttachData.EMPTY_ATTACH_DATA);
         return Optional.ofNullable(attachData);
     }
@@ -406,9 +407,28 @@ public class ItemUtils {
     }
 
     /**
-     * 将指定的名称包装为 container 识别的命名空间 key
+     * 获取道具指定附魔的等级
+     *
+     * @param enchantment 附魔
+     * @param itemStack   道具
+     * @return 附魔等级，不存在时返回 0
      */
-    private static NamespacedKey getWarpedKey(String key) {
-        return new NamespacedKey(StrengthenWeapon.getInstance(), key);
+    public static int getEnchantLevelOnItem(ItemStack itemStack, Enchantment enchantment) {
+        if (null == enchantment || null == itemStack) {
+            return 0;
+        }
+        Integer lvl = itemStack.getEnchantments().get(enchantment);
+        return null == lvl ? 0 : lvl;
+    }
+
+    /**
+     * 通过附魔名获取附魔对象，支持原生附魔和自定义附魔
+     *
+     * @param enchantName 附魔名
+     * @return 指定的附魔对象
+     */
+    public static Optional<Enchantment> getEnchantByName(String enchantName) {
+        Enchantment enchantment = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchantName));
+        return Optional.ofNullable(enchantment);
     }
 }

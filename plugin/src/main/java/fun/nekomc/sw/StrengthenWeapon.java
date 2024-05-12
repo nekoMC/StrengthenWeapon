@@ -5,8 +5,8 @@ import fun.nekomc.sw.domain.dto.SkillConfigDto;
 import fun.nekomc.sw.skill.*;
 import fun.nekomc.sw.skill.helper.SkillHelper;
 import fun.nekomc.sw.skill.helper.WatcherTriggers;
-import fun.nekomc.sw.skill.magia.PotionEnchantment;
-import fun.nekomc.sw.skill.magia.SplashEnchantment;
+import fun.nekomc.sw.skill.magia.PotionSkill;
+import fun.nekomc.sw.skill.magia.WitcherSkill;
 import fun.nekomc.sw.exception.LifeCycleException;
 import fun.nekomc.sw.exception.SwException;
 import fun.nekomc.sw.command.CommandHandler;
@@ -17,6 +17,7 @@ import fun.nekomc.sw.common.ConfigManager;
 
 import fun.nekomc.sw.common.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.Bukkit;
@@ -24,7 +25,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -94,75 +94,70 @@ public class StrengthenWeapon extends JavaPlugin {
 
     @SuppressWarnings("unchecked")
     private void loadSkills() {
-        Class<? extends AbstractSwEnchantment>[] enchantClasses = new Class[]{
-                ArrowRainEnchantment.class,
-                GiftOfTheSeaEnchantment.class,
-                SuckBloodEnchantment.class,
-                GetHitHealEnchantment.class,
-                SecKillEnchantment.class,
+        Class<? extends AbstractSwSkill>[] skills = new Class[]{
+                ArrowRainSkill.class,
+                GiftOfTheSeaSkill.class,
+                SuckBloodSkill.class,
+                GetHitHealSkill.class,
+                SecKillSkill.class,
                 // Magia 支持
-                SplashEnchantment.class,
-                PotionEnchantment.Slow.class,
-                PotionEnchantment.Blind.class,
-                PotionEnchantment.Harm.class,
-                PotionEnchantment.Absorption.class,
-                PotionEnchantment.ConduitPower.class,
-                PotionEnchantment.Confusion.class,
-                PotionEnchantment.Resistance.class,
-                PotionEnchantment.FireResistance.class,
-                PotionEnchantment.Glowing.class,
-                PotionEnchantment.Heal.class,
-                PotionEnchantment.Hunger.class,
-                PotionEnchantment.IncreaseDamage.class,
-                PotionEnchantment.Invisibility.class,
-                PotionEnchantment.Jump.class,
-                PotionEnchantment.Float.class,
-                PotionEnchantment.NightVision.class,
-                PotionEnchantment.Poison.class,
-                PotionEnchantment.Regeneration.class,
-                PotionEnchantment.Saturation.class,
-                PotionEnchantment.Speed.class,
-                PotionEnchantment.WaterBreathing.class,
-                PotionEnchantment.WeaknessBreathing.class,
-                PotionEnchantment.Wither.class,
+                WitcherSkill.class,
+                PotionSkill.Slow.class,
+                PotionSkill.Blind.class,
+                PotionSkill.Harm.class,
+                PotionSkill.Absorption.class,
+                PotionSkill.ConduitPower.class,
+                PotionSkill.Confusion.class,
+                PotionSkill.Resistance.class,
+                PotionSkill.FireResistance.class,
+                PotionSkill.Glowing.class,
+                PotionSkill.Heal.class,
+                PotionSkill.Hunger.class,
+                PotionSkill.IncreaseDamage.class,
+                PotionSkill.Invisibility.class,
+                PotionSkill.Jump.class,
+                PotionSkill.Float.class,
+                PotionSkill.NightVision.class,
+                PotionSkill.Poison.class,
+                PotionSkill.Regeneration.class,
+                PotionSkill.Saturation.class,
+                PotionSkill.Speed.class,
+                PotionSkill.WaterBreathing.class,
+                PotionSkill.WeaknessBreathing.class,
+                PotionSkill.Wither.class,
         };
 
-        Set<String> customEnchantKeySet = getCustomEnchantKeySet();
-        registerConfigCustomEnchantments(customEnchantKeySet, enchantClasses);
+        Set<String> customSkillKeySet = getCustomSkillKeySet();
+        registerSkills(customSkillKeySet, skills);
         // 注册自定义附魔触发器
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(WatcherTriggers.getInstance(), this);
         log.info("Enchantments registered.");
     }
 
-    private Set<String> getCustomEnchantKeySet() {
-        Map<String, SkillConfigDto> customEnchants = ConfigManager.getConfigYml().getEnchants();
-        if (CollUtil.isEmpty(customEnchants)) {
+    private Set<String> getCustomSkillKeySet() {
+        Map<String, SkillConfigDto> skillConfigs = ConfigManager.getConfigYml().getSkills();
+        if (CollUtil.isEmpty(skillConfigs)) {
             return CollUtil.empty(Set.class);
         }
-        return customEnchants.keySet();
+        return skillConfigs.keySet();
     }
 
-    private void registerConfigCustomEnchantments(Set<String> customEnchantKeySet, Class<? extends AbstractSwEnchantment>[] enchantClasses) {
+    private void registerSkills(Set<String> customSkillKeySet, Class<? extends AbstractSwSkill>[] skillClasses) {
         // 在这里声明全部自定义附魔的键
-        for (Class<? extends AbstractSwEnchantment> enchantClass : enchantClasses) {
+        for (Class<? extends AbstractSwSkill> skillClass : skillClasses) {
             try {
-                String enchantKey = parseEnchantKeyFromEnchantClass(enchantClass);
-                if (customEnchantKeySet.contains(enchantKey)) {
-                    AbstractSwEnchantment enchantment = enchantClass.getConstructor().newInstance();
-                    SkillHelper.register(enchantment);
+                AbstractSwSkill skill = skillClass.getConstructor().newInstance();
+                String skillKey = skill.getConfigKey();
+                if (customSkillKeySet.contains(skillKey)) {
+                    SkillHelper.register(skill);
                     continue;
                 }
-                log.warn("Disabled enchant: {}", enchantKey);
+                log.warn("Disabled skill: {}", skillKey);
             } catch (ReflectiveOperationException e) {
-                log.error("Malformed Enchantment Class: {}, msg: {}", enchantClass, e.getMessage());
+                log.error("Malformed Skill Class: {}, msg: {}", skillClass, e.getMessage());
             }
         }
-    }
-
-    private String parseEnchantKeyFromEnchantClass(Class<? extends AbstractSwEnchantment> enchantClass) throws ReflectiveOperationException {
-        Field enchantKeyField = enchantClass.getField(AbstractSwEnchantment.ENCHANT_KEY);
-        return (String) enchantKeyField.get(enchantClass);
     }
 
     /**
@@ -185,5 +180,12 @@ public class StrengthenWeapon extends JavaPlugin {
         pluginManager.registerEvents(new RefineGuiListener(), this);
         // 防自定义附魔
         pluginManager.registerEvents(new ItemSecurityListener(), this);
+    }
+
+    /**
+     * 将指定的名称包装为 container 识别的命名空间 key
+     */
+    public static NamespacedKey getWarpedKey(String key) {
+        return new NamespacedKey(StrengthenWeapon.getInstance(), key);
     }
 }

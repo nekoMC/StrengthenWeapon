@@ -52,19 +52,15 @@ class SwAttributeCommand extends AbstractMainHandItemCommand {
         // 获取 give 指令的参数
         String[] actualArgs = ignoreDontCareArgs(args);
         int actualArgLength = getArgsActualLength(actualArgs, args);
-        switch (actualArgLength) {
-            case 0:
-                return Arrays.stream(EquipmentSlot.values())
-                        .map(EquipmentSlot::name)
-                        .collect(Collectors.toList());
-            case 1:
-                return Arrays.stream(Attribute.values())
-                        .map(Attribute::name)
-                        .collect(Collectors.toList());
-            case 2:
-                return ListUtil.of(Constants.STR_ZERO, "0.2", "2", "2.2");
-            default:
-                return ListUtil.empty();
-        }
+        return switch (actualArgLength) {
+            case 0 -> Arrays.stream(EquipmentSlot.values())
+                    .map(EquipmentSlot::name)
+                    .collect(Collectors.toList());
+            case 1 -> Arrays.stream(Attribute.values())
+                    .map(Attribute::name)
+                    .collect(Collectors.toList());
+            case 2 -> ListUtil.of(Constants.STR_ZERO, "0.2", "2", "2.2");
+            default -> ListUtil.empty();
+        };
     }
 }

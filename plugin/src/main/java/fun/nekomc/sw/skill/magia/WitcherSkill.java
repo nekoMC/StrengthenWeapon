@@ -1,7 +1,10 @@
 package fun.nekomc.sw.skill.magia;
 
 import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.skill.helper.SkillHelper;
+import fun.nekomc.sw.utils.DurabilityUtils;
+import fun.nekomc.sw.utils.ItemUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -28,12 +31,11 @@ import java.util.List;
  * @author Chiru
  */
 @Slf4j
-public class SplashEnchantment extends AbstractSwEnchantment {
+public class WitcherSkill extends AbstractSwSkill {
 
-    /**
-     * AbstractSwEnchantment 子类必须声明本属性，以完成自动注册匹配
-     */
-    public static final String ENCHANT_KEY = "SPLASH";
+    public WitcherSkill() {
+        super("WITCHER");
+    }
 
     private final Map<UUID, Long> timer = new WeakHashMap<>(16);
 
@@ -77,10 +79,6 @@ public class SplashEnchantment extends AbstractSwEnchantment {
         BLACKLIST_CLICKED_BLOCKS.addAll(Tag.SHULKER_BOXES.getValues());
     }
 
-    public SplashEnchantment() {
-        super(ENCHANT_KEY);
-    }
-
     @Override
     public void onMainHandRightClick(@NotNull Player player, @NotNull ItemStack holdInHand, int level, @NotNull PlayerInteractEvent event) {
         Block clickedBlock = event.getClickedBlock();
@@ -103,11 +101,11 @@ public class SplashEnchantment extends AbstractSwEnchantment {
         if (null == meta) {
             return;
         }
-        meta.setBasePotionData(new PotionData(PotionType.UNCRAFTABLE, false, false));
-        Map<AbstractSwEnchantment, Integer> enchantsOnItem = SkillHelper.getEnchantsOnItem(holdInHand);
-        enchantsOnItem.forEach((enchant, lvl) -> {
-            if (enchant instanceof PotionEnchantment) {
-                ((PotionEnchantment) enchant).decoratePotionMeta(player, meta, this, level, lvl);
+        meta.setBasePotionType(PotionType.UNCRAFTABLE);
+        Map<AbstractSwSkill, Integer> skillsOnItem = SkillHelper.getSkillsOnItem(holdInHand);
+        skillsOnItem.forEach((skill, lvl) -> {
+            if (skill instanceof PotionSkill potionSkill) {
+                potionSkill.decoratePotionMeta(player, meta, this, level, lvl);
             }
         });
         itemStack.setItemMeta(meta);
@@ -116,12 +114,15 @@ public class SplashEnchantment extends AbstractSwEnchantment {
         thrownPotion.setItem(itemStack);
         Vector direction = player.getLocation().getDirection();
         thrownPotion.setVelocity(direction);
+
+        // 投掷后，物品耐久消耗 1
+        DurabilityUtils.damageItem(holdInHand, 1);
     }
 
     private boolean passCoolDown(Player player, final int level) {
         UUID uuid = player.getUniqueId();
         Long lastSplash = timer.get(uuid);
-        int coolDown = getEnchantLvlAttribute(level);
+        int coolDown = getSkillLvlAttribute(level);
         long now = System.currentTimeMillis();
         // 仍需 CD 时
         if (null != lastSplash && now - lastSplash < coolDown) {

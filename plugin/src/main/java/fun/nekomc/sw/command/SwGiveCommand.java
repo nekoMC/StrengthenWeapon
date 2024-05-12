@@ -43,7 +43,7 @@ class SwGiveCommand extends SwCommand {
         int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(actualArgs[2]);
         // 获取指定名称道具的配置
         Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(itemName);
-        if (!itemConfigOptional.isPresent()) {
+        if (itemConfigOptional.isEmpty()) {
             throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
         }
         // 给玩家指定的道具
@@ -52,7 +52,7 @@ class SwGiveCommand extends SwCommand {
         try {
             // 根据配置文件构建物品
             Optional<ItemStack> itemStackOpt = ItemUtils.buildItemByConfig(itemConfig);
-            if (!itemStackOpt.isPresent()) {
+            if (itemStackOpt.isEmpty()) {
                 throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
             }
             itemStack = itemStackOpt.get();
@@ -74,15 +74,11 @@ class SwGiveCommand extends SwCommand {
         String[] actualArgs = ignoreDontCareArgs(args);
         int actualArgLength = getArgsActualLength(actualArgs, args);
         // 输入为 `sw give` 的情况，返回 null 以使用默认补全（用户名）
-        switch (actualArgLength) {
-            case 0:
-                return null;
-            case 1:
-                return ConfigManager.getItemNameList();
-            case 2:
-                return ListUtil.of("1", "64");
-            default:
-                return ListUtil.empty();
-        }
+        return switch (actualArgLength) {
+            case 0 -> null;
+            case 1 -> ConfigManager.getItemNameList();
+            case 2 -> ListUtil.of("1", "64");
+            default -> ListUtil.empty();
+        };
     }
 }

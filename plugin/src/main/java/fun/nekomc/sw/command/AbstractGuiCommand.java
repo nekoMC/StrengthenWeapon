@@ -2,11 +2,11 @@ package fun.nekomc.sw.command;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.exception.SwCommandException;
 import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
-import jdk.internal.joptsimple.internal.Strings;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,7 +22,7 @@ public abstract class AbstractGuiCommand extends SwCommand {
     private static final int REQUIRE_ARG_MAX_SIZE = 1;
 
     protected AbstractGuiCommand(String command) {
-        super(command, false, Strings.EMPTY);
+        super(command, false, StrUtil.EMPTY);
     }
 
     /**
