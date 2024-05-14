@@ -33,7 +33,8 @@ subprojects {
         testAnnotationProcessor(rootProject.libs.org.projectlombok.lombok)
         compileOnly(rootProject.libs.org.slf4j.slf4j.log4j12)
         testImplementation(rootProject.libs.org.slf4j.slf4j.log4j12)
-        implementation(kotlin("stdlib"))
+        // kotlin 仅构建
+        compileOnly(kotlin("stdlib"))
     }
 }
 
