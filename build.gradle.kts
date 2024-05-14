@@ -28,6 +28,7 @@ subprojects {
         testImplementation(rootProject.libs.org.junit.platform.junit.platform.suite.engine)
         compileOnly(rootProject.libs.org.jetbrains.annotations)
         compileOnly(rootProject.libs.org.projectlombok.lombok)
+        annotationProcessor(rootProject.libs.org.projectlombok.lombok)
         compileOnly(rootProject.libs.org.slf4j.slf4j.log4j12)
         implementation(kotlin("stdlib"))
     }
@@ -38,10 +39,10 @@ version = "1.0-beta.4"
 description = "StrengthWeapon"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-tasks.withType<Javadoc>() {
+tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
 }

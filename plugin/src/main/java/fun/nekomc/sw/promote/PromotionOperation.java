@@ -16,7 +16,6 @@ import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.MsgUtils;
 import fun.nekomc.sw.utils.ServiceUtils;
-import lombok.Getter;
 import org.bukkit.Keyed;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -42,7 +41,6 @@ import java.util.Optional;
  * @param attrSlot       属性生效的装备槽，如果为附魔类型，则本字段为 null
  * @author Chiru
  */
-@Getter
 public record PromotionOperation(PromotionTypeEnum promotion, Keyed target, String promotionValue, boolean rewrite,
                                  int weight, EquipmentSlot attrSlot) {
 

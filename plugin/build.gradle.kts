@@ -29,6 +29,21 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
+tasks.withType<JavaCompile> {
+    // 编码
+    options.encoding = "UTF-8"
+    // 构建后执行，移动 libs 文件夹下全部文件到 jar-app/plugins 目录下
+    doLast {
+        val libsDir = File(project.layout.buildDirectory.get().asFile, "libs")
+        val pluginsDir = File(project.parent?.layout?.projectDirectory?.asFile, "jar-app/plugins")
+        if (libsDir.exists()) {
+            libsDir.listFiles()?.forEach {
+                it.copyTo(File(pluginsDir, it.name), true)
+            }
+        }
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
 }
