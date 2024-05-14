@@ -1,4 +1,4 @@
-package sw.common;
+package fun.nekomc.sw.common;
 
 import cn.hutool.core.util.StrUtil;
 import fun.nekomc.sw.domain.dto.ConfigYmlDto;
@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -23,24 +24,30 @@ public class ConfigManagerTest {
 
     private static MockedStatic<MsgUtils> mockedMsgUtils;
 
+    private final static String CONFIG_PATH_PREFIX = "./src/test/resources/";
+
     @BeforeEach
     void commonMockBeforeAll() {
-        mockedMsgUtils = Mockito.mockStatic(MsgUtils.class);
-        Mockito.doNothing().when(MsgUtils.class);
+        mockedMsgUtils = mockStatic(MsgUtils.class);
+        doNothing().when(MsgUtils.class);
     }
 
     @AfterEach
+    @SneakyThrows
     void releaseMockAfterAll() {
         mockedMsgUtils.close();
+        // 通过反射清空 configYmlDto 字段
+        Field configYmlDto = ConfigManager.class.getDeclaredField("configYmlDto");
+        configYmlDto.setAccessible(true);
+        configYmlDto.set(null, null);
     }
 
     @Test
-    @SneakyThrows
     void normalTest() {
 
         assertThrows(LifeCycleException.class, ConfigManager::getConfigYml, "加载前获取配置报错");
 
-        ConfigManager.loadConfig("test_case/normal");
+        ConfigManager.loadConfig(CONFIG_PATH_PREFIX + "test_case/normal");
         // 验证 ConfigYmlDto 解析结构正确
         ConfigYmlDto loadedConfigYml = ConfigManager.getConfigYml();
         assertEquals("§c§lTITLE", loadedConfigYml.getStrengthTitle(), "配置项解析");
@@ -61,7 +68,7 @@ public class ConfigManagerTest {
 
     @Test
     void testEmptyConfig() {
-        ConfigManager.loadConfig("test_case/empty");
+        ConfigManager.loadConfig(CONFIG_PATH_PREFIX + "test_case/empty");
 
         assertTrue(ConfigManager.getItemConfigList().isEmpty(), "不存在物品配置时，配置列表为空");
         assertTrue(ConfigManager.getItemNameList().isEmpty(), "不存在物品配置时，名称列表为空");
@@ -70,7 +77,7 @@ public class ConfigManagerTest {
 
     @Test
     void testConfigPartitionMissingWithError() {
-        ConfigManager.loadConfig("test_case/part_missing");
+        ConfigManager.loadConfig(CONFIG_PATH_PREFIX + "test_case/part_missing");
 
         Optional<SwItemConfigDto> rodConfigOpt1 = ConfigManager.getItemConfig("rod1");
         assertFalse(rodConfigOpt1.isPresent(), "物品未配置 type 时，不解析");
@@ -84,7 +91,7 @@ public class ConfigManagerTest {
 
     @Test
     void testConfigPartitionMissingWithoutError() {
-        ConfigManager.loadConfig("test_case/normal_missing");
+        ConfigManager.loadConfig(CONFIG_PATH_PREFIX + "test_case/normal_missing");
 
         Optional<SwItemConfigDto> rodConfigOpt = ConfigManager.getItemConfig("rod3");
         assertTrue(rodConfigOpt.isPresent(), "物品非 type 缺失时，可正常解析出内容");

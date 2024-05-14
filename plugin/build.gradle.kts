@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "fun.nekomc"
@@ -25,13 +26,32 @@ repositories {
 dependencies {
     api(rootProject.libs.cn.hutool.hutool.core)
     compileOnly(rootProject.libs.org.spigotmc.spigot.api)
+    testImplementation(rootProject.libs.org.spigotmc.spigot.api)
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
-tasks.withType<JavaCompile> {
-    // 编码
-    options.encoding = "UTF-8"
+sourceSets {
+    test {
+        java {
+            srcDir("src/main/java")
+            srcDir("src/test/java")
+        }
+    }
+}
+
+apply {
+    plugin("com.github.johnrengelman.shadow")
+}
+
+tasks.shadowJar {
+    archiveBaseName.set(project.name)
+    archiveClassifier.set("plugin")
+    archiveVersion.set(project.version.toString())
+
+    // 重定向 hutool 包
+    relocate("cn.hutool", "fun.nekomc.sw.libs.cn.hutool")
+
     // 构建后执行，移动 libs 文件夹下全部文件到 jar-app/plugins 目录下
     doLast {
         val libsDir = File(project.layout.buildDirectory.get().asFile, "libs")
@@ -42,6 +62,11 @@ tasks.withType<JavaCompile> {
             }
         }
     }
+}
+
+tasks.withType<JavaCompile> {
+    // 编码
+    options.encoding = "UTF-8"
 }
 
 tasks.test {

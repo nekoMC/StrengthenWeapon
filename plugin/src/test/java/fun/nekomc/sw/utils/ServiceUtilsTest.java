@@ -1,4 +1,4 @@
-package sw.utils;
+package fun.nekomc.sw.utils;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
@@ -62,7 +62,7 @@ public class ServiceUtilsTest {
 
     @Test
     void randomByWeight() {
-        try (MockedStatic<RandomUtil> mockedRandomUtil = Mockito.mockStatic(RandomUtil.class)) {
+        try (MockedStatic<RandomUtil> mockedRandomUtil = mockStatic(RandomUtil.class)) {
             mockRandomMethodReturnMidOfMinAndMax(mockedRandomUtil);
             List<Integer> candidates = new ArrayList<>(4);
             assertNull(ServiceUtils.randomByWeight(candidates, v -> v), "空候选集时，返回 null");

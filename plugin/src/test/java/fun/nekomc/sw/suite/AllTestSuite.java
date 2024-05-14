@@ -1,6 +1,6 @@
-package sw.suite;
+package fun.nekomc.sw.suite;
 
-import sw.StrengthenWeaponTest;
+import fun.nekomc.sw.StrengthenWeaponTest;
 import org.junit.platform.suite.api.*;
 
 /**

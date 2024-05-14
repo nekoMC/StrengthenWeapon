@@ -1,13 +1,14 @@
-package sw;
+package fun.nekomc.sw;
 
 import cn.hutool.core.io.FileUtil;
 import fun.nekomc.sw.common.ConfigManager;
-import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.exception.LifeCycleException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 import static fun.nekomc.sw.common.ConfigManager.ITEMS_CONFIG_FOLDER_NAME;
 import static org.mockito.Mockito.*;
@@ -34,33 +35,38 @@ public class StrengthenWeaponTest {
         clearWorkspace();
     }
 
+    @SneakyThrows
     private void clearWorkspace() {
         String workPath = new File("./").getAbsolutePath() + "/";
         FileUtil.del(workPath + ConfigManager.CONFIG_FILE_NAME);
         FileUtil.del(workPath + ConfigManager.DEFAULT_ITEM_FILE_NAME);
         FileUtil.del(workPath + ITEMS_CONFIG_FOLDER_NAME);
+        // 通过反射清理 StrengthenWeapon.instance
+        Field instance = StrengthenWeapon.class.getDeclaredField("instance");
+        instance.setAccessible(true);
+        instance.set(null, null);
     }
 
     private void shouldAutoGenerateConfigYmlOnLoad() {
         StrengthenWeapon plugin = mockPluginCallOnLoadMethod();
         plugin.onLoad();
-        Mockito.verify(plugin, Mockito.times(1)).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
-        Mockito.verify(plugin, Mockito.times(1)).saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
+        verify(plugin, times(1)).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
+        verify(plugin, times(1)).saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
     }
 
     private void shouldNotChangeConfigYmlIfExistsOnLoad() {
         StrengthenWeapon plugin = mockPluginCallOnLoadMethod();
         plugin.onLoad();
         // 配置文件存在时，不需要修改。
-        Mockito.verify(plugin, Mockito.times(0)).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
-        Mockito.verify(plugin, Mockito.times(0)).saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
+        verify(plugin, times(0)).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
+        verify(plugin, times(0)).saveResource(ConfigManager.DEFAULT_ITEM_FILE_NAME, false);
     }
 
     private StrengthenWeapon mockPluginCallOnLoadMethod() {
-        StrengthenWeapon plugin = Mockito.mock(StrengthenWeapon.class);
+        StrengthenWeapon plugin = mock(StrengthenWeapon.class);
 
-        Mockito.doAnswer(this::mockSaveResourceMethod).when(plugin).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
-        Mockito.doCallRealMethod().when(plugin).onLoad();
+        doAnswer(this::mockSaveResourceMethod).when(plugin).saveResource(ConfigManager.CONFIG_FILE_NAME, false);
+        doCallRealMethod().when(plugin).onLoad();
         return plugin;
     }
 

@@ -12,13 +12,11 @@ refineType: FURNACE
 
 enablePlayerEnchant: false
 
-enchants:
+skills:
   ARROW_RAIN:
-    key: ARROW_RAIN
     displayName: §bARROW_RAIN
     addition: 1
   GIFT_OF_THE_SEA:
-    key: GIFT_OF_THE_SEA
     displayName: §6GIFT_OF_THE_SEA
     addition: 10
 

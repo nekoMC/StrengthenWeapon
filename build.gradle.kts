@@ -29,7 +29,10 @@ subprojects {
         compileOnly(rootProject.libs.org.jetbrains.annotations)
         compileOnly(rootProject.libs.org.projectlombok.lombok)
         annotationProcessor(rootProject.libs.org.projectlombok.lombok)
+        testImplementation(rootProject.libs.org.projectlombok.lombok)
+        testAnnotationProcessor(rootProject.libs.org.projectlombok.lombok)
         compileOnly(rootProject.libs.org.slf4j.slf4j.log4j12)
+        testImplementation(rootProject.libs.org.slf4j.slf4j.log4j12)
         implementation(kotlin("stdlib"))
     }
 }

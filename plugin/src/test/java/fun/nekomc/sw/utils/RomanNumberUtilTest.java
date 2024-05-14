@@ -1,4 +1,4 @@
-package sw.utils;
+package fun.nekomc.sw.utils;
 
 import org.junit.jupiter.api.Test;
 
