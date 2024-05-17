@@ -1,0 +1,23 @@
+message:
+  one_line: "§b单行信息: %s！"
+  multi_line_msg: |
+    §c§l--- §a多行信息 §c§l---
+    §a§l多行信息查询
+  special_word: ✨Ｅm0Jℹ
+
+strengthTitle: §c§lTITLE
+strengthType: FURNACE
+refineType: FURNACE
+# refineTitle: 缺失的信息
+
+enablePlayerEnchant: false
+
+skills:
+  ARROW_RAIN:
+    displayName: §bARROW_RAIN
+    addition: 1
+  GIFT_OF_THE_SEA:
+    displayName: §6GIFT_OF_THE_SEA
+    addition: 10
+
+usingLoreGetter: true

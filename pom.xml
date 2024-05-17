@@ -6,11 +6,11 @@
 
     <groupId>fun.nekomc</groupId>
     <artifactId>StrengthWeapon</artifactId>
-    <version>1.0-beta.4</version>
+    <version>2.0-alpha.1</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Environment properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,7 +20,7 @@
         <junit.platform.version>1.9.0</junit.platform.version>
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
         <mockito.version>4.7.0</mockito.version>
-        <hutool.version>5.8.5</hutool.version>
+        <hutool.version>5.8.27</hutool.version>
 
         <!-- Versioning properties -->
         <project.outputName>StrengthWeapon</project.outputName>
@@ -43,7 +43,7 @@
         </repository>
         <repository>
             <id>vault-repo</id>
-            <url>https://nexus.hc.to/content/repositories/pub_releases</url>
+            <url>https://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
         <!--repository>
             <id>ess-repo</id>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

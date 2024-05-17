@@ -1,10 +1,14 @@
 # 排除 IDEA 文件
 /.idea/
+/.gradle/
 /.run/
 # 排除输出目录
 /out/
 /target/
+/**/build/
 # 排除库文件目录
 /**/lib/
 # 排除测试用 Spigot 目录
 /spigot/
+/buildtool/
+/jar-app/
