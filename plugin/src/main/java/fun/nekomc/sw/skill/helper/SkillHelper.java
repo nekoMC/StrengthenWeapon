@@ -9,19 +9,14 @@ import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.utils.DurabilityUtils;
 import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.PlayerHolder;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 @Slf4j
+@SuppressWarnings("unused")
 public class SkillHelper {
 
     public final LinkedHashMap<String, AbstractSwSkill> SKILL_MAP = new LinkedHashMap<>();
@@ -65,7 +61,7 @@ public class SkillHelper {
             return 0;
         }
         Map<String, Integer> skillLvMap = attachDataOpt.get().getSkills();
-        Integer lvl = skillLvMap.get(skill.getKey());
+        Integer lvl = skillLvMap.get(skill.getConfigKey());
         return null == lvl ? 0 : lvl;
     }
 
@@ -358,7 +354,7 @@ public class SkillHelper {
      * @param skill 要注销的技能
      */
     public void unregister(@NotNull final AbstractSwSkill skill) {
-        SKILL_MAP.remove(skill.getKey());
+        SKILL_MAP.remove(skill.getConfigKey());
     }
 
     /**
@@ -537,6 +533,7 @@ public class SkillHelper {
         SwItemAttachData attachData = ItemUtils.getAttachData(targetItem).orElse(new SwItemAttachData());
         attachData.putSkill(targetSkill, targetLevel);
         ItemUtils.updateAttachData(itemMeta, attachData);
+        targetItem.setItemMeta(itemMeta);
         // 刷新附魔 Lore
         SkillHelper.updateLore(targetItem);
 
@@ -544,7 +541,7 @@ public class SkillHelper {
         if (CharSequenceUtil.isEmpty(itemName)) {
             itemName = itemMeta.getLocalizedName();
         }
-        log.info("{} updated [{}]'s Enchantment: {}",
+        log.info("{} updated [{}]'s skill: {}",
                 PlayerHolder.getSender().getName(), itemName, targetSkill.getConfigKey());
         return true;
     }

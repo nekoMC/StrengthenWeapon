@@ -12,7 +12,7 @@ speed_bow:
     - §5族人舍利炼化制得。坚韧有力，因附有
     - §5的执念使之产生了魔力。
     - §5稀有度：§4传说
-    - §5练度：§4${ref_lvl}§a洗 §7- §4${str_lvl}§a精
+    - §5练度：§4${refine_level}§a洗 §7- §4${strengthen_level}§a精
   material: BOW
   unbreakable: true
   attributes:
@@ -113,7 +113,7 @@ bow_sapling:
     - §5可能使以下属性发生改变1-2次：
     - §a移速 力量 箭雨
     - §4击退抗性 最大生命
-  enchantments:
+  skills:
     - ARROW_RAIN:1
   # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
   # 配置解释：可获得的条数,概率权重,每提升一级对概率权重的影响
@@ -133,7 +133,7 @@ bow_sapling:
     - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.1:5
     - ATTR-HAND:GENERIC_MAX_HEALTH:-2:60
     - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.2:60
-    - ENCH:ARROW_RAIN:1:30
+    - SKILL:ARROW_RAIN:1:30
     - ENCH_UP:POWER:+1:40
   # 成功率加成
   addition: 0
@@ -191,8 +191,9 @@ bow_shelf:
   displayName: §6缚魔大典-弓篇
   name: bow_shelf
   enchantments:
-    - ARROW_RAIN:1
     - POWER:1
+  skills:
+    - ARROW_RAIN:1
   lore:
     - §5稀有的禁术魔导书典藏，封印了
     - §5突破神力，用它精炼可以使已有
@@ -201,7 +202,7 @@ bow_shelf:
     - §5可能使以下属性增强：
     - §a箭雨 力量
   candidates:
-    - ENCH_UP:ARROW_RAIN:+1:10
+    - SKILL_UP:ARROW_RAIN:+1:10
     - ENCH_UP:POWER:+1:20
   # 成功率加成
   addition: 0
@@ -248,9 +249,10 @@ fishing_rod1:
   name: fishing_rod1
   damage: 54
   enchantments:
-    - GIFT_OF_THE_SEA:2
     - LUCK_OF_THE_SEA:5
     - LURE:3
+  skills:
+    - GIFT_OF_THE_SEA:2
   lore:
     - §5下海！下海！鬼知道海里有什么！！
     - §5只有十发，海王护佑，下一杆一定！

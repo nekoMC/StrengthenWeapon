@@ -8,9 +8,7 @@ import fun.nekomc.sw.common.ConfigManager;
 import fun.nekomc.sw.common.Constants;
 import fun.nekomc.sw.domain.dto.ConfigYmlDto;
 import fun.nekomc.sw.domain.dto.SkillConfigDto;
-import fun.nekomc.sw.skill.helper.SkillHelper;
 import fun.nekomc.sw.skill.helper.Watcher;
-import fun.nekomc.sw.utils.ItemUtils;
 import fun.nekomc.sw.utils.RomanNumberUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +54,7 @@ public abstract class AbstractSwSkill implements Listener, Watcher, Keyed {
         SkillConfigDto configDto = getConfig();
         Map<String, String> ext = configDto.getExt();
         String configRule = "repeat";
-        if (StrUtil.isBlank(configDto.getShowLevel())) {
+        if (StrUtil.isNotBlank(configDto.getShowLevel())) {
             configRule = configDto.getShowLevel();
         }
         String levelChar = DEFAULT_LEVEL_CHAR;
@@ -83,7 +81,7 @@ public abstract class AbstractSwSkill implements Listener, Watcher, Keyed {
         SkillConfigDto configDto = getConfig();
         Map<String, String> ext = configDto.getExt();
         String configRule = "repeat";
-        if (StrUtil.isBlank(configDto.getShowLevel())) {
+        if (StrUtil.isNotBlank(configDto.getShowLevel())) {
             configRule = configDto.getShowLevel();
         }
         String levelChar = DEFAULT_LEVEL_CHAR;
@@ -122,7 +120,7 @@ public abstract class AbstractSwSkill implements Listener, Watcher, Keyed {
     public SkillConfigDto getConfig() {
         ConfigYmlDto configYml = ConfigManager.getConfigYml();
         Map<String, SkillConfigDto> skills = configYml.getSkills();
-        return skills.get(getKey());
+        return skills.get(getConfigKey());
     }
 
     public String getDisplayName() {

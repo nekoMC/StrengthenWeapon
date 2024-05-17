@@ -4,20 +4,19 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import fun.nekomc.sw.StrengthenWeapon;
 import fun.nekomc.sw.exception.ConfigurationException;
+import fun.nekomc.sw.skill.AbstractSwSkill;
+import fun.nekomc.sw.skill.helper.SkillHelper;
 import lombok.Data;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * SW 道具配置，含部分配置解析逻辑
@@ -69,6 +68,11 @@ public class SwItemConfigDto implements Serializable {
      * 附魔列表
      */
     private List<String> enchantments;
+
+    /**
+     * 技能列表
+     */
+    private List<String> skills;
 
     /**
      * 稀有度权重
@@ -125,11 +129,7 @@ public class SwItemConfigDto implements Serializable {
             // 解析附魔配置
             String[] enchantNameAndLevel = enchantment.split(":");
             String enchantmentName = enchantNameAndLevel[0].toLowerCase();
-            Enchantment targetEnchant = Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName));
-            if (null == targetEnchant) {
-                // 无法解析时，尝试作为自定义附魔进行解析
-                targetEnchant = Enchantment.getByKey(new NamespacedKey(StrengthenWeapon.getInstance(), enchantmentName));
-            }
+            Enchantment targetEnchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchantmentName));
             if (null == targetEnchant) {
                 throw new ConfigurationException("无法识别的附魔：" + enchantment);
             }
@@ -140,5 +140,27 @@ public class SwItemConfigDto implements Serializable {
             enchantMap.put(targetEnchant, lvl);
         }
         return enchantMap;
+    }
+
+    public Map<AbstractSwSkill, Integer> getLvlMap() {
+        if (CollUtil.isEmpty(skills)) {
+            return MapUtil.empty();
+        }
+        HashMap<AbstractSwSkill, Integer> skillMap = new HashMap<>(skills.size());
+        for (String skill : skills) {
+            // 解析附魔配置
+            String[] skillAndLvl = skill.split(":");
+            String skillKey = skillAndLvl[0];
+            Optional<AbstractSwSkill> targetSkillOpt = SkillHelper.getByKey(skillKey);
+            if (targetSkillOpt.isEmpty()) {
+                throw new ConfigurationException("无法识别的技能：" + skill);
+            }
+            int lvl = 0;
+            if (skillAndLvl.length == 2) {
+                lvl = Integer.parseInt(skillAndLvl[1]);
+            }
+            skillMap.put(targetSkillOpt.get(), lvl);
+        }
+        return skillMap;
     }
 }

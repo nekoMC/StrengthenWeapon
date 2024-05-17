@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "fun.nekomc"
-version = "1.0-beta.4"
+version = "2.0-alpha.1"
 
 repositories {
     mavenLocal()
@@ -26,6 +26,7 @@ repositories {
 dependencies {
     api(rootProject.libs.cn.hutool.hutool.core)
     compileOnly(rootProject.libs.org.spigotmc.spigot.api)
+    compileOnly(rootProject.libs.com.google.guava.guava.collections)
     testImplementation(rootProject.libs.org.spigotmc.spigot.api)
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

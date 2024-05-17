@@ -46,6 +46,10 @@ public class Constants {
      * 等级显示，格式化规则的键
      */
     public static final String LEVEL_FORMAT = "levelFormat";
+    /**
+     * 默认物品使用的通用KEY：Default Sw Item
+     */
+    public static final String DEFAULT_ITEM_NAME = "DSI";
 
     @UtilityClass
     public static class Msg {

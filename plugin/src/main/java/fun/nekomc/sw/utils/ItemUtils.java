@@ -15,7 +15,6 @@ import fun.nekomc.sw.domain.dto.SwItemConfigDto;
 import fun.nekomc.sw.domain.enumeration.ItemsTypeEnum;
 import fun.nekomc.sw.skill.helper.SkillHelper;
 import fun.nekomc.sw.exception.ConfigurationException;
-import fun.nekomc.sw.exception.SwException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Material;
@@ -79,8 +78,10 @@ public class ItemUtils {
         // Meta - 附加信息，为白板写入带有初始强化等级的附加信息
         ItemsTypeEnum itemType = ItemsTypeEnum.valueOf(itemConfig.getType());
         SwItemAttachData itemDefaultAttachData = itemType == ItemsTypeEnum.BLANK
-                ? SwItemAttachData.LVL0_ATTACH_DATA
-                : SwItemAttachData.EMPTY_ATTACH_DATA;
+                ? new SwItemAttachData(0, 0)
+                : new SwItemAttachData(null, null);
+        // Meta - 技能信息
+        itemConfig.getLvlMap().forEach(itemDefaultAttachData::putSkill);
         PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
         persistentDataContainer.set(StrengthenWeapon.getWarpedKey(itemConfig.getName()),
                 SwItemAttachData.EMPTY_ATTACH_DATA, itemDefaultAttachData);
@@ -118,13 +119,13 @@ public class ItemUtils {
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
         String nameFromDataContainer = getNameFromDataContainer(persistentDataContainer);
         if (StrUtil.isBlank(nameFromDataContainer)) {
-            throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.UNKNOWN_ITEM));
+            nameFromDataContainer = Constants.DEFAULT_ITEM_NAME;
         }
         persistentDataContainer.set(StrengthenWeapon.getWarpedKey(nameFromDataContainer), SwItemAttachData.EMPTY_ATTACH_DATA, attachData);
         Optional<SwItemConfigDto> itemConfigOptional = ConfigManager.getItemConfig(nameFromDataContainer);
         // 配置文件内容缺失时，不进行后续处理
-        if (!itemConfigOptional.isPresent()) {
-            MsgUtils.consoleMsg("配置项缺失，请检查道具[%s]的配置", nameFromDataContainer);
+        if (itemConfigOptional.isEmpty()) {
+            MsgUtils.consoleMsg("正在修改原生物品[%s]", itemMeta.getLocalizedName());
             return;
         }
         // 更新 lore 信息
@@ -149,7 +150,7 @@ public class ItemUtils {
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
         String nameFromDataContainer = getNameFromDataContainer(persistentDataContainer);
         if (StrUtil.isBlank(nameFromDataContainer)) {
-            return Optional.empty();
+            nameFromDataContainer = Constants.DEFAULT_ITEM_NAME;
         }
         NamespacedKey warpedItemName = StrengthenWeapon.getWarpedKey(nameFromDataContainer);
         SwItemAttachData attachData = persistentDataContainer.get(warpedItemName, SwItemAttachData.EMPTY_ATTACH_DATA);
@@ -204,8 +205,7 @@ public class ItemUtils {
      * 尝试获取与当前实体关联的玩家对象，获取不到时返回 null
      */
     public Player tryAsPlayer(Entity entity) {
-        if (entity instanceof Projectile) {
-            Projectile projectile = (Projectile) entity;
+        if (entity instanceof Projectile projectile) {
             if (projectile.getShooter() instanceof Player) {
                 return (Player) projectile.getShooter();
             }
@@ -213,8 +213,7 @@ public class ItemUtils {
         if (entity instanceof Player) {
             return (Player) entity;
         }
-        if (entity instanceof Tameable) {
-            Tameable tameable = (Tameable) entity;
+        if (entity instanceof Tameable tameable) {
             return (Player) tameable.getOwner();
         }
         return null;
@@ -301,8 +300,6 @@ public class ItemUtils {
             }
         }
         targetItem.setItemMeta(itemMeta);
-        // 刷新附魔 Lore
-        SkillHelper.updateLore(targetItem);
 
         String itemName = itemMeta.getDisplayName();
         if (CharSequenceUtil.isEmpty(itemName)) {
@@ -326,7 +323,7 @@ public class ItemUtils {
         String itemName = ItemUtils.getNameFromMeta(item);
         Optional<SwItemConfigDto> itemConfig = ConfigManager.getItemConfig(itemName);
         // 没有配置或没有配置类型不匹配，返回空
-        if (!itemConfig.isPresent() || !(dtoType.isInstance(itemConfig.get()))) {
+        if (itemConfig.isEmpty() || !(dtoType.isInstance(itemConfig.get()))) {
             return Optional.empty();
         }
         return Optional.of((D) itemConfig.get());
