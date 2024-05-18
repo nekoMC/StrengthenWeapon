@@ -1,0 +1,180 @@
+message:
+  no_auth: §4您没有权限执行该指令
+  command_error: §4指令解析出错：
+  not_player: §4该指令只能被玩家执行
+  grammar_error: §4语法错误，使用 sw help 获取帮助
+  unknown_item: §4不存在的道具
+  config_error: §4无法解析配置，请检查配置文件
+  config_cannot_resolve: §4无法解析配置：%s
+  unknown_player: §4玩家不存在
+  unknown_entity: §4实体不存在
+  unknown_attribute: §4不存在的属性
+  cannot_operate: §4无法完成操作
+  line_number: 行号
+  reloaded: §a配置文件已重新读取
+  promote_change:  §b强化成功！§a属性[%s.%s]发生变化:[%s]
+  promote_reset:  §b强化成功！§a属性[%s.%s]重写为:[%s]
+  promote_fail: §4强化失败！
+  check_not_pass: §4强化失败，未发生改变！
+  got_sea_gift: §b获得了海之馈赠：%s！
+  help_msg: |
+    §c§l--- §aSW 帮助信息 §c§l---
+    §a§l/sw refine [<玩家>] §e打开洗炼菜单
+    §a§l/sw strengthen [<玩家>] §e打开强化菜单
+    §a§l/sw help §e显示本帮助信息
+  admin_help_msg: |
+    §c§l--- §aSW 管理指令 §c§l---
+    §b§l/sw give <玩家> <道具名> [<数量>] §e给予指定玩家道具
+    §b§l/sw drop <玩家> <x> <y> <z> <道具名> [<数量>] §e在玩家所在世界的指定位置生成掉落物
+    §b§l/sw enchant <附魔ID> <附魔等级> §e对主手上的物品进行附魔
+    §b§l/sw skill <技能ID> <技能等级> §e对主手上物品的技能进行调整
+    §b§l/sw attribute <槽位> <属性ID> <属性值变化> §e对主手上物品的属性增强进行修改
+    §b§l/sw lore set <行号> <Lore内容> §e修改主手上物品的 Lore
+    §b§l/sw lore del <行号> §e删除主手上物品指定行的 Lore
+    §b§l/sw promote <原料名> §e使用指定的原料对主手上的物品进行强化
+    §b§l/sw rename <新名称> §e重命名道具
+
+# 自定义技能
+skills:
+  # -------------------------------------
+  # 注释掉整个配置即可禁用一个附魔
+  # 启用、禁用某个附魔时，需要重启才能生效
+  # 不建议中途修改附魔名，因为原附魔名会遗留在道具的 lore 中
+  # -------------------------------------
+  # 用在弓上时，每提升一级可以额外射出 addition 支箭
+  ARROW_RAIN:
+    displayName: §b箭雨
+    addition: 1 # 每级多射出的箭数
+  # 拥有此附魔的鱼竿有概率钓到配置的道具
+  GIFT_OF_THE_SEA:
+    displayName: §6海之馈赠
+    addition: 10 # 每级提升的概率
+  # 近战攻击时有概率吸血
+  SUCK_BLOOD:
+    displayName: §4嗜血
+    addition: 20 # 吸血量 = 等级 * addition / 100
+  # 受击时恢复
+  GET_HIT_HEAL:
+    displayName: §4坚守
+    addition: 20 # 恢复量 = 等级 * addition / 100
+  # 概率秒杀
+  SECKILL:
+    displayName: §4制裁
+    addition: 1 # 每提升一级，增加 1% 概率
+    start: 2 # 2% 秒杀
+    ext:
+      safe: 500 # HP 高于多少的怪物不会受影响
+  # 手持含该附魔的物品右键时，会投掷出喷溅药水瓶
+  WITCHER:
+    displayName: §4巫师
+    addition: -100 # 每级 CD 时间缩短的 ms 数
+    start: 1000 # 附魔等级为 1 时的属性值，如果不配置默认为 addition 的值
+  # ---------------------
+  # 药水的辅助附魔 - 减益
+  # ---------------------
+  # 药剂效果：延缓
+  SLOW_POTION:
+    displayName: §b魔咒-缓慢
+    addition: 20 # 每级增加的效果时长，单位 tick，药水类均一样
+  # 药剂效果：瞎
+  BLIND_POTION:
+    displayName: §b魔咒-失明
+    addition: 20
+  # 药剂效果：瞬间伤害
+  HARM_POTION:
+    displayName: §b魔咒-伤害
+    addition: 10
+  # 药剂效果：恶心
+  CONFUSION_POTION:
+    displayName: §b魔咒-晕厥
+    addition: 20
+  # 药剂效果：发光
+  GLOWING_POTION:
+    displayName: §b魔咒-光环
+    addition: 20
+  # 药剂效果：饥饿
+  HUNGER_POTION:
+    displayName: §b魔咒-饥馑
+    addition: 20
+  # 药剂效果：漂浮
+  FLOAT_POTION:
+    displayName: §b魔咒-升腾
+    addition: 20
+  # 药剂效果：中毒
+  POISON_POTION:
+    displayName: §b魔咒-猛毒
+    addition: 20
+  # 药剂效果：中毒
+  WEAKNESS_POTION:
+    displayName: §b魔咒-削弱
+    addition: 20
+  # 药剂效果：凋零
+  WITHER_POTION:
+    displayName: §b魔咒-奈落
+    addition: 20
+  # ---------------------
+  # 药水的辅助附魔 - 增益
+  # ---------------------
+  # 药剂效果：伤害吸收
+  ABSORPTION_POTION:
+    displayName: §b祝福-圣血
+    addition: 20
+  # 药剂效果：涌潮能量
+  CONDUIT_POTION:
+    displayName: §b祝福-潮涌
+    addition: 20
+  # 药剂效果：伤害减免
+  RESISTANCE_POTION:
+    displayName: §b祝福-圣盾
+    addition: 20
+  # 药剂效果：抗火
+  FIRE_RESISTANCE_POTION:
+    displayName: §b祝福-耐火
+    addition: 20
+  # 药剂效果：瞬间治疗
+  HEAL_POTION:
+    displayName: §b祝福-圣愈
+    addition: 10
+  # 药剂效果：伤害增加
+  INCREASE_DMG_POTION:
+    displayName: §b祝福-斗气
+    addition: 20
+  # 药剂效果：隐身
+  INVISIBILITY_POTION:
+    displayName: §b祝福-隐匿
+    addition: 20
+  # 药剂效果：跳跃提升
+  JUMP_POTION:
+    displayName: §b祝福-弹跳
+    addition: 20
+  # 药剂效果：跳跃提升
+  NIGHT_VISION_POTION:
+    displayName: §b祝福-夜视
+    addition: 20
+  # 药剂效果：生命恢复
+  REGENERATION_POTION:
+    displayName: §b祝福-再生
+    addition: 20
+  # 药剂效果：饱和
+  SATURATION_POTION:
+    displayName: §b祝福-饱和
+    addition: 20
+  # 药剂效果：速度提升
+  SPEED_POTION:
+    displayName: §b祝福-极速
+    addition: 20
+  # 药剂效果：水下呼吸
+  WATER_BREATHING_POTION:
+    displayName: §b祝福-水肺
+    addition: 20
+
+# 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
+# 比如，使用 FURNACE 时，必须将原料配置为燃料类，否则基岩版玩家无法使用 GUI，Java 版无需关心
+refineType: FURNACE
+refineTitle: §6§l洗炼炉
+strengthType: FURNACE
+strengthTitle: §c§l精炼台
+# 关闭后，玩家将不能对插件道具进行附魔、祛魔、改名等
+enablePlayerEnchant: false
+# 启用自定义附魔修复，如果因为 ProtocolSupport 等插件导致自定义附魔丢失可以开启此配置项
+usingLoreGetter: true

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fun.nekomc</groupId>
+    <artifactId>StrengthWeapon</artifactId>
+    <version>1.0-beta.4</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+
+        <!-- Environment properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>17</java.version>
+        <maven.minimumVersion>3.6.0</maven.minimumVersion>
+        <junit.platform.version>1.9.0</junit.platform.version>
+        <junit.jupiter.version>5.9.0</junit.jupiter.version>
+        <mockito.version>4.7.0</mockito.version>
+        <hutool.version>5.8.5</hutool.version>
+
+        <!-- Versioning properties -->
+        <project.outputName>StrengthWeapon</project.outputName>
+        <project.buildNumber>CUSTOM</project.buildNumber>
+        <project.versionCode>${project.version}-b${project.buildNumber}</project.versionCode>
+        <project.finalNameBase>${project.outputName}-${project.version}</project.finalNameBase>
+
+        <!-- Plugin description file properties -->
+        <pluginDescription.name>${project.outputName}</pluginDescription.name>
+        <pluginDescription.version>${project.versionCode}</pluginDescription.version>
+        <pluginDescription.main>${project.groupId}.${project.artifactId}.${pluginDescription.name}
+        </pluginDescription.main>
+        <pluginDescription.authors>ourange, ChiruMori</pluginDescription.authors>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>vault-repo</id>
+            <url>https://nexus.hc.to/content/repositories/pub_releases</url>
+        </repository>
+        <!--repository>
+            <id>ess-repo</id>
+            <url>https://repo.ess3.net/content/groups/essentials</url>
+        </repository-->
+        <repository>
+            <id>clip-repo</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>provided</scope>
+        </dependency>
