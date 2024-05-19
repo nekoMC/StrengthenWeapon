@@ -230,12 +230,14 @@ public interface Watcher {
      * @param player     钓鱼的玩家
      * @param fishingRod 使用的鱼竿
      * @param caught     钓上来的东西
+     * @param godHasGift 神是否已有所赠与
      * @param level      鱼竿上指定附魔的等级
      * @param event      The event that called this watcher.
      */
     default void onFishing(@NotNull final Player player,
                            @NotNull final ItemStack fishingRod,
                            @NotNull final Item caught,
+                           final boolean godHasGift,
                            final int level,
                            @NotNull final PlayerFishEvent event) {
         // Empty default as enchantments only override required watchers.

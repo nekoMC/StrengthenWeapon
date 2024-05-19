@@ -67,6 +67,12 @@ public class SwItemAttachData implements PersistentDataType<String, SwItemAttach
         this.skills = new HashMap<>();
     }
 
+    public SwItemAttachData(Integer refLv, Integer strLv, Map<String, Integer> skills) {
+        this.refineLevel = refLv;
+        this.strengthenLevel = strLv;
+        this.skills = skills;
+    }
+
     @NotNull
     @Override
     public Class<String> getPrimitiveType() {

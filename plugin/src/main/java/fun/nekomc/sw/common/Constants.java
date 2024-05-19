@@ -71,5 +71,6 @@ public class Constants {
         public static final String GOT_SEA_GIFT = "got_sea_gift";
         public static final String UNKNOWN_PLAYER = "unknown_player";
         public static final String UNKNOWN_ENTITY = "unknown_entity";
+        public static final String GOT_GODS_GIFT = "got_gods_gift";
     }
 }

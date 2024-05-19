@@ -17,6 +17,7 @@ message:
   promote_fail: §4强化失败！
   check_not_pass: §4强化失败，未发生改变！
   got_sea_gift: §b获得了海之馈赠：%s！
+  got_gods_gift: "%s§b获得了神明赠与的[%s]！"
   help_msg: |
     §c§l--- §aSW 帮助信息 §c§l---
     §a§l/sw refine [<玩家>] §e打开洗炼菜单
@@ -64,6 +65,10 @@ skills:
     start: 2 # 2% 秒杀
     ext:
       safe: 500 # HP 高于多少的怪物不会受影响
+  # 霹雳
+  THUNDER:
+      displayName: §4霹雳
+      addition: 10 # 每级增加的触发概率
   # 手持含该附魔的物品右键时，会投掷出喷溅药水瓶
   WITCHER:
     displayName: §4巫师
@@ -167,6 +172,14 @@ skills:
   WATER_BREATHING_POTION:
     displayName: §b祝福-水肺
     addition: 20
+
+# 获取各类型神明馈赠的概率
+gift:
+  fishery: 0.005
+  agriculture: 0.005
+  mining: 0.001
+  potion: 0.0002
+  battle: 0.002
 
 # 只有 FURNACE、ANVIL 支持性较好，基岩版兼容性更差，需要考虑燃料等情况
 # 比如，使用 FURNACE 时，必须将原料配置为燃料类，否则基岩版玩家无法使用 GUI，Java 版无需关心

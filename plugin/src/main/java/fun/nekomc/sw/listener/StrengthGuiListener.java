@@ -36,8 +36,11 @@ public class StrengthGuiListener extends TwoInputOneOutputGuiListener implements
 
     @Override
     protected SwItemAttachData newAttachDataAfterLvlUp(SwItemAttachData oldAttach) {
-        int oldStr = (null == oldAttach || null == oldAttach.getStrengthenLevel()) ? 0 : oldAttach.getStrengthenLevel();
-        int oldRef = (null == oldAttach || null == oldAttach.getRefineLevel()) ? 0 : oldAttach.getRefineLevel();
-        return new SwItemAttachData(oldRef, oldStr + 1);
+        if (oldAttach == null) {
+            return new SwItemAttachData(0, 1);
+        }
+        int oldStr = null == oldAttach.getStrengthenLevel() ? 0 : oldAttach.getStrengthenLevel();
+        int oldRef = null == oldAttach.getRefineLevel() ? 0 : oldAttach.getRefineLevel();
+        return new SwItemAttachData(oldRef, oldStr + 1, oldAttach.getSkills());
     }
 }

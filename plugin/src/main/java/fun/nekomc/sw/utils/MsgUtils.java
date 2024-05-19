@@ -62,4 +62,8 @@ public class MsgUtils {
         CommandSender sender = PlayerHolder.getSender();
         returnMsgToSender(sender, configuredMsg, args);
     }
+
+    public static void broadcase(String msg, Object... args) {
+        StrengthenWeapon.server().broadcastMessage(String.format(msg, args));
+    }
 }

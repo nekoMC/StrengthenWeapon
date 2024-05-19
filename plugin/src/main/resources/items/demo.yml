@@ -1,6 +1,6 @@
-# ========== #
-# = 白板配置 = #
-# ========== #
+# ============== #
+# = 战斗物品配置 = #
+# ============= #
 
 speed_bow:
   type: BLANK
@@ -42,7 +42,7 @@ speed_bow:
         - §4洗炼失败时，可能损失原物品！
         - §4本次洗炼成功率：${chance}%
       material: CHEST
-    broke: refine_scrap # 洗练失败时的产物
+    broke: bow_shelf # 洗练失败时的产物
   # 精炼规则
   strength:
     limit: 10 # 最多可以强化的次数
@@ -59,11 +59,10 @@ speed_bow:
         - §4精炼失败时，可能损失原物品！
         - §4本次精炼成功率：${chance}%
       material: ENDER_CHEST
-    broke: str_scrap # 精炼失败时的产物
-
-# ========== #
-# = 洗炼原料 = #
-# ========== #
+    broke: bow_shelf # 精炼失败时的产物
+  rarity:
+    fishery: 1
+    battle: 20
 
 speed_btn:
   material: BIRCH_BUTTON
@@ -71,13 +70,14 @@ speed_btn:
   displayName: §d神羽之种
   name: speed_btn
   lore:
-    - §5上古神鸟的魔力结核，仍保留
-    - §5着微弱的神力，拿在手上便可
-    - §5感受到神力。
+    - §d============================
+    - §5上古神鸟的魔力结核，仍保留着微弱的
+    - §5神力，拿在手上便可感受到神力。
+    - §d============================
     - §5稀有度：§d史诗-洗炼原料
     - §5可能使以下属性发生改变：
-    - §a移速 攻速 力量
-    - §4击退抗性 盔甲
+    - §a⬆ 移速 攻速 力量
+    - §4⬇ 击退抗性 盔甲
   attributes:
     HAND:
       GENERIC_MOVEMENT_SPEED: 0.2
@@ -98,7 +98,10 @@ speed_btn:
   # 成功率加成
   addition: 0
   # 稀有度，值越大越容易通过自然途径（钓鱼）获取，为 0 或缺省时无法自然获取
-  rarity: 60
+  rarity:
+    fishery: 5
+    potion: 1
+    battle: 20
 
 bow_sapling:
   material: BIRCH_SAPLING
@@ -106,13 +109,16 @@ bow_sapling:
   displayName: §6神木的枝叶
   name: bow_sapling
   lore:
-    - §5神鸟栖息地巨大神木的枝叶。
-    - §5相传具有神力的弓均以神木制
-    - §5成。
+    - §6============================
+    - §5神鸟栖息地巨大神木的枝叶。相传具有
+    - §5神力的弓均以神木制成。
+    - §6============================
     - §5稀有度：§6臻品-洗炼原料
     - §5可能使以下属性发生改变1-2次：
-    - §a移速 力量 箭雨
-    - §4击退抗性 最大生命
+    - §a⬆ 移速 力量 箭雨 霹雳
+    - §4⬇ 击退抗性 最大生命
+  enchantments:
+    - FORTUNE:1
   skills:
     - ARROW_RAIN:1
   # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
@@ -134,14 +140,13 @@ bow_sapling:
     - ATTR-HAND:GENERIC_MAX_HEALTH:-2:60
     - ATTR-HAND:GENERIC_KNOCKBACK_RESISTANCE:-0.2:60
     - SKILL:ARROW_RAIN:1:30
+    - SKILL:THUNDER:1:20
     - ENCH_UP:POWER:+1:40
   # 成功率加成
   addition: 0
-  rarity: 10
-
-# ========== #
-# = 精炼原料 = #
-# ========== #
+  rarity:
+    fishery: 2
+    battle: 100
 
 mov_speed_coal:
   material: COAL
@@ -151,18 +156,23 @@ mov_speed_coal:
   enchantments:
     - SOUL_SPEED:1
   lore:
+    - §d============================
     - §5大地深处埋藏的远古神木，漫长的
     - §5时光中，汇聚大地精华。使能发掘
     - §5出其真实力量的人得以大地上畅行
+    - §d============================
     - §5稀有度：§d史诗-精炼原料
     - §5可能使以下属性增强：
-    - §a主手移速 副手移速
+    - §a⬆ 主手移速 副手移速
   candidates:
     - ATTR_UP-HAND:GENERIC_MOVEMENT_SPEED:+0.05:50
     - ATTR_UP-OFF_HAND:GENERIC_MOVEMENT_SPEED:+0.05:50
   # 成功率加成
   addition: 0
-  rarity: 40
+  rarity:
+    fishery: 2
+    mining: 5
+    battle: 200
 
 atk_speed_char:
   material: CHARCOAL
@@ -172,18 +182,23 @@ atk_speed_char:
   enchantments:
     - SOUL_SPEED:2
   lore:
+    - §d============================
     - §5即使是神木，也无法避免被制成木炭
     - §5但神木中的魔力在烧制过程中并未消
     - §5失，而是发生了转变。
+    - §d============================
     - §5稀有度：§d史诗-精炼原料
     - §5可能使以下属性增强：
-    - §a主手攻速 副手攻速
+    - §a⬆ 主手攻速 副手攻速
   candidates:
     - ATTR_UP-HAND:GENERIC_ATTACK_SPEED:+0.05:50
-    - ATTR_UP-OFF_HAND:GENERIC_ATTACK_SPEED:+0.05:50
+    - ATTR_UP-`OFF_HAND`:GENERIC_ATTACK_SPEED:+0.05:50
   # 成功率加成
   addition: 0
-  rarity: 50
+  rarity:
+    fishery: 2
+    mining: 5
+    battle: 200
 
 bow_shelf:
   material: BOOKSHELF
@@ -195,9 +210,11 @@ bow_shelf:
   skills:
     - ARROW_RAIN:1
   lore:
-    - §5稀有的禁术魔导书典藏，封印了
-    - §5突破神力，用它精炼可以使已有
-    - §5的魔咒得到进一步增强。
+    - §6============================
+    - §5稀有的禁术魔导书典藏，封印了突破
+    - §5神力，用它精炼可以使已有的能力得
+    - §5到进一步增强。
+    - §6============================
     - §5稀有度：§6臻品-精炼原料
     - §5可能使以下属性增强：
     - §a箭雨 力量
@@ -208,52 +225,775 @@ bow_shelf:
   addition: 0
   rarity: 10
 
-# ========== #
-# =  废料   = #
-# ========== #
+# ================= #
+# =  渔业相关物品   = #
+# ================ #
 
-refine_scrap:
-  material: NETHERITE_SCRAP
-  type: DEFAULT
-  displayName: §3洗炼废料
-  name: refine_scrap
-  enchantments:
-    - FORTUNE:1
-  lore:
-    - §5即使熟练的工匠，也无法保证
-    - §5万无一失，失败在所难免，但
-    - §5工匠似乎对这些废料很有兴趣
-    - §5稀有度：§3稀有
-
-str_scrap:
-  material: NETHERITE_SCRAP
-  type: DEFAULT
-  displayName: §3精炼废料
-  name: str_scrap
-  enchantments:
-    - FORTUNE:2
-  lore:
-    - §5即使熟练的工匠，也无法保证
-    - §5万无一失，失败在所难免，但
-    - §5工匠似乎对这些废料很有兴趣
-    - §5稀有度：§3稀有
-
-# ========== #
-# =  其他   = #
-# ========== #
-
-fishing_rod1:
+rod_blank1:
   material: FISHING_ROD
-  type: DEFAULT
-  displayName: §d海王的晾衣杆
-  name: fishing_rod1
+  type: BLANK
+  displayName: §6海神的晾衣杆
+  name: rod_blank1
   damage: 54
   enchantments:
-    - LUCK_OF_THE_SEA:5
+    - LUCK_OF_THE_SEA:2
     - LURE:3
   skills:
     - GIFT_OF_THE_SEA:2
   lore:
-    - §5下海！下海！鬼知道海里有什么！！
-    - §5只有十发，海王护佑，下一杆一定！
+    - §6============================
+    - §5北冥海域打捞的废铜烂铁，看上去只是
+    - §5一截残损的晾衣杆而已，没什么特别的
+    - §6============================
+    - §5稀有度：§6臻品
+    - §5练度：§4${refine_level}§a洗 §7- §4${strengthen_level}§a精
+  # 洗炼规则
+  refine:
+    limit: 20 # 最多可以洗炼的次数
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 1 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
+      - void_coal
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: rod_blank1_pre1
+      lore:
+        - §a最多可以进行20次洗炼。
+        - §4洗炼成功率会逐级降低！
+        - §4洗炼失败时，可能损失原物品！
+        - §4本次洗炼成功率：${chance}%
+      material: CHEST
+    broke: rod_once # 洗练失败时的产物
+  # 精炼规则
+  strength:
+    limit: 10 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 5 # 每洗炼一次，成功率下降多少
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: rod_blank1_pre2
+      lore:
+        - §a最多可以进行10次精炼。
+        - §4精炼成功率会逐级降低！
+        - §4精炼只能强化已有属性，注意选择材料！
+        - §4精炼失败时，可能损失原物品！
+        - §4本次精炼成功率：${chance}%
+      material: ENDER_CHEST
+    broke: rod_once # 精炼失败时的产物
+  rarity:
+    # 通过钓鱼获取到本物品的权重值，权重越大占比越大，默认为0可缺省
+    fishery: 100
+    # 通过采收庄稼获取到本物品的权重，默认为0可缺省
+    agriculture: 0
+    # 通过采石挖矿获得到本物品的权重，默认为0可缺省
+    mining: 0
+    # 砸药水瓶爆本物品的权重，默认为0可缺省
+    potion: 0
+    # 杀怪爆本物品的权重，默认为0可缺省
+    battle: 5
+
+rod_blank2:
+  material: FISHING_ROD
+  type: BLANK
+  displayName: §4海神的策马鞭
+  name: rod_blank2
+  unbreakable: true
+  attributes:
+    HAND:
+      GENERIC_MOVEMENT_SPEED: -0.3
+      GENERIC_ARMOR: 5
+  enchantments:
+    - LUCK_OF_THE_SEA:5
+    - LURE:3
+    - UNBREAKING:5
+  skills:
+    - GIFT_OF_THE_SEA:2
+  lore:
+    - §4============================
+    - §5海贼之王向海神“借”的策马鞭，重达十万
+    - §5八千斤，是极佳的健身器材。
+    - §4============================
+    - §5稀有度：§4传说
+    - §5练度：§4${refine_level}§a洗 §7- §4${strengthen_level}§a精
+  # 洗炼规则
+  refine:
+    limit: 20 # 最多可以洗炼的次数
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 2 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
+      - void_coal
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: rod_blank2_pre1
+      lore:
+        - §a最多可以进行20次洗炼。
+        - §4洗炼成功率会逐级降低！
+        - §4洗炼失败时，可能损失原物品！
+        - §4本次洗炼成功率：${chance}%
+      material: CHEST
+    broke: rod_once # 洗练失败时的产物
+  # 精炼规则
+  strength:
+    limit: 10 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 6 # 每洗炼一次，成功率下降多少
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: rod_blank2_pre2
+      lore:
+        - §a最多可以进行10次精炼。
+        - §4精炼成功率会逐级降低！
+        - §4精炼只能强化已有属性，注意选择材料！
+        - §4精炼失败时，可能损失原物品！
+        - §4本次精炼成功率：${chance}%
+      material: ENDER_CHEST
+    broke: rod_once # 精炼失败时的产物
+  rarity:
+    fishery: 10
+
+rod_once:
+  material: FISHING_ROD
+  type: DEFAULT
+  displayName: §6海之探宝索
+  name: rod_once
+  damage: 63
+  enchantments:
+    - LURE:3
+  skills:
+    - GIFT_OF_THE_SEA:10
+  attributes:
+    HAND:
+      GENERIC_MAX_HEALTH: -4
+    OFF_HAND:
+      GENERIC_MAX_HEALTH: -4
+  lore:
+    - §6============================
+    - §5挥杆！海盗亡灵的耳语会告诉你宝藏在
+    - §5哪里
+    - §6============================
+    - §5稀有度：§6臻品
+  rarity:
+    fishery: 150
+    battle: 10
+
+void_coal:
+  material: COAL
+  type: STRENGTHEN_STONE
+  displayName: §d虚空的纳米原料
+  name: void_coal
+  enchantments:
+    - LURE:1
+  lore:
+    - §d============================
+    - §5来自虚空次元的顶级原材料，千万不能
+    - §5浪费，用来改良鱼竿刚刚好。
+    - §d============================
+    - §5稀有度：§d史诗-精炼原料
+    - §5可能造成的影响：
+    - §a⬆ 耐久 饵钓 海之馈赠 海之眷顾
+    - §4⬇ 移速
+  candidates:
+    - SKILL_UP:GIFT_OF_THE_SEA:1:40
+    - SKILL_UP:GIFT_OF_THE_SEA:2:5
+    - ENCH_UP:LURE:1:50
+    - ENCH_UP:UNBREAKING:1:30
+    - ENCH_UP:LUCK_OF_THE_SEA:1:25
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:-0.05:20
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 300
+    mining: 5
+    battle: 15
+
+void_stick:
+  material: STICK
+  type: REFINE_STONE
+  displayName: §d虚空的紫杆杆
+  name: void_stick
+  lore:
+    - §d============================
+    - §5来自虚空次元的未知大棒子，万万不可
+    - §5浪费，可用于鱼竿的洗练。
+    - §d============================
+    - §5稀有度：§d史诗-洗练原料
+    - §5可能造成的影响：
+    - §a⬆ 耐久 精修 幸运 荆棘 海之馈赠
+    - §4⬇ 移速 生命
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  # 配置解释：可获得的条数,概率权重,每提升一个洗练等级对概率权重的影响
+  times:
+    - time: 1
+      chance: 100
+      rate: 2
+    - time: 2
+      chance: 10
+      rate: -2
+  candidates:
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.01:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.03:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.05:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:0.1:5
+    - ATTR-HAND:GENERIC_MAX_HEALTH:-2:20
+    - SKILL:GIFT_OF_THE_SEA:1:10
+    - ENCH:MENDING:1:20
+    - ENCH:UNBREAKING:1:20
+    - ENCH:FORTUNE:1:30
+    - ENCH:THORNS:3:5
+  enchantments:
+    - LURE:2
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 300
+    mining: 5
+    battle: 15
+
+straw_hat:
+  material: TURTLE_HELMET
+  type: DEFAULT
+  displayName: §6油绿的草帽子
+  name: straw_hat
+  unbreakable: true
+  enchantments:
+    - PROTECTION:5
+    - RESPIRATION:2
+    - AQUA_AFFINITY:2
+    - THORNS:8
+  skills:
+    - GIFT_OF_THE_SEA:10
+  attributes:
+    HEAD:
+      GENERIC_MOVEMENT_SPEED: -0.2
+      GENERIC_KNOCKBACK_RESISTANCE: 5
+      GENERIC_ARMOR: 5
+  lore:
+    - §6============================
+    - §5青箬笠，绿蓑衣。需要悟透这一境界，
+    - §5才能登上渔之领域的巅峰。
+    - §6============================
+    - §5稀有度：§6臻品
+  rarity:
+    fishery: 150
+    battle: 10
+
+# ================= #
+# =  巫师相关物品   = #
+# ================ #
+
+lost_canon:
+  material: BOOK
+  type: BLANK
+  displayName: §4失落的圣典
+  name: lost_canon
+  unbreakable: true
+  enchantments:
+    - MENDING:4
+  skills:
+    - WITCHER:2
+    - SECKILL:1
+  lore:
+    - §6============================
+    - §5不该存在的圣典，其记载的魔咒已被悉数
+    - §5禁锢，只剩下巫师传承不灭的符咒。重筑
+    - §5后必成大器。
+    - §6============================
+    - §5稀有度：§4传说
+    - §5练度：§4${refine_level}§a洗 §7- §4${strengthen_level}§a精
+  # 洗炼规则
+  refine:
+    limit: 10 # 最多可以洗炼的次数
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 9 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
+      - disaster_root
+      - bless_root
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: lost_canon_pre1
+      lore:
+        - §a最多可以进行10次洗炼。
+        - §4洗炼圣典是一场豪赌！
+        - §4洗炼失败时，可能损失原物品！
+        - §4本次洗炼成功率：${chance}%
+      material: CHEST
+    broke: magic_roots1 # 洗练失败时的产物
+  # 精炼规则
+  strength:
+    limit: 10 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 9 # 每洗炼一次，成功率下降多少
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: rod_blank1_pre2
+      lore:
+        - §a最多可以进行10次精炼。
+        - §4精炼圣典是一场豪赌！
+        - §4精炼只能强化已有属性，注意选择材料！
+        - §4精炼失败时，可能损失原物品！
+        - §4本次精炼成功率：${chance}%
+      material: ENDER_CHEST
+    broke: magic_roots2 # 精炼失败时的产物
+  rarity:
+    # 通过钓鱼获取到本物品的权重值，权重越大占比越大，默认为0可缺省
+    fishery: 1
+    # 通过采收庄稼获取到本物品的权重，默认为0可缺省
+    agriculture: 0
+    # 通过采石挖矿获得到本物品的权重，默认为0可缺省
+    mining: 0
+    # 砸药水瓶爆本物品的权重，默认为0可缺省
+    potion: 20
+    # 杀怪爆本物品的权重，默认为0可缺省
+    battle: 1
+
+broken_brush:
+  material: BRUSH
+  type: DEFAULT
+  displayName: §6魔女的扫把
+  name: broken_brush
+  damage: 32
+  attributes:
+    HAND:
+      GENERIC_MOVEMENT_SPEED: 0.3
+  enchantments:
+    - SOUL_SPEED:4
+  skills:
+    - WITCHER:1
+  lore:
+    - §6============================
+    - §5大魔女用过的扫把，仅仅是扫除用具，
+    - §5似乎沾染了奇怪的刻印。
+    - §4============================
+    - §5稀有度：§6臻品
+    - §5练度：§4${refine_level}§a洗 §7- §4${strengthen_level}§a精
+  # 洗炼规则
+  refine:
+    limit: 20 # 最多可以洗炼的次数
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 4 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
+      - void_coal
+      - void_stick
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: broken_brush_pre1
+      lore:
+        - §a最多可以进行20次洗炼。
+        - §4洗炼成功率会逐级降低！
+        - §4洗炼失败时，可能损失原物品！
+        - §4本次洗炼成功率：${chance}%
+      material: CHEST
+    broke: magic_roots # 洗练失败时的产物
+  # 精炼规则
+  strength:
+    limit: 25 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 3 # 每洗炼一次，成功率下降多少
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: broken_brush_pre2
+      lore:
+        - §a最多可以进行10次精炼。
+        - §4精炼成功率会逐级降低！
+        - §4精炼只能强化已有属性，注意选择材料！
+        - §4精炼失败时，可能损失原物品！
+        - §4本次精炼成功率：${chance}%
+      material: ENDER_CHEST
+    broke: magic_roots # 精炼失败时的产物
+  rarity:
+    fishery: 5
+    agriculture: 5
+    potion: 100
+    battle: 1
+
+wand_golden:
+  material: GOLDEN_SHOVEL
+  type: DEFAULT
+  displayName: §3橘子汽水杖
+  name: wand_golden
+  enchantments:
+    - FIRE_ASPECT:3
+    - KNOCKBACK:4
+  skills:
+    - WITCHER:1
+  lore:
+    - §3============================
+    - §5用橘子汽水瓶做成的魔杖，不太耐用的
+    - §5样子
+    - §3============================
+    - §5稀有度：§3稀有
+  rarity:
+    fishery: 10
+    agriculture: 10
+    potion: 400
+    battle: 5
+
+wand_iron:
+  material: IRON_SHOVEL
+  type: DEFAULT
+  displayName: §d圣杖
+  name: wand_iron
+  enchantments:
+    - UNBREAKING:3
+    - EFFICIENCY:5
+  skills:
+    - WITCHER:2
+    - GLOWING_POTION:5
+    - FLOAT_POTION:1
+    - ABSORPTION_POTION:2
+    - RESISTANCE_POTION:2
+  lore:
+    - §d============================
+    - §5银色的魔杖，有一丁点神圣属性
+    - §d============================
     - §5稀有度：§d史诗
+  rarity:
+    fishery: 15
+    agriculture: 10
+    potion: 300
+    battle: 10
+
+wand_black:
+  material: NETHERITE_SHOVEL
+  type: DEFAULT
+  displayName: §6地狱魔杖
+  name: wand_black
+  attributes:
+    HAND:
+      GENERIC_MAX_HEALTH: 4
+  enchantments:
+    - LOOTING:2
+  skills:
+    - WITCHER:2
+    - WITHER_POTION:3
+    - POISON_POTION:3
+    - CONFUSION_POTION:2
+  lore:
+    - §6============================
+    - §5亡灵的大魔法师使用过的魔杖，有种不
+    - §5祥的感觉，不要对自己尝试。
+    - §6============================
+    - §5稀有度：§6臻品
+  rarity:
+    fishery: 15
+    agriculture: 10
+    potion: 200
+    battle: 10
+
+wand_diamond:
+  material: DIAMOND_SHOVEL
+  type: DEFAULT
+  displayName: §6蓝宝石魔杖
+  name: wand_diamond
+  enchantments:
+    - UNBREAKING:1
+  skills:
+    - WITCHER:2
+    - HEAL_POTION:1
+    - REGENERATION_POTION:1
+    - SATURATION_POTION:1
+  lore:
+    - §6============================
+    - §5蕴含再生力量的强大魔杖，是冒险旅途
+    - §5的必备良品。
+    - §6============================
+    - §5稀有度：§6臻品
+  rarity:
+    fishery: 15
+    agriculture: 10
+    potion: 200
+    battle: 10
+
+magic_roots:
+  material: MANGROVE_ROOTS
+  type: REFINE_STONE
+  displayName: §d万法之源
+  name: magic_roots
+  enchantments:
+    - SOUL_SPEED:1
+  lore:
+    - §d============================
+    - §5蕴藏世间奥妙的根源，可用于巫术的洗练，
+    - §5是魔法师的常用消耗品。
+    - §d============================
+    - §5稀有度：§d史诗-洗练原料
+    - §5可能造成的影响：
+    - §a⬆ 全部魔咒 全部祝福
+    - §4⬇ 移速 生命
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  # 配置解释：可获得的条数,概率权重,每提升一个洗练等级对概率权重的影响
+  times:
+    - time: 1
+      chance: 30
+      rate: -2
+    - time: 2
+      chance: 100
+      rate: 2
+    - time: 2
+      chance: 30
+      rate: -2
+  candidates:
+    - SKILL:SLOW_POTION:1:20
+    - SKILL:BLIND_POTION:1:20
+    - SKILL:HARM_POTION:1:20
+    - SKILL:CONFUSION_POTION:1:20
+    - SKILL:GLOWING_POTION:1:20
+    - SKILL:HUNGER_POTION:1:20
+    - SKILL:FLOAT_POTION:1:20
+    - SKILL:POISON_POTION:1:20
+    - SKILL:WEAKNESS_POTION:1:20
+    - SKILL:WITHER_POTION:1:20
+    - SKILL:ABSORPTION_POTION:1:20
+    - SKILL:CONDUIT_POTION:1:20
+    - SKILL:RESISTANCE_POTION:1:20
+    - SKILL:FIRE_RESISTANCE_POTION:1:20
+    - SKILL:HEAL_POTION:1:20
+    - SKILL:INCREASE_DMG_POTION:1:20
+    - SKILL:INVISIBILITY_POTION:1:20
+    - SKILL:JUMP_POTION:1:20
+    - SKILL:NIGHT_VISION_POTION:1:20
+    - SKILL:REGENERATION_POTION:1:20
+    - SKILL:SATURATION_POTION:1:20
+    - SKILL:SPEED_POTION:1:20
+    - SKILL:WATER_BREATHING_POTION:1:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:-0.05:20
+    - ATTR-HAND:GENERIC_MAX_HEALTH:-2:20
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 15
+    agriculture: 10
+    potion: 200
+    battle: 10
+
+magic_roots1:
+  material: MANGROVE_ROOTS
+  type: REFINE_STONE
+  displayName: §6百厄之源
+  name: magic_roots1
+  enchantments:
+    - SOUL_SPEED:1
+  lore:
+    - §6============================
+    - §5蕴藏黑暗巫术的根源，可用于巫术的洗练，
+    - §5是魔法师的常用消耗品。
+    - §6============================
+    - §5稀有度：§6臻品-洗练原料
+    - §5可能造成的影响：
+    - §a⬆ 全部魔咒
+    - §4⬇ 移速 生命
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  # 配置解释：可获得的条数,概率权重,每提升一个洗练等级对概率权重的影响
+  times:
+    - time: 1
+      chance: 30
+      rate: -2
+    - time: 2
+      chance: 100
+      rate: 2
+    - time: 2
+      chance: 30
+      rate: -2
+  candidates:
+    - SKILL:SLOW_POTION:1:20
+    - SKILL:BLIND_POTION:1:20
+    - SKILL:HARM_POTION:1:20
+    - SKILL:CONFUSION_POTION:1:20
+    - SKILL:GLOWING_POTION:1:20
+    - SKILL:HUNGER_POTION:1:20
+    - SKILL:FLOAT_POTION:1:20
+    - SKILL:POISON_POTION:1:20
+    - SKILL:WEAKNESS_POTION:1:20
+    - SKILL:WITHER_POTION:1:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:-0.05:20
+    - ATTR-HAND:GENERIC_MAX_HEALTH:-2:20
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 5
+    agriculture: 3
+    potion: 100
+    battle: 3
+
+magic_roots2:
+  material: MANGROVE_ROOTS
+  type: REFINE_STONE
+  displayName: §6百惠之源
+  name: magic_roots2
+  enchantments:
+    - SOUL_SPEED:1
+  lore:
+    - §6============================
+    - §5蕴藏祝福圣术的根源，可用于祝福的洗练，
+    - §5是魔法师的常用消耗品。
+    - §6============================
+    - §5稀有度：§6臻品-洗练原料
+    - §5可能造成的影响：
+    - §a⬆ 全部祝福
+    - §4⬇ 移速 生命
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  # 配置解释：可获得的条数,概率权重,每提升一个洗练等级对概率权重的影响
+  times:
+    - time: 1
+      chance: 30
+      rate: -2
+    - time: 2
+      chance: 100
+      rate: 2
+    - time: 2
+      chance: 30
+      rate: -2
+  candidates:
+    - SKILL:ABSORPTION_POTION:1:20
+    - SKILL:CONDUIT_POTION:1:20
+    - SKILL:RESISTANCE_POTION:1:20
+    - SKILL:FIRE_RESISTANCE_POTION:1:20
+    - SKILL:HEAL_POTION:1:20
+    - SKILL:INCREASE_DMG_POTION:1:20
+    - SKILL:INVISIBILITY_POTION:1:20
+    - SKILL:JUMP_POTION:1:20
+    - SKILL:NIGHT_VISION_POTION:1:20
+    - SKILL:REGENERATION_POTION:1:20
+    - SKILL:SATURATION_POTION:1:20
+    - SKILL:SPEED_POTION:1:20
+    - SKILL:WATER_BREATHING_POTION:1:20
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:-0.05:20
+    - ATTR-HAND:GENERIC_MAX_HEALTH:-2:20
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 5
+    agriculture: 3
+    potion: 100
+    battle: 3
+
+black_sign:
+  material: DARK_OAK_HANGING_SIGN
+  type: STRENGTHEN_STONE
+  displayName: §d诡术残篇
+  name: black_sign
+  lore:
+    - §d============================
+    - §5记载了增强魔咒的办法，可用于精炼魔咒
+    - §d============================
+    - §5稀有度：§d史诗-精练原料
+    - §5可能造成的影响：
+    - §a⬆ 全部魔咒
+  candidates:
+    - SKILL_UP:SLOW_POTION:1:20
+    - SKILL_UP:BLIND_POTION:1:20
+    - SKILL_UP:HARM_POTION:1:20
+    - SKILL_UP:CONFUSION_POTION:1:20
+    - SKILL_UP:GLOWING_POTION:1:20
+    - SKILL_UP:HUNGER_POTION:1:20
+    - SKILL_UP:FLOAT_POTION:1:20
+    - SKILL_UP:POISON_POTION:1:20
+    - SKILL_UP:WEAKNESS_POTION:1:20
+    - SKILL_UP:WITHER_POTION:1:20
+  enchantments:
+    - SILK_TOUCH:2
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 10
+    agriculture: 5
+    potion: 200
+    battle: 5
+
+white_sign:
+  material: CHERRY_HANGING_SIGN
+  type: STRENGTHEN_STONE
+  displayName: §d祝福断章
+  name: white_sign
+  lore:
+    - §d============================
+    - §5记载了增强祝福的办法，可用于精炼魔咒
+    - §d============================
+    - §5稀有度：§d史诗-精练原料
+    - §5可能造成的影响：
+    - §a⬆ 全部祝福
+  candidates:
+    - SKILL_UP:ABSORPTION_POTION:1:20
+    - SKILL_UP:CONDUIT_POTION:1:20
+    - SKILL_UP:RESISTANCE_POTION:1:20
+    - SKILL_UP:FIRE_RESISTANCE_POTION:1:20
+    - SKILL_UP:HEAL_POTION:1:20
+    - SKILL_UP:INCREASE_DMG_POTION:1:20
+    - SKILL_UP:INVISIBILITY_POTION:1:20
+    - SKILL_UP:JUMP_POTION:1:20
+    - SKILL_UP:NIGHT_VISION_POTION:1:20
+    - SKILL_UP:REGENERATION_POTION:1:20
+    - SKILL_UP:SATURATION_POTION:1:20
+    - SKILL_UP:SPEED_POTION:1:20
+    - SKILL_UP:WATER_BREATHING_POTION:1:20
+  enchantments:
+    - SILK_TOUCH:2
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 10
+    agriculture: 5
+    potion: 200
+    battle: 5
+
+# ============== #
+# = 农业物品配置 = #
+# ============= #
+
+black_hoe:
+  material: NETHERITE_HOE
+  type: DEFAULT
+  displayName: §4漆黑的镰刀
+  name: black_hoe
+  unbreakable: true
+  enchantments:
+    - FORTUNE:5
+    - SHARPNESS:8
+  skills:
+    - THUNDER:3
+    - SECKILL:1
+  attribute:
+    HAND:
+      GENERIC_ATTACK_DAMAGE: 4
+      GENERIC_MOVEMENT_SPEED: 0.2
+  lore:
+    - §4============================
+    - §5从远古时代传承下来的镰刀，收割了无数
+    - §5土地，无论是土地上的生命还是土地上的
+    - §5作物。
+    - §4============================
+    - §5稀有度：§4传说
+  rarity:
+    agriculture: 100
+
+wooden_hoe:
+  material: WOODEN_HOE
+  type: STRENGTHEN_STONE
+  displayName: §d神木镰
+  name: wooden_hoe
+  enchantments:
+    - FORTUNE:1
+  attribute:
+    HAND:
+      GENERIC_ATTACK_DAMAGE: -5
+  lore:
+    - §d============================
+    - §5神木打造的镰刀，对收成有促进作用。
+    - §d============================
+    - §5稀有度：§d史诗-强化原料
+    - §5可能造成的影响：
+    - §a⬆ 幸运
+    - §4⬇ 主手伤害
+  candidates:
+    - ENCH_UP:FORTUNE:1:100
+    - ATTR-HAND:GENERIC_ATTACK_DAMAGE:-5:100
+  rarity:
+    agriculture: 400

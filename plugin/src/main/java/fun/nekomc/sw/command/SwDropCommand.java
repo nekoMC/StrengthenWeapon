@@ -67,7 +67,7 @@ class SwDropCommand extends SwCommand {
             int amount = actualArgs.length == REQUIRE_ARG_MIN_SIZE ? 1 : Integer.parseInt(actualArgs[5]);
             ItemStack itemStack = itemStackOpt.get();
             itemStack.setAmount(amount);
-            targetWorld.dropItem(new Location(targetWorld, x, y, z), itemStack);
+            targetWorld.dropItemNaturally(new Location(targetWorld, x, y, z), itemStack);
         } catch (NumberFormatException e) {
             throw new SwCommandException(sender, ConfigManager.getConfiguredMsg(Constants.Msg.GRAMMAR_ERROR));
         }

@@ -1,11 +1,12 @@
 package fun.nekomc.sw.skill.magia;
 
 import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.skill.AbstractCoolDownSwSkill;
 import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.skill.helper.SkillHelper;
 import fun.nekomc.sw.utils.DurabilityUtils;
-import fun.nekomc.sw.utils.ItemUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -31,13 +32,11 @@ import java.util.List;
  * @author Chiru
  */
 @Slf4j
-public class WitcherSkill extends AbstractSwSkill {
+public class WitcherSkill extends AbstractCoolDownSwSkill {
 
     public WitcherSkill() {
         super("WITCHER");
     }
-
-    private final Map<UUID, Long> timer = new WeakHashMap<>(16);
 
     /**
      * Items that don't cause spells to activate when right clicked.
@@ -88,17 +87,19 @@ public class WitcherSkill extends AbstractSwSkill {
         if (clickUnCareBlock) {
             return;
         }
-        // 取消掉原事件，避免可防止物品的误放置
-        event.setCancelled(true);
 
         if (!passCoolDown(player, level)) {
+            event.setCancelled(true);
             return;
         }
+        // 取消掉原事件，避免可放置物品的误放置
+        event.setCancelled(true);
         // 通过了 CD，生成投掷的药水
         ThrownPotion thrownPotion = player.launchProjectile(ThrownPotion.class, player.getLocation().add(0, player.getHeight() * 0.618, 0).getDirection());
         ItemStack itemStack = new ItemStack(Material.SPLASH_POTION);
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
         if (null == meta) {
+            event.setCancelled(true);
             return;
         }
         meta.setBasePotionType(PotionType.UNCRAFTABLE);
@@ -115,20 +116,8 @@ public class WitcherSkill extends AbstractSwSkill {
         Vector direction = player.getLocation().getDirection();
         thrownPotion.setVelocity(direction);
 
-        // 投掷后，物品耐久消耗 1
-        DurabilityUtils.damageItem(holdInHand, 1);
-    }
-
-    private boolean passCoolDown(Player player, final int level) {
-        UUID uuid = player.getUniqueId();
-        Long lastSplash = timer.get(uuid);
-        int coolDown = getSkillLvlAttribute(level);
-        long now = System.currentTimeMillis();
-        // 仍需 CD 时
-        if (null != lastSplash && now - lastSplash < coolDown) {
-            return false;
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            DurabilityUtils.damageItem(player, holdInHand, 1);
         }
-        timer.put(uuid, now);
-        return true;
     }
 }

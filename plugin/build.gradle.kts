@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "fun.nekomc"
-version = "2.0-alpha.1"
+version = "2.1-alpha.1"
 
 repositories {
     mavenLocal()
@@ -52,6 +52,24 @@ tasks.shadowJar {
 
     // 重定向 hutool 包
     relocate("cn.hutool", "fun.nekomc.sw.libs.cn.hutool")
+
+    // 构建前执行，删除相关文件
+    doFirst {
+        val libsDir = File(project.layout.buildDirectory.get().asFile, "libs")
+        libsDir.listFiles()?.forEach {
+            it.delete()
+        }
+        val pluginsDir = File(project.parent?.layout?.projectDirectory?.asFile, "jar-app/plugins")
+        if (pluginsDir.exists()) {
+            pluginsDir.listFiles()?.forEach {
+                if (it.name.contains("plugin.jar")) {
+                    it.delete()
+                } else if (it.name.equals("StrengthenWeapon")) {
+                    it.deleteRecursively()
+                }
+            }
+        }
+    }
 
     // 构建后执行，移动 libs 文件夹下全部文件到 jar-app/plugins 目录下
     doLast {

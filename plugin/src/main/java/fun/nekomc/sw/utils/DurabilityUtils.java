@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Chiru
  * @see <a href="https://github.com/Auxilor/eco">参考 Eco</a>
  */
+@SuppressWarnings("unused")
 public final class DurabilityUtils {
 
     /**
@@ -28,12 +28,13 @@ public final class DurabilityUtils {
      * @param player The player.
      * @param item   The item to damage.
      * @param damage The amount of damage to deal.
+     * @return true if the item broke, false otherwise.
      */
-    public static void damageItem(@NotNull final Player player,
+    public static boolean damageItem(@NotNull final Player player,
                                   @NotNull final ItemStack item,
                                   final int damage) {
         if (unbreakable(item)) {
-            return;
+            return false;
         }
 
         PlayerItemDamageEvent event3 = new PlayerItemDamageEvent(player, item, damage);
@@ -53,12 +54,16 @@ public final class DurabilityUtils {
                 item.setItemMeta(meta);
                 PlayerItemBreakEvent event = new PlayerItemBreakEvent(player, item);
                 Bukkit.getPluginManager().callEvent(event);
+                // 从玩家背包移除指定物品
+                player.getInventory().removeItem(item);
                 item.setType(Material.AIR);
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1, 1);
+                return true;
             } else {
                 item.setItemMeta(meta);
             }
         }
+        return false;
     }
 
     /**
@@ -66,11 +71,12 @@ public final class DurabilityUtils {
      *
      * @param item   The item to damage.
      * @param damage The amount of damage to deal.
+     * @return true if the item broke, false otherwise.
      */
-    public static void damageItem(@NotNull final ItemStack item,
+    public static boolean damageItem(@NotNull final ItemStack item,
                                   final int damage) {
         if (unbreakable(item)) {
-            return;
+            return false;
         }
 
         Damageable meta = (Damageable) item.getItemMeta();
@@ -84,8 +90,10 @@ public final class DurabilityUtils {
             meta.setDamage(item.getType().getMaxDurability());
             item.setItemMeta(meta);
             item.setType(Material.AIR);
+            return true;
         } else {
             item.setItemMeta(meta);
+            return false;
         }
     }
 

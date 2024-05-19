@@ -100,6 +100,7 @@ public class StrengthenWeapon extends JavaPlugin {
                 SuckBloodSkill.class,
                 GetHitHealSkill.class,
                 SecKillSkill.class,
+                ThunderSkill.class,
                 // Magia 支持
                 WitcherSkill.class,
                 PotionSkill.Slow.class,

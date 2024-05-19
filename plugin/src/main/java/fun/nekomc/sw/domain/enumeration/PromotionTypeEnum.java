@@ -42,7 +42,6 @@ public enum PromotionTypeEnum implements BaseEnum<Integer> {
     OPTI(10),
     ;
 
-    @Getter
     private final Integer code;
 
     /**

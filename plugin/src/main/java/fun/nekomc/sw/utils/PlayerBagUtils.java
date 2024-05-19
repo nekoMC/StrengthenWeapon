@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import lombok.experimental.UtilityClass;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -27,5 +26,7 @@ public class PlayerBagUtils {
             world.dropItem(player.getLocation(), dropItem);
         }
     }
+
+
 }
 

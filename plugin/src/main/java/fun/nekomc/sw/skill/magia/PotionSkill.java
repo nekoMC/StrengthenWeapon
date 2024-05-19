@@ -111,7 +111,7 @@ public abstract class PotionSkill extends AbstractSwSkill {
      */
     public static class Poison extends PotionSkill {
         public Poison() {
-            super("POISON", PotionEffectType.POISON);
+            super("POISON_POTION", PotionEffectType.POISON);
         }
     }
 

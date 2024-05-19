@@ -77,7 +77,7 @@ public class SwItemConfigDto implements Serializable {
     /**
      * 稀有度权重
      */
-    private int rarity;
+    private Map<String, Integer> rarity;
 
     /**
      * 道具的耐久损耗

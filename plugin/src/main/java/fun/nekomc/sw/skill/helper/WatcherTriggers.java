@@ -1,10 +1,16 @@
 package fun.nekomc.sw.skill.helper;
 
+import cn.hutool.core.collection.CollUtil;
 import fun.nekomc.sw.StrengthenWeapon;
+import fun.nekomc.sw.domain.enumeration.RarityIndustryEnum;
 import fun.nekomc.sw.skill.AbstractSwSkill;
 import fun.nekomc.sw.utils.ItemUtils;
+import fun.nekomc.sw.utils.ServiceUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -21,11 +28,12 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * 拷贝自：https://github.com/Auxilor/EcoEnchants
+ * 拷贝自：<a href="https://github.com/Auxilor/EcoEnchants">EcoEnchants</a>
  * created: 2022/3/16 00:39
  *
  * @author Chiru
@@ -47,24 +55,21 @@ public class WatcherTriggers implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onArrowDamage(@NotNull final EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Arrow)) {
+        if (!(event.getDamager() instanceof Arrow arrow)) {
             return;
         }
-        Arrow arrow = (Arrow) event.getDamager();
 
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity victim)) {
             return;
         }
-        LivingEntity victim = (LivingEntity) event.getEntity();
 
         if (arrow.getShooter() == null) {
             return;
         }
 
-        if (!(arrow.getShooter() instanceof LivingEntity)) {
+        if (!(arrow.getShooter() instanceof LivingEntity attacker)) {
             return;
         }
-        LivingEntity attacker = (LivingEntity) arrow.getShooter();
 
         SkillHelper.getSkillsOnArrow(arrow)
                 .forEach(((skill, level) -> skill.onArrowDamage(attacker, victim, arrow, level, event)));
@@ -78,24 +83,21 @@ public class WatcherTriggers implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onTridentDamage(@NotNull final EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Trident)) {
+        if (!(event.getDamager() instanceof Trident trident)) {
             return;
         }
-        Trident trident = (Trident) event.getDamager();
 
-        if (!(trident.getShooter() instanceof LivingEntity)) {
+        if (!(trident.getShooter() instanceof LivingEntity attacker)) {
             return;
         }
-        LivingEntity attacker = (LivingEntity) trident.getShooter();
 
         if (trident.getShooter() == null) {
             return;
         }
 
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity victim)) {
             return;
         }
-        LivingEntity victim = (LivingEntity) event.getEntity();
 
         ItemStack item = trident.getItem();
 
@@ -110,15 +112,13 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onMeleeAttack(@NotNull final EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof LivingEntity)) {
+        if (!(event.getDamager() instanceof LivingEntity attacker)) {
             return;
         }
-        LivingEntity attacker = (LivingEntity) event.getDamager();
 
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity victim)) {
             return;
         }
-        LivingEntity victim = (LivingEntity) event.getEntity();
 
         if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) {
             return;
@@ -158,11 +158,9 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        if (!(event.getEntity().getShooter() instanceof Player)) {
+        if (!(event.getEntity().getShooter() instanceof Player shooter)) {
             return;
         }
-
-        LivingEntity shooter = (LivingEntity) event.getEntity().getShooter();
 
         Projectile projectile = event.getEntity();
 
@@ -196,10 +194,9 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity victim)) {
             return;
         }
-        LivingEntity victim = (LivingEntity) event.getEntity();
 
         SkillHelper.getSkillsOnArmor(victim)
                 .forEach((skill, level) -> skill.onFallDamage(victim, level, event));
@@ -212,15 +209,13 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onArrowHit(@NotNull final ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof Arrow)) {
+        if (!(event.getEntity() instanceof Arrow arrow)) {
             return;
         }
-        Arrow arrow = (Arrow) event.getEntity();
 
-        if (!(arrow.getShooter() instanceof LivingEntity)) {
+        if (!(arrow.getShooter() instanceof LivingEntity shooter)) {
             return;
         }
-        LivingEntity shooter = (LivingEntity) arrow.getShooter();
 
         if (event.getEntity().getShooter() == null) {
             return;
@@ -237,17 +232,11 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onTridentHit(@NotNull final ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof Trident)) {
+        if (!(event.getEntity() instanceof Trident trident)) {
             return;
         }
-        Trident trident = (Trident) event.getEntity();
 
-        if (!(trident.getShooter() instanceof LivingEntity)) {
-            return;
-        }
-        LivingEntity shooter = (LivingEntity) trident.getShooter();
-
-        if (shooter == null) {
+        if (!(trident.getShooter() instanceof LivingEntity shooter)) {
             return;
         }
 
@@ -271,6 +260,40 @@ public class WatcherTriggers implements Listener {
                 .forEach((skill, level) -> skill.onBlockBreak(player, block, level, event));
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockDropItemEvent(@NotNull final BlockDropItemEvent event) {
+        Player player = event.getPlayer();
+        // 敲的啥
+        BlockState blockState = event.getBlockState();
+        Material blockType = blockState.getType();
+        Optional<RarityIndustryEnum> industryOpt = RarityIndustryEnum.getByMaterial(blockType);
+        if (industryOpt.isEmpty()) {
+            return;
+        }
+        // 作物没有生长，敲掉不算
+        BlockData blockData = blockState.getBlockData();
+        if (blockData instanceof Ageable ageable) {
+            if (ageable.getAge() == 0) {
+                return;
+            }
+        }
+        // 获得破坏后的掉落物
+        List<Item> drops = event.getItems();
+        if (CollUtil.isEmpty(drops)) {
+            return;
+        }
+        for (Item drop : drops) {
+            // 神明是否有馈赠
+            RarityIndustryEnum rarityIndustry = industryOpt.get();
+            if (rarityIndustry.godHasGift()) {
+                Optional<ItemStack> reward = ServiceUtils.getReward(player, rarityIndustry, true);
+                // 替换掉落物
+                reward.ifPresent(drop::setItemStack);
+                break;
+            }
+        }
+    }
+
     /**
      * Called when an entity takes damage wearing armor.
      *
@@ -278,10 +301,9 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onDamageWearingArmor(@NotNull final EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity victim)) {
             return;
         }
-        LivingEntity victim = (LivingEntity) event.getEntity();
 
         SkillHelper.getSkillsOnArmor(victim)
                 .forEach((skill, level) -> skill.onDamageWearingArmor(victim, level, event));
@@ -312,18 +334,15 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onTridentLaunch(@NotNull final ProjectileLaunchEvent event) {
-        if (!(event.getEntity() instanceof Trident)) {
-            return;
-        }
-        Trident trident = (Trident) event.getEntity();
-
-        if (!(trident.getShooter() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof Trident trident)) {
             return;
         }
 
-        LivingEntity shooter = (LivingEntity) trident.getShooter();
+        if (!(trident.getShooter() instanceof LivingEntity shooter)) {
+            return;
+        }
+
         ItemStack item = trident.getItem();
-        assert shooter != null;
 
         SkillHelper.getSkillsOnItem(item)
                 .forEach((skill, level) -> skill.onTridentLaunch(shooter, trident, level, event));
@@ -336,10 +355,9 @@ public class WatcherTriggers implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onDeflect(@NotNull final EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player blocker)) {
             return;
         }
-        Player blocker = (Player) event.getEntity();
 
         LivingEntity attacker = ItemUtils.tryAsPlayer(event.getDamager());
 
@@ -369,11 +387,9 @@ public class WatcherTriggers implements Listener {
             return;
         }
 
-        if (!(arrow.getShooter() instanceof LivingEntity)) {
+        if (!(arrow.getShooter() instanceof LivingEntity shooter)) {
             return;
         }
-
-        LivingEntity shooter = (LivingEntity) arrow.getShooter();
 
         if (shooter.getEquipment() == null) {
             return;
@@ -420,11 +436,23 @@ public class WatcherTriggers implements Listener {
         if (null == caughtItem) {
             return;
         }
-        // 鱼竿都有啥附魔
+        // 神明是否有馈赠
+        boolean godHasGift = RarityIndustryEnum.FISHERY.godHasGift();
+        if (godHasGift) {
+            Optional<ItemStack> reward = ServiceUtils.getReward(player, RarityIndustryEnum.FISHERY, true);
+            if (reward.isPresent()) {
+                ItemStack itemStack = reward.get();
+                caughtItem.setItemStack(itemStack);
+            }
+        }
+        // 鱼竿都有啥技能
         Map<AbstractSwSkill, Integer> skills = SkillHelper.getSkillsOnItem(fishingRod);
-        skills.forEach((skill, level) -> skill.onFishing(player, fishingRod, caughtItem, level, event));
+        skills.forEach((skill, level) -> skill.onFishing(player, fishingRod, caughtItem, godHasGift, level, event));
     }
 
+    /**
+     * 右键时
+     */
     @EventHandler
     public void onRightClick(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
@@ -444,12 +472,15 @@ public class WatcherTriggers implements Listener {
         skills.forEach((skill, level) -> skill.onMainHandRightClick(player, holdInHand, level, event));
     }
 
+    /**
+     * 砸药水时
+     */
     @EventHandler
     public void onPotionSplash(PotionSplashEvent potionSplashEvent) {
         ThrownPotion potion = potionSplashEvent.getEntity();
 
         Optional<ItemStack> triggerOptional = ItemUtils.getPotionTriggerItem(potion);
-        if (!triggerOptional.isPresent()) {
+        if (triggerOptional.isEmpty()) {
             return;
         }
 
@@ -460,7 +491,35 @@ public class WatcherTriggers implements Listener {
 
         ItemStack triggerItem = triggerOptional.get();
 
+        // 神明是否有馈赠
+        boolean godHasGift = RarityIndustryEnum.POTION.godHasGift();
+        if (godHasGift && shooter instanceof Player player) {
+            Optional<ItemStack> reward = ServiceUtils.getReward(player, RarityIndustryEnum.POTION, true);
+            // 药水打在哪，东西放在哪
+            reward.ifPresent(itemStack -> potion.getWorld().dropItemNaturally(potion.getLocation(), itemStack));
+        }
+
         Map<AbstractSwSkill, Integer> skills = SkillHelper.getSkillsOnItem(triggerItem);
         skills.forEach((skill, level) -> skill.onPotionSplash((LivingEntity) shooter, triggerItem, potion, level, potionSplashEvent));
     }
+
+    /**
+     * 怪物掉落时
+     */
+    @EventHandler
+    public void onEntityDrop(EntityDeathEvent event) {
+        LivingEntity entity = event.getEntity();
+        // 获取凶手，只有玩家才触发后续处理
+        LivingEntity killer = entity.getKiller();
+        if (!(killer instanceof Player player)) {
+            return;
+        }
+        // 神明是否有馈赠
+         if (RarityIndustryEnum.BATTLE.godHasGift()) {
+            Optional<ItemStack> reward = ServiceUtils.getReward(player, RarityIndustryEnum.BATTLE, true);
+            // 替换掉落物
+            reward.ifPresent(item -> entity.getWorld().dropItemNaturally(entity.getLocation(), item));
+        }
+    }
+
 }

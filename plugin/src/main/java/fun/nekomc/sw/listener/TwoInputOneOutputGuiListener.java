@@ -78,7 +78,7 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         // 不存在指定配置时，原样返回
         ItemStack blank = wrapped.inventory.getItem(BLANK_INDEX);
         Optional<SwBlankConfigDto> blankConfigOpt = ItemUtils.getConfigDtoFromItem(blank, SwBlankConfigDto.class);
-        if (!blankConfigOpt.isPresent()) {
+        if (blankConfigOpt.isEmpty()) {
             return blank;
         }
         // 生成预览物品
@@ -112,7 +112,7 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         Optional<SwItemAttachData> attachData = ItemUtils.getAttachData(item);
         Optional<SwBlankConfigDto> blankConfigOpt = ItemUtils.getConfigDtoFromItem(item, SwBlankConfigDto.class);
         Optional<SwRawConfigDto> rawConfigDtoOpt = ItemUtils.getConfigDtoFromItem(raw, SwRawConfigDto.class);
-        if (!blankConfigOpt.isPresent() || !attachData.isPresent() || !rawConfigDtoOpt.isPresent()) {
+        if (blankConfigOpt.isEmpty() || attachData.isEmpty() || rawConfigDtoOpt.isEmpty()) {
             return item;
         }
         SwRawConfigDto rawConfig = rawConfigDtoOpt.get();
@@ -123,7 +123,7 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         if (!promoteSuccess) {
             Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(promoteRule.getBroke());
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_FAIL));
-            if (!brokeItem.isPresent()) {
+            if (brokeItem.isEmpty()) {
                 return item;
             }
             return ItemUtils.buildItemByConfig(brokeItem.get()).orElse(item);
@@ -137,7 +137,7 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         // 查询白板配置
         ItemStack blank = targetInv.getItem(BLANK_INDEX);
         Optional<SwBlankConfigDto> blankConfigOpt = ItemUtils.getConfigDtoFromItem(blank, SwBlankConfigDto.class);
-        if (!blankConfigOpt.isPresent()) {
+        if (blankConfigOpt.isEmpty()) {
             return false;
         }
         // 原料材料

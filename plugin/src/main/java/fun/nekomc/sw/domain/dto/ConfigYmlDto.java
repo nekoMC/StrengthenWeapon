@@ -61,6 +61,11 @@ public class ConfigYmlDto implements Serializable {
     private boolean usingLoreGetter;
 
     /**
+     * 获取各类型神明赠品的概率
+     */
+    private Map<String, Double> gift;
+
+    /**
      * 获取 message 中指定的消息内容
      *
      * @param key 键

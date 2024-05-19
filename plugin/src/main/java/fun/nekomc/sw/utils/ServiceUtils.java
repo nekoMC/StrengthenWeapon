@@ -3,8 +3,15 @@ package fun.nekomc.sw.utils;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
-import fun.nekomc.sw.domain.dto.SwRawConfigDto;
+import fun.nekomc.sw.common.ConfigManager;
+import fun.nekomc.sw.common.Constants;
+import fun.nekomc.sw.domain.dto.SwItemConfigDto;
+import fun.nekomc.sw.domain.enumeration.RarityIndustryEnum;
 import lombok.experimental.UtilityClass;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -79,6 +86,9 @@ public class ServiceUtils {
                 totalWeight += now;
             }
         }
+        if (totalWeight == 0) {
+            return null;
+        }
         // 计算随机数，并寻找满足该随机数范围的配置项
         int randomInt = RandomUtil.randomInt(0, totalWeight);
         int nowWeight = 0;
@@ -91,5 +101,25 @@ public class ServiceUtils {
             nowWeight += newToAdd;
         }
         return null;
+    }
+
+    public static Optional<ItemStack> getReward(@NotNull Player player, RarityIndustryEnum industry, boolean broadcast) {
+        // 可以获得宝藏
+        Collection<SwItemConfigDto> candidates = ConfigManager.getItemConfigList();
+        SwItemConfigDto itemConfigToReturn = ServiceUtils.randomByWeight(candidates, industry::getRarityFrom);
+        if (itemConfigToReturn == null) {
+            return Optional.empty();
+        }
+        Optional<ItemStack> targetItem = ItemUtils.buildItemByConfig(itemConfigToReturn);
+        if (targetItem.isEmpty()) {
+            return targetItem;
+        }
+        // 获得的目标物品
+        ItemMeta itemMeta = targetItem.get().getItemMeta();
+        String displayName = itemMeta != null ? itemMeta.getDisplayName() : targetItem.get().getType().name();
+        if (broadcast) {
+            MsgUtils.broadcase(ConfigManager.getConfiguredMsg(Constants.Msg.GOT_GODS_GIFT), player.getDisplayName(), displayName);
+        }
+        return targetItem;
     }
 }
