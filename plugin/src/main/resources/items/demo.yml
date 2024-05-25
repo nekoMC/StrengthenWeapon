@@ -2,6 +2,34 @@
 # = 战斗物品配置 = #
 # ============= #
 
+eternal_wing:
+  material: ELYTRA
+  type: DEFAULT
+  displayName: §6永恒之翼
+  name: eternal_wing
+  unbreakable: true
+  enchantments:
+    - PROTECTION:5
+    - THORNS:3
+  attributes:
+    CHEST:
+      GENERIC_MOVEMENT_SPEED: 0.2
+      GENERIC_ARMOR: 5
+  skills:
+    - GET_HIT_HEAL: 1
+  lore:
+    - §4============================
+    - §5不灭不朽的羽翼，具备守护的力量，
+    - §5是不折不扣的宝具。
+    - §4============================
+    - §5稀有度：§4传说
+  rarity:
+    fishery: 1
+    agriculture: 1
+    mining: 1
+    potion: 1
+    battle: 10
+
 speed_bow:
   type: BLANK
   displayName: §4残月
@@ -510,8 +538,9 @@ lost_canon:
     beginRate: 100 # 0洗时的成功率
     rateLvlDown: 9 # 每洗炼一次，成功率下降多少
     compatible: # 可以使用的洗练材料（名称）缺省时不限制
-      - disaster_root
-      - bless_root
+      - magic_roots
+      - magic_roots1
+      - magic_roots2
     preview: # 洗练时的预览信息
       type: DEFAULT
       displayName: §b点击以进行洗炼
@@ -997,3 +1026,196 @@ wooden_hoe:
     - ATTR-HAND:GENERIC_ATTACK_DAMAGE:-5:100
   rarity:
     agriculture: 400
+
+
+# ================= #
+# =  采矿业相关物品   = #
+# ================ #
+
+blue_pickaxe:
+  material: DIAMOND_PICKAXE
+  type: BLANK
+  displayName: §4蓝宝十字镐
+  name: blue_pickaxe
+  unbreakable: true
+  enchantments:
+    - MENDING:5
+    - EFFICIENCY:3
+    - FORUNE:3
+  skills:
+    - SECKILL:1
+  attribute:
+    HAND:
+      GENERIC_ATTACK_DAMAGE: 3
+      GENERIC_MOVEMENT_SPEED: 0.1
+      GENERIC_ARMOR: 2
+  lore:
+    - §4============================
+    - §5蓝宝石制成的十字镐，已经没有了
+    - §5魔力，但仍然兼顾耐用，需加以锤
+    - §5炼方可发挥其往日的力量。
+    - §4============================
+    - §5稀有度：§4传说
+    - §5练度：§4${refine_level}§a洗 §7- §4${strengthen_level}§a精
+  # 洗炼规则
+  refine:
+    limit: 20 # 最多可以洗炼的次数
+    beginRate: 100 # 0洗时的成功率
+    rateLvlDown: 5 # 每洗炼一次，成功率下降多少
+    compatible: # 可以使用的洗练材料（名称）缺省时不限制
+      - ancient_coal
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行洗炼
+      name: blue_pickaxe_p1
+      lore:
+        - §a最多可以进行20次洗炼。
+        - §4洗炼成功率会逐级降低！
+        - §4洗炼失败时，可能损失原物品！
+        - §4本次洗炼成功率：${chance}%
+      material: CHEST
+    broke: magic_roots1 # 洗练失败时的产物
+  # 精炼规则
+  strength:
+    limit: 20 # 最多可以强化的次数
+    beginRate: 100 # 0精时的成功率
+    rateLvlDown: 4 # 每洗炼一次，成功率下降多少
+    preview: # 洗练时的预览信息
+      type: DEFAULT
+      displayName: §b点击以进行强化
+      name: blue_pickaxe_p2
+      lore:
+        - §a最多可以进行10次精炼。
+        - §4精炼成功率会逐级降低！
+        - §4精炼只能强化已有属性，注意选择材料！
+        - §4精炼失败时，可能损失原物品！
+        - §4本次精炼成功率：${chance}%
+      material: ENDER_CHEST
+    broke: magic_roots2 # 精炼失败时的产物
+  rarity:
+    fishery: 1
+    agriculture: 0
+    mining: 20
+    potion: 1
+    battle: 1
+
+woo_pickaxe:
+  material: WOODEN_PICKAXE
+  type: DEFAULT
+  displayName: §6朽木镐
+  unbreakable: true
+  name: woo_pickaxe
+  enchantments:
+    - EFFICIENCY:10
+    - SILK_TOUCH:10
+    - KNOKBACK:10
+  skills:
+    - THUNDER:1
+  lore:
+    - §6============================
+    - §5由雷击的朽木雕琢而成，即将破碎
+    - §5的残镐，没什么用处的样子。
+    - §4============================
+    - §5稀有度：§6臻品
+  rarity:
+    fishery: 5
+    agriculture: 5
+    mining: 100
+    battle: 1
+
+star_pickaxe:
+  material: IRON_PICKAXE
+  type: DEFAULT
+  displayName: §d星银镐
+  name: star_pickaxe
+  damage: 250
+  enchantments:
+    - FORTUNE:32
+  lore:
+    - §d============================
+    - §5星银材质的幸运镐，质地脆弱，爆
+    - §5率极高，且用且珍惜。
+    - §d============================
+    - §5稀有度：§d史诗
+  rarity:
+    fishery: 10
+    agriculture: 10
+    mining: 500
+    potion: 5
+    battle: 5
+
+ancient_coal:
+  material: COAL
+  type: REFINE_STONE
+  displayName: §d远古神煤
+  name: ancient_coal
+  enchantments:
+    - SOUL_SPEED:1
+  lore:
+    - §d============================
+    - §5神木经过千年沉淀形成的煤炭，可
+    - §5用于镐头的洗练，当然也是优质的
+    - §5燃料。
+    - §d============================
+    - §5稀有度：§d史诗-洗练原料
+    - §5可能造成的影响：
+    - §a⬆ 效率 耐久 幸运 精准
+    - §4⬇ 移速 护甲
+  # 洗练成功时，可获得的属性条目范围，可获得多条时，有重复的可能
+  # 配置解释：可获得的条数,概率权重,每提升一个洗练等级对概率权重的影响
+  times:
+    - time: 1
+      chance: 30
+      rate: 2
+    - time: 2
+      chance: 100
+      rate: -2
+    - time: 3
+      chance: 30
+      rate: -2
+  candidates:
+    - ATTR-HAND:GENERIC_MOVEMENT_SPEED:-0.05:20
+    - ATTR-HAND:GENERIC_ARMOR:-2:20
+    - ENCH_UP:EFFECTIVE:1:50
+    - ENCH_UP:EFFICIENCY:2:10
+    - ENCH_UP:UNBREAKING:1:10
+    - ENCH_UP:FORUNE:1:50
+    - ENCH_UP:FORUNE:1:10
+    - ENCH:SILK_TOUCH:1:10
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 15
+    agriculture: 10
+    mining: 400
+    battle: 10
+
+ancient_charcoal:
+  material: CHARCOAL
+  type: STRENGTHEN_STONE
+  displayName: §6远古神木炭
+  name: ancient_charcoal
+  enchantments:
+    - SOUL_SPEED:1
+  lore:
+    - §6============================
+    - §5实用千年神木烧制而成的炭，可以
+    - §5用于镐头的精炼，当然也是优质的
+    - §5燃料。
+    - §6============================
+    - §5稀有度：§6臻品-精练原料
+    - §5可能造成的影响：
+    - §a⬆ 效率 耐久 幸运
+  candidates:
+    - ENCH_UP:EFFECTIVE:1:50
+    - ENCH_UP:EFFICIENCY:2:10
+    - ENCH_UP:UNBREAKING:1:10
+    - ENCH_UP:FORUNE:1:50
+    - ENCH_UP:FORUNE:1:10
+  # 成功率加成
+  addition: 0
+  rarity:
+    fishery: 7
+    agriculture: 5
+    mining: 200
+    battle: 5

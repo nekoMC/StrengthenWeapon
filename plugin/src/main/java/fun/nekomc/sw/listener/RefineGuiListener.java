@@ -36,7 +36,10 @@ public class RefineGuiListener extends TwoInputOneOutputGuiListener implements L
 
     @Override
     protected SwItemAttachData newAttachDataAfterLvlUp(SwItemAttachData oldAttach) {
-        int oldRef = (null == oldAttach || null == oldAttach.getRefineLevel()) ? 0 : oldAttach.getRefineLevel();
-        return new SwItemAttachData(oldRef + 1, 0);
+        if (oldAttach == null) {
+            return new SwItemAttachData(1, 0, null);
+        }
+        int oldRef = null == oldAttach.getRefineLevel() ? 0 : oldAttach.getRefineLevel();
+        return new SwItemAttachData(oldRef + 1, 0, oldAttach.getSkills());
     }
 }

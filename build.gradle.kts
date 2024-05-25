@@ -39,7 +39,7 @@ subprojects {
 }
 
 group = "fun.nekomc"
-version = "2.1-alpha.1"
+version = "2.1-alpha.2"
 description = "StrengthWeapon"
 java.sourceCompatibility = JavaVersion.VERSION_17
 

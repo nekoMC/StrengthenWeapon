@@ -112,9 +112,10 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         Optional<SwItemAttachData> attachData = ItemUtils.getAttachData(item);
         Optional<SwBlankConfigDto> blankConfigOpt = ItemUtils.getConfigDtoFromItem(item, SwBlankConfigDto.class);
         Optional<SwRawConfigDto> rawConfigDtoOpt = ItemUtils.getConfigDtoFromItem(raw, SwRawConfigDto.class);
-        if (blankConfigOpt.isEmpty() || attachData.isEmpty() || rawConfigDtoOpt.isEmpty()) {
+        if (blankConfigOpt.isEmpty() || attachData.isEmpty() || rawConfigDtoOpt.isEmpty() || item == null) {
             return item;
         }
+        ItemStack cloneItem = item.clone();
         SwRawConfigDto rawConfig = rawConfigDtoOpt.get();
         SwItemAttachData swItemAttachData = attachData.get();
         SwBlankConfigDto.StrengthRule promoteRule = getStrengthRuleFromBlankConfig(blankConfigOpt.get());
@@ -123,13 +124,10 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         if (!promoteSuccess) {
             Optional<SwItemConfigDto> brokeItem = ConfigManager.getItemConfig(promoteRule.getBroke());
             MsgUtils.sendToSenderInHolder(ConfigManager.getConfiguredMsg(Constants.Msg.PROMOTE_FAIL));
-            if (brokeItem.isEmpty()) {
-                return item;
-            }
-            return ItemUtils.buildItemByConfig(brokeItem.get()).orElse(item);
+            return brokeItem.map(configDto -> ItemUtils.buildItemByConfig(configDto).orElse(cloneItem)).orElse(cloneItem);
         }
         // 执行增强
-        return doPromote(item, blankConfigOpt.get(), rawConfig, swItemAttachData);
+        return doPromote(cloneItem, blankConfigOpt.get(), rawConfig, swItemAttachData);
     }
 
     @Override
@@ -182,9 +180,11 @@ public abstract class TwoInputOneOutputGuiListener extends AbstractComposeGui {
         if (null == newItemMeta) {
             throw new SwException(ConfigManager.getConfiguredMsg(Constants.Msg.CONFIG_ERROR));
         }
+        oldAttach = ItemUtils.getAttachData(newItem).orElse(oldAttach);
         SwItemAttachData newAttach = newAttachDataAfterLvlUp(oldAttach);
         ItemUtils.updateAttachData(newItemMeta, newAttach);
         newItem.setItemMeta(newItemMeta);
+        newItem.setAmount(1);
         SkillHelper.updateLore(newItem);
         return newItem;
     }

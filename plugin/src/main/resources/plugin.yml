@@ -1,6 +1,6 @@
 name: StrengthenWeapon
 main: fun.nekomc.sw.StrengthenWeapon
-version: '2.1-alpha.1'
+version: '2.1-alpha.2'
 api-version: '1.20'
 authors: [ChiruMori, ourange]
 website: https://github.com/nekoMC/StrengthenWeapon

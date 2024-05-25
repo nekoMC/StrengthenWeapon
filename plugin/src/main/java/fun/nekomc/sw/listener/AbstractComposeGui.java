@@ -167,7 +167,7 @@ public abstract class AbstractComposeGui implements Listener {
      * 点击背包事件
      */
     @SuppressWarnings("unused")
-    public void onClickBag(WrappedInventoryClickEvent wrapped) {
+    protected void onClickBag(WrappedInventoryClickEvent wrapped) {
     }
 
     /**
@@ -188,9 +188,9 @@ public abstract class AbstractComposeGui implements Listener {
 
     /**
      * 点击容器事件
-     * 事件整理思路（无关紧要的事件全取消）参考：https://github.com/WesJD/AnvilGUI
+     * 事件整理思路（无关紧要的事件全取消）参考：<a href="https://github.com/WesJD/AnvilGUI">AnvilGUI</a>
      */
-    public void onClickInventory(WrappedInventoryClickEvent wrapped) {
+    protected void onClickInventory(WrappedInventoryClickEvent wrapped) {
         // 消除默认处理干扰
         wrapped.cancelEvent();
         // 点击容器后，清空输出格窗
@@ -241,7 +241,7 @@ public abstract class AbstractComposeGui implements Listener {
             ItemStack item = targetInv.getItem(slot);
             String nameFromMeta = ItemUtils.getNameFromMeta(item);
             Optional<SwItemConfigDto> itemConfig = ConfigManager.getItemConfig(nameFromMeta);
-            if (!itemConfig.isPresent()) {
+            if (itemConfig.isEmpty()) {
                 return false;
             }
             // 为该物品配置的 Type 与注册的规则匹配？
