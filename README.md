@@ -1,6 +1,6 @@
 # StrengthenWeapon
 
-道具强化插件 For [PaperMC](https://github.com/PaperMC/Paper)
+道具强化插件 For [PaperMC](https://github.com/PaperMC/Paper)，[演示效果](https://cxlm.work/archives/mc_plugin_sw)
 
 ### 功能介绍
 
