@@ -1,6 +1,6 @@
 # StrengthenWeapon
 
-道具强化插件 For [PaperMC](https://github.com/PaperMC/Paper)，[演示效果](https://cxlm.work/archives/mc_plugin_sw)
+道具强化插件 For [PaperMC](https://github.com/PaperMC/Paper)，[演示效果](https://cxlm.work/archives/mc_plugin_sw)，[spigotmc 介绍页](https://www.spigotmc.org/resources/strengthenweapon.116951/)
 
 ### 功能介绍
 
